@@ -106,8 +106,7 @@ class Api():
             manga_list.append(current_manga)
         return manga_list
 
-    def get_manga_list(self, limit = 10, **kwargs):
+    def get_manga_list(self, **kwargs):
         url = f"{self.URL}/manga"
         resp = self._request_url(url, 'GET', params=kwargs)
         return self._create_manga_list(resp)
-    
