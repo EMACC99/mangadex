@@ -1,5 +1,4 @@
 from __future__ import absolute_import
-from mangadex.errors import ApiError
 
 import json
 import requests
@@ -19,7 +18,7 @@ except ImportError:
     from urllib import urlencode
 
 
-from mangadex import (ApiError, ApiClientError, Manga, Tag)
+from mangadex import (ApiError, ApiClientError, Manga, Tag, Chapter)
 
 class Api():
     def __init__(self, key = None, secret = None, timeout = 5):
@@ -106,8 +105,8 @@ class Api():
         resp = resp["results"]
         manga_list = []
         for elem in resp:
-            current_manga = self._create_manga(elem)
-            manga_list.append(current_manga)
+            manga_list.append(self._create_manga(elem))
+            
         return manga_list
 
     def _create_tag(self, elem):
@@ -118,10 +117,22 @@ class Api():
     def _create_tag_list(self, resp) -> List[Tag]:
         tag_list = []
         for tag in resp:
-            current_tag = self._create_tag(tag)
-            tag_list.append(current_tag)
+            tag_list.append(self._create_tag(tag))
 
         return tag_list
+
+    def _create_chapter(self, elem):
+        chap = Chapter()
+        chap._ChapterFromDict(elem)
+        return chap
+
+    def _create_chapter_list(self, resp) -> List[Chapter]:
+        resp = resp["results"]
+        chap_list = []
+        for elem in resp:
+            chap_list.append(self._create_chapter(elem))
+
+        return chap_list
 
     def get_manga_list(self, **kwargs):
         url = f"{self.URL}/manga"
@@ -143,3 +154,7 @@ class Api():
         resp = self._request_url(url, "GET")
         return self._create_tag_list(resp)
     
+    def manga_feed(self, id : str, **kwargs):
+        url = f"{self.URL}/manga/{id}/feed"
+        resp = self._request_url(url, "GET", params = kwargs)
+        return self._create_chapter_list(resp)

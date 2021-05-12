@@ -1,4 +1,5 @@
 import datetime
+from mangadex.errors import ChapterError
 
 from dateutil.parser import parse
 from future.utils import raise_with_traceback
@@ -64,3 +65,47 @@ class Tag():
 
         self.id = data["data"]["id"]
         self.name = attributes["name"]
+
+class Chapter():
+    def __init__(self) -> None:
+        self.id = ""
+        self.title = ""
+        self.volume = ""
+        self.chapter = ""
+        self.Mangaid = ""
+        self.sacanlation_group_id = ""
+        self.translatedLanguage = ""
+        self.hash = ""
+        self.data = []
+        self.uploader = ""
+        self.createdAt = ""
+        self.updatedAt = ""
+        self.publishAt = ""
+    
+    def _ChapterFromDict(self, data):
+        if data["data"]["type"] != 'chapter' or not data:
+            raise ChapterError("The data probvided is not a Tag")
+
+        attributes = data["data"]["attributes"]
+
+        self.id = data["data"]["id"]
+        self.title = attributes["title"]
+        self.volume = attributes["volume"]
+        self.chapter = attributes["chapter"]
+        self.translatedLanguage = attributes["translatedLanguage"]
+        self.hash = attributes["hash"]
+        self.data = attributes["data"]
+        self.publishAt = parse(attributes["publishAt"])
+        self.createdAt = parse(attributes["createdAt"])
+        self.updatedAt = parse(attributes["updatedAt"])
+        self.sacanlation_group_id = data["relationships"][0]["id"]
+        self.Mangaid = data["relationships"][1]["id"]
+        self.uploader = data["relationships"][2]["id"]
+
+class ScanlationGroup():
+    def __init__(self) -> None:
+        pass
+
+class User():
+    def __init__(self) -> None:
+        pass

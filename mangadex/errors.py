@@ -9,3 +9,6 @@ class MangaError(Exception):
 
 class TagError(Exception):
     pass
+
+class ChapterError(Exception):
+    pass
