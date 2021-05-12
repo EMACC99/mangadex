@@ -4,7 +4,7 @@ from mangadex.errors import ApiError
 import json
 import requests
 
-from typing import Tuple
+from typing import Tuple, List
 from future.utils import iteritems
 
 try:
@@ -19,7 +19,7 @@ except ImportError:
     from urllib import urlencode
 
 
-from mangadex import (ApiError, ApiClientError, Manga, manga)
+from mangadex import (ApiError, ApiClientError, Manga, Tag)
 
 class Api():
     def __init__(self, key = None, secret = None, timeout = 5):
@@ -97,16 +97,49 @@ class Api():
         except:
             return
 
+    def _create_manga(self, elem):
+        manga = Manga()
+        manga._MangaFromDict(elem)
+        return manga
+
     def _create_manga_list(self, resp):
         resp = resp["results"]
         manga_list = []
         for elem in resp:
-            current_manga = Manga()
-            current_manga._MangaFromDict(elem)
+            current_manga = self._create_manga(elem)
             manga_list.append(current_manga)
         return manga_list
+
+    def _create_tag(self, elem):
+        tag = Tag()
+        tag._TagFromDict(elem)
+        return tag
+
+    def _create_tag_list(self, resp) -> List[Tag]:
+        tag_list = []
+        for tag in resp:
+            current_tag = self._create_tag(tag)
+            tag_list.append(current_tag)
+
+        return tag_list
 
     def get_manga_list(self, **kwargs):
         url = f"{self.URL}/manga"
         resp = self._request_url(url, 'GET', params=kwargs)
         return self._create_manga_list(resp)
+
+    def view_manga(self, id: str)-> Manga:
+        url = f"{self.URL}/manga/{id}"
+        resp = self._request_url(url, "GET")
+        return self._create_manga(resp)
+    
+    def random_manga(self):
+        url = f"{self.URL}/manga/random"
+        resp = self._request_url(url, "GET")
+        return self._create_manga(resp)
+    
+    def tag_list(self):
+        url = f"{self.URL}/manga/tag"
+        resp = self._request_url(url, "GET")
+        return self._create_tag_list(resp)
+    

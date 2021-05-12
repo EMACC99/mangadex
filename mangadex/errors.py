@@ -6,3 +6,6 @@ class ApiClientError(Exception):
 
 class MangaError(Exception):
     pass
+
+class TagError(Exception):
+    pass

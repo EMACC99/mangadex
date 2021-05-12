@@ -1,6 +1,6 @@
-from .errors import (ApiError, ApiClientError, MangaError)
+from .errors import (ApiError, ApiClientError, MangaError, TagError)
 
-from .manga import (Manga)
+from .models import (Manga, Tag)
 
 from .api import (Api)
 

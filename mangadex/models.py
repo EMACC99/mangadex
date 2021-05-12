@@ -3,7 +3,7 @@ import datetime
 from dateutil.parser import parse
 from future.utils import raise_with_traceback
 
-from mangadex import MangaError
+from mangadex import (MangaError, TagError)
 
 class Manga():
     def __init__(self) -> None:
@@ -49,3 +49,18 @@ class Manga():
         self.tags = attributes["tags"]
         self.createdAt = parse(attributes["createdAt"])
         self.updatedAt = parse(attributes["updatedAt"])
+
+
+class Tag():
+    def __init__(self) -> None:
+        self.id = ""
+        self.name = []
+
+    def _TagFromDict(self, data):
+        if data["data"]["type"] != 'tag' or not data:
+            raise TagError("The data provided is not a Tag")
+        
+        attributes = data["data"]["attributes"]
+
+        self.id = data["data"]["id"]
+        self.name = attributes["name"]
