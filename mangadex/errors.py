@@ -15,3 +15,9 @@ class ChapterError(Exception):
 
 class AuthorError(Exception):
     pass
+
+class ScanlationGroupError(Exception):
+    pass
+
+class UserError(Exception):
+    pass

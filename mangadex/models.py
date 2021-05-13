@@ -4,7 +4,7 @@ from mangadex.errors import ChapterError
 from dateutil.parser import parse
 from future.utils import raise_with_traceback
 
-from mangadex import (MangaError, TagError, ChapterError, AuthorError)
+from mangadex import (MangaError, TagError, ChapterError, AuthorError, ScanlationGroupError)
 
 class Manga():
     def __init__(self) -> None:
@@ -114,14 +114,23 @@ class Chapter():
         temp2 = f"data = {self.data}, publishAt = {self.publishAt}, createdAt = {self.createdAt}, uploadedAt = {self.updatedAt}, sacanlation_group_id = {self.sacanlation_group_id}, Mangaid = {self.Mangaid}, uploader = {self.uploader})"
         return temp1 + temp2
 
-class ScanlationGroup():
-    def __init__(self) -> None:
-        pass
-
 class User():
     def __init__(self) -> None:
-        self.username = ""
-    
+        self.id : str = ""
+        self.username :str = ""
+
+    def _UserFromDict(self, data):
+        if['data']["type"] != "user" or not data:
+            raise UserError("The data provided is not an author")
+        
+        attributes = data["data"]["attributes"]
+
+        self.id = data["data"]["id"]
+        self.username = attributes["username"]
+
+    def __repr__(self) -> str:
+        return f"User(id = {self.id}, username = {self.username})"
+
 class Author():
     def __init__(self) -> None:
         self.id = ""
@@ -141,8 +150,37 @@ class Author():
         self.name = attributes["name"]
         self.imageUrl = attributes["imageUrl"]
         self.bio = attributes["biography"]
-        self.createdAt = attributes["createdAt"]
-        self.updatedAt = attributes["updatedAt"]
+        self.createdAt = parse(attributes["createdAt"])
+        self.updatedAt = parse(attributes["updatedAt"])
     
     def __repr__(self) -> str:
         return f"Author(id = {self.id}, name = {self.name}, imageUrl = {self.imageUrl}, createdAt = {self.createdAt}, updatedAt = {self.updatedAt})"
+
+class ScanlationGroup():
+    def __init__(self) -> None:
+        self.id : str = ""
+        self.name : str = ""
+        self.leader : User = None
+        self.createdAt : datetime = None
+        self.updatedAt : datetime = None
+
+    def _ScanlationFromDict(self, data):
+        
+        if["data"]["type"] != "scanlation_group" or not data:
+            raise ScanlationGroupError("The data provided is not an scanlation group")
+
+        attributes = data["data"]["attributes"]
+
+        self.id = data["data"]["id"]
+        self.name = attributes["name"]
+
+        leader = User()
+        leader.id = attributes["leader"]["id"]
+        leader.username = attributes["leader"]["attributes"]["username"]
+        self.leader =  leader
+
+        self.createdAt = parse(attributes["createdAt"])
+        self.updatedAt = parse(attributes["updatedAt"])
+    
+    def __repr__(self) -> str:
+        return f"ScanlationGroup(id = {self.id}, name = {self.name}, leader = {self.leader}, createdAt = {self.createdAt}, updatedAt = {self.updatedAt})"
