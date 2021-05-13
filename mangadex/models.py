@@ -4,7 +4,7 @@ from mangadex.errors import ChapterError
 from dateutil.parser import parse
 from future.utils import raise_with_traceback
 
-from mangadex import (MangaError, TagError, ChapterError, AuthorError, ScanlationGroupError)
+from mangadex import (MangaError, TagError, ChapterError, AuthorError, ScanlationGroupError, UserError)
 
 class Manga():
     def __init__(self) -> None:
