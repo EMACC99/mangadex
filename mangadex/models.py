@@ -4,7 +4,7 @@ from mangadex.errors import ChapterError
 from dateutil.parser import parse
 from future.utils import raise_with_traceback
 
-from mangadex import (MangaError, TagError)
+from mangadex import (MangaError, TagError, ChapterError)
 
 class Manga():
     def __init__(self) -> None:
@@ -51,7 +51,12 @@ class Manga():
         self.createdAt = parse(attributes["createdAt"])
         self.updatedAt = parse(attributes["updatedAt"])
 
-
+    def __repr__(self) -> str:
+        temp1 = f"Manga(id = {self.id}, title = {self.title}, altTitles = {self.altTitles}, description = {self.description}, isLocked = {self.isLocked}, links = {self.links}, originalLanguage = {self.originalLanguage} \n"
+        temp2 = f"lastVolume = {self.lastVolume}, lastChapter = {self.lastChapter}, publicationDemographic = {self.publicationDemographic}, status = {self.status}, year = {self.year}, contentRating = {self.contentRating} \n"
+        temp3 = f"createdAt = {self.createdAt}, uploadedAt = {self.updatedAt})"
+        return temp1 + temp2 + temp3
+        
 class Tag():
     def __init__(self) -> None:
         self.id = ""
@@ -66,6 +71,8 @@ class Tag():
         self.id = data["data"]["id"]
         self.name = attributes["name"]
 
+    def __repr__(self) -> str:
+        return f"Tag(id = {self.id}, name = {self.name})"
 class Chapter():
     def __init__(self) -> None:
         self.id = ""
@@ -101,11 +108,20 @@ class Chapter():
         self.sacanlation_group_id = data["relationships"][0]["id"]
         self.Mangaid = data["relationships"][1]["id"]
         self.uploader = data["relationships"][2]["id"]
+    
+    def __repr__(self) -> str:
+        temp1 =  f"Chapter(id = {self.id}, title = {self.title}, volume = {self.volume}, chapter = {self.chapter}, translatedLanguage = {self.translatedLanguage}, hash = {self.hash} \n"
+        temp2 = f"data = {self.data}, publishAt = {self.publishAt}, createdAt = {self.createdAt}, uploadedAt = {self.updatedAt}, sacanlation_group_id = {self.sacanlation_group_id}, Mangaid = {self.Mangaid}, uploader = {self.uploader})"
+        return temp1 + temp2
 
 class ScanlationGroup():
     def __init__(self) -> None:
         pass
 
 class User():
+    def __init__(self) -> None:
+        self.username = ""
+    
+class Author():
     def __init__(self) -> None:
         pass

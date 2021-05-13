@@ -158,3 +158,14 @@ class Api():
         url = f"{self.URL}/manga/{id}/feed"
         resp = self._request_url(url, "GET", params = kwargs)
         return self._create_chapter_list(resp)
+
+    def fetch_chapter_images(self, chapter : Chapter):
+        url = f"{self.URL}/at-home/server/{chapter.id}"
+        image_server_url = self._request_url(url, "GET")
+        image_server_url = image_server_url["baseUrl"].replace("\\", "")
+        image_server_url = f"{image_server_url}/data"
+        image_urls = []
+        for filename in chapter.data:
+            image_urls.append(f"{image_server_url}/{chapter.hash}/{filename}")
+
+        return image_urls
