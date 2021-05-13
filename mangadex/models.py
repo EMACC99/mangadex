@@ -4,7 +4,7 @@ from mangadex.errors import ChapterError
 from dateutil.parser import parse
 from future.utils import raise_with_traceback
 
-from mangadex import (MangaError, TagError, ChapterError)
+from mangadex import (MangaError, TagError, ChapterError, AuthorError)
 
 class Manga():
     def __init__(self) -> None:
@@ -56,7 +56,7 @@ class Manga():
         temp2 = f"lastVolume = {self.lastVolume}, lastChapter = {self.lastChapter}, publicationDemographic = {self.publicationDemographic}, status = {self.status}, year = {self.year}, contentRating = {self.contentRating} \n"
         temp3 = f"createdAt = {self.createdAt}, uploadedAt = {self.updatedAt})"
         return temp1 + temp2 + temp3
-        
+
 class Tag():
     def __init__(self) -> None:
         self.id = ""
@@ -124,4 +124,25 @@ class User():
     
 class Author():
     def __init__(self) -> None:
-        pass
+        self.id = ""
+        self.name = ""
+        self.imageUrl = ""
+        self.bio = {}
+        self.createdAt = ""
+        self.updatedAt = ""
+    
+    def _AuthorFromDict(self, data):
+        if['data']["type"] != "author" or not data:
+            raise AuthorError("The data provided is not an author")
+    
+        attributes = data["data"]["attributes"]
+
+        self.id = data["data"]["id"]
+        self.name = attributes["name"]
+        self.imageUrl = attributes["imageUrl"]
+        self.bio = attributes["biography"]
+        self.createdAt = attributes["createdAt"]
+        self.updatedAt = attributes["updatedAt"]
+    
+    def __repr__(self) -> str:
+        return f"Author(id = {self.id}, name = {self.name}, imageUrl = {self.imageUrl}, createdAt = {self.createdAt}, updatedAt = {self.updatedAt})"

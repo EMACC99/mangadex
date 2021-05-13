@@ -1,10 +1,10 @@
 from __future__ import absolute_import
 
 import json
+from mangadex.models import Author
 import requests
 
 from typing import Tuple, List
-from future.utils import iteritems
 
 try:
     basestring
@@ -29,7 +29,7 @@ class Api():
 
 
     def _request_url(self, url, type, params = None):
-        headers = None
+        headers = None #this is for private calls to the API. not implemented yet
         if params is None:
             params = {}
         params = {k: v.decode("utf-8") if isinstance(v, bytes) else v for k, v in params.items()}
@@ -43,7 +43,7 @@ class Api():
                 raise
         elif type == 'POST':
             try:
-                resp = requests.post(url, headers=headers, timeout=self.timeout)
+                resp = requests.post(url, json = params, headers=headers, timeout=self.timeout)
             except requests.RequestException as e:
                 print(f"An error has occured: {e}")
                 raise
@@ -133,13 +133,26 @@ class Api():
             chap_list.append(self._create_chapter(elem))
 
         return chap_list
+    
+    def _create_author(self, elem):
+        author = Author()
+        author._AuthorFromDict(elem)
+        return author
+
+    def _create_authors_list(self, resp) -> List[Author]:
+        resp = resp["results"]
+        authors_list = []
+        for elem in resp:
+            authors_list.append(self._create_author(elem))
+
+        return authors_list
 
     def get_manga_list(self, **kwargs):
         url = f"{self.URL}/manga"
         resp = self._request_url(url, 'GET', params=kwargs)
         return self._create_manga_list(resp)
 
-    def view_manga(self, id: str)-> Manga:
+    def view_manga_by_id(self, id: str)-> Manga:
         url = f"{self.URL}/manga/{id}"
         resp = self._request_url(url, "GET")
         return self._create_manga(resp)
@@ -169,3 +182,13 @@ class Api():
             image_urls.append(f"{image_server_url}/{chapter.hash}/{filename}")
 
         return image_urls
+
+    def get_author(self, **kwargs):
+        url = f"{self.URL}/author"
+        resp = self._request_url(url, "GET", kwargs)
+        return self._create_authors_list(resp)
+
+    def get_author_by_id(self, id : str) -> Author:
+        url = f"{self.URL}/author/{id}"
+        resp = self._request_url(url, "GET")
+        return self._create_author(resp)

@@ -12,3 +12,6 @@ class TagError(Exception):
 
 class ChapterError(Exception):
     pass
+
+class AuthorError(Exception):
+    pass
