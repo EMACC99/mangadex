@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = '0.0.1'
+VERSION = '0.0.2'
 DESCRIPTION = 'Python wrapper for the mangadex API'
 LONG_DESCRIPTION = 'A python wrapper fot the mangadex API V5'
 
@@ -15,6 +15,6 @@ setup(
     install_requires = ["requests", "urllib"],
 
     keywords = ['python', 'mangadex'],
-    # clasifiers = ["Development Status :: "]
+    clasifiers = ["Development Status :: "]
 
 )
