@@ -1,6 +1,15 @@
 # mangadex-py
 A python wrapper for the mangadex API V5. It uses the requests library and all the aditional arguments can ve viewed in the [Official Mangadex Documentation](https://api.mangadex.org/docs.html)
 
+# Instaling the API
+## PyPI
+For now the PyPI release is on hold until I can polish it more.
+
+## Installing via setuptools
+```
+python setup.py install --user
+```
+
 # Using the API
 ```py
 >>> import mangadex
