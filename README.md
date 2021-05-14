@@ -104,3 +104,41 @@ The list of the manga tags
 ```py
 >>> tag_list = api.tag_list()
 ```
+
+# Private Calls
+
+## Login
+
+Method to login to the website
+```py
+api.login(username = USERNAME, password = PASSWORD)
+```
+It is recomended that you add this values to you path for security reasons.
+
+## Get Logged User Followed Manga List
+
+Get your manga follow list!
+
+```py
+follow_list = api.get_my_mangalist()
+```
+This functions, as well as most of the other ones accept optional parameters.
+This are:
+* `limit` : limits the amout of results. It accepts a value between 1 and 100, the default if 10
+* `offset` : Makes an offset of the velue provided to the list. Accepts values >= 0
+
+## Get Logged User Followed Groups
+
+Get the list of the Scanlination group you follow!
+
+```py
+scangroups_followlist = api.get_my_followed_groups()
+```
+
+## Get Logged User Followed Users
+
+The list of the users you follow
+
+```py
+followed_users = api.get_my_followed_users()
+```
