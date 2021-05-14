@@ -1,5 +1,4 @@
 import datetime
-from mangadex.errors import ChapterError
 
 from dateutil.parser import parse
 from future.utils import raise_with_traceback
@@ -120,7 +119,7 @@ class User():
         self.username :str = ""
 
     def _UserFromDict(self, data):
-        if['data']["type"] != "user" or not data:
+        if data["data"]["type"] != "user" or not data:
             raise UserError("The data provided is not an author")
         
         attributes = data["data"]["attributes"]
@@ -141,7 +140,7 @@ class Author():
         self.updatedAt = ""
     
     def _AuthorFromDict(self, data):
-        if['data']["type"] != "author" or not data:
+        if data["data"]["type"] != "author" or not data:
             raise AuthorError("The data provided is not an author")
     
         attributes = data["data"]["attributes"]
@@ -166,7 +165,7 @@ class ScanlationGroup():
 
     def _ScanlationFromDict(self, data):
         
-        if["data"]["type"] != "scanlation_group" or not data:
+        if data["data"]["type"] != "scanlation_group" or not data:
             raise ScanlationGroupError("The data provided is not an scanlation group")
 
         attributes = data["data"]["attributes"]
@@ -176,7 +175,7 @@ class ScanlationGroup():
 
         leader = User()
         leader.id = attributes["leader"]["id"]
-        leader.username = attributes["leader"]["attributes"]["username"]
+        leader.username = attributes["leader"]["attributes"]["username"] #didn't use the _UserFromDict method becasue the api response is different
         self.leader =  leader
 
         self.createdAt = parse(attributes["createdAt"])

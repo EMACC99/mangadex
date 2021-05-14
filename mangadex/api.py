@@ -86,15 +86,13 @@ class Api():
             
         return data
     
-    def _check_api_error(self, data):
-        try:
+    def _check_api_error(self, data : dict): #this needs a rework
+        if "result" in data.keys():
             if data['result'] == 'error' or 'error' in data:
                 raise ApiError(data['errors'])
             if isinstance(data, (list, tuple)) and len(data) > 0:
-                if 'error' in data[0]:
+                if 'error' in data:
                     raise ApiError(data['errors'])
-        except:
-            return
 
     def _create_manga(self, elem):
         manga = Manga()
