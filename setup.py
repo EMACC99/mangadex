@@ -12,7 +12,7 @@ setup(
     description = DESCRIPTION,
     long_description = LONG_DESCRIPTION,
     packages = find_packages(),
-    install_requires = ["requests"],
+    install_requires = ["requests", "urllib"],
 
     keywords = ['python', 'mangadex'],
     # clasifiers = ["Development Status :: "]
