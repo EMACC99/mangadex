@@ -3,7 +3,10 @@ A python wrapper for the mangadex API V5. It uses the requests library and all t
 
 # Instaling the API
 ## PyPI
-For now the PyPI release is on hold until I can polish it more.
+
+```
+pip install mangadex
+```
 
 ## Installing via setuptools
 ```
