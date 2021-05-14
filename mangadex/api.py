@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 
 import json
-from mangadex.models import Author
 import requests
 
 from typing import Tuple, List
@@ -18,7 +17,7 @@ except ImportError:
     from urllib import urlencode
 
 
-from mangadex import (ApiError, ApiClientError, Manga, Tag, Chapter)
+from mangadex import (ApiError, ApiClientError, Manga, Tag, Chapter, User, UserError, ChapterError, Author)
 
 class Api():
     def __init__(self, key = None, secret = None, timeout = 5):
@@ -145,6 +144,12 @@ class Api():
 
         return authors_list
 
+    def _create_user(self, elem):
+        user = User()
+        user._UserFromDict(elem)
+        return user
+    
+
     def get_manga_list(self, **kwargs):
         url = f"{self.URL}/manga"
         resp = self._request_url(url, 'GET', params=kwargs)
@@ -170,6 +175,17 @@ class Api():
         resp = self._request_url(url, "GET", params = kwargs)
         return self._create_chapter_list(resp)
 
+    def chapter_list(self, **kwargs):
+        url = f"{self.URL}/chapter"
+        resp = self._request_url(url, "GET", params= kwargs)
+        return self._create_chapter_list(resp)
+
+    def get_chapter(self, id: str) -> Chapter:
+        url = f"{self.URL}/chapter/{id}"
+        resp = self._request_url(url, "GET")
+        return self._create_chapter(resp)
+        
+
     def fetch_chapter_images(self, chapter : Chapter):
         url = f"{self.URL}/at-home/server/{chapter.id}"
         image_server_url = self._request_url(url, "GET")
@@ -190,3 +206,8 @@ class Api():
         url = f"{self.URL}/author/{id}"
         resp = self._request_url(url, "GET")
         return self._create_author(resp)
+    
+    def get_user(self, id : str) -> User:
+        url = f"{self.URL}/user/{id}"
+        resp = self._request_url(url, "GET")
+        return self._create_user(resp)

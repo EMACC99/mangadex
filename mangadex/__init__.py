@@ -1,6 +1,6 @@
 from .errors import (ApiError, ApiClientError, MangaError, TagError, ChapterError, AuthorError, ScanlationGroupError, UserError)
 
-from .models import (Manga, Tag, Chapter, User, ScanlationGroup)
+from .models import (Manga, Tag, Chapter, User, ScanlationGroup, Author)
 
 from .api import (Api)
 
