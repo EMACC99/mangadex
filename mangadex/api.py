@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 import json
+from mangadex.models import ScanlationGroup
 import requests
 
 from typing import Tuple, List
@@ -153,6 +154,26 @@ class Api():
         user._UserFromDict(elem)
         return user
     
+    def _create_user_list(self, resp) -> List[User]:
+        resp = resp["results"]
+        user_list = []
+        for elem in resp:
+            user_list.append(self._create_user(elem))
+
+        return user_list
+
+    def _create_group(self, elem) ->  ScanlationGroup:
+        group = ScanlationGroup()
+        group._ScanlationFromDict(elem)
+        return group
+
+    def _create_group_list(self, resp)-> List[ScanlationGroup]:
+        resp = resp["results"]
+        group_list = []
+        for elem in resp:
+            group_list.append(self._create_group(elem))
+        
+        return group_list  
 
     def get_manga_list(self, **kwargs) -> List[Manga]:
         url = f"{self.URL}/manga"
@@ -228,3 +249,14 @@ class Api():
         url = f"{self.URL}/user/follows/manga"
         resp = self._request_url(url, "GET", params = kwargs, headers=self.bearer)
         return self._create_manga_list(resp)
+    
+    def get_my_follwed_groups(self, **kwargs) -> List[ScanlationGroup]:
+        url = f"{self.URL}/user/follows/group"
+        resp = self._request_url(url, "GET", params=kwargs, headers= self.bearer)
+        return self._create_group_list(resp)
+
+    def get_my_followed_users(self, **kwargs) -> List[User]:
+        url = f"{self.URL}/user/follows/user"
+        resp = self._request_url(url, "GET", params=kwargs, headers=self.bearer)
+        return self._create_user_list(resp)
+        
