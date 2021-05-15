@@ -3,30 +3,32 @@ import datetime
 from dateutil.parser import parse
 from future.utils import raise_with_traceback
 
+from typing import Dict, List
+
 from mangadex import (MangaError, TagError, ChapterError, AuthorError, ScanlationGroupError, UserError)
 
 class Manga():
     def __init__(self) -> None:
 
-        self.id = ""
-        self.title = ""
-        self.altTitles = {}
-        self.description = {}
-        self.isLocked = False
-        self.links = []
-        self.originalLanguage = ""
-        self.lastVolume = ""
-        self.lastChapter = ""
-        self.publicationDemographic = ""
-        self.status = ""
-        self.year = 0
-        self.contentRating = ""
-        self.tags = []
+        self.id : str = ""
+        self.title : Dict[str, str] = {}
+        self.altTitles : Dict[str, str] = {}
+        self.description : Dict[str, str] = {}
+        self.isLocked : bool = False
+        self.links : Dict[str, str] = {}
+        self.originalLanguage : str = ""
+        self.lastVolume : str = ""
+        self.lastChapter : str = ""
+        self.publicationDemographic : str = ""
+        self.status : str = ""
+        self.year : int = 0
+        self.contentRating : str = ""
+        self.tags : List[str]  = []
         self.version = 1
-        self.createdAt = ""
-        self.updatedAt = ""
+        self.createdAt : datetime = ""
+        self.updatedAt : datetime = ""
 
-    def _MangaFromDict(self, data):
+    def _MangaFromDict(self, data : dict):
         if data["data"]["type"] != 'manga' or not data:
             # print("The type is not a manga")
             raise MangaError("The data provides is not a Manga")
@@ -58,10 +60,10 @@ class Manga():
 
 class Tag():
     def __init__(self) -> None:
-        self.id = ""
-        self.name = []
+        self.id : str= ""
+        self.name : Dict[str, str] = {}
 
-    def _TagFromDict(self, data):
+    def _TagFromDict(self, data : dict):
         if data["data"]["type"] != 'tag' or not data:
             raise TagError("The data provided is not a Tag")
         
@@ -74,19 +76,19 @@ class Tag():
         return f"Tag(id = {self.id}, name = {self.name})"
 class Chapter():
     def __init__(self) -> None:
-        self.id = ""
-        self.title = ""
-        self.volume = ""
-        self.chapter = ""
-        self.Mangaid = ""
-        self.sacanlation_group_id = ""
-        self.translatedLanguage = ""
-        self.hash = ""
-        self.data = []
-        self.uploader = ""
-        self.createdAt = ""
-        self.updatedAt = ""
-        self.publishAt = ""
+        self.id : str = ""
+        self.title : str = ""
+        self.volume : str = ""
+        self.chapter : str = ""
+        self.Mangaid : str = ""
+        self.sacanlation_group_id : str = ""
+        self.translatedLanguage : str= ""
+        self.hash : str = ""
+        self.data : List[str] = []
+        self.uploader : str = ""
+        self.createdAt : datetime = ""
+        self.updatedAt : datetime = ""
+        self.publishAt : datetime = ""
     
     def _ChapterFromDict(self, data):
         if data["data"]["type"] != 'chapter' or not data:
@@ -132,12 +134,12 @@ class User():
 
 class Author():
     def __init__(self) -> None:
-        self.id = ""
-        self.name = ""
-        self.imageUrl = ""
-        self.bio = {}
-        self.createdAt = ""
-        self.updatedAt = ""
+        self.id : str = ""
+        self.name : str = ""
+        self.imageUrl : str = ""
+        self.bio : Dict[str,  str] = {}
+        self.createdAt : datetime = ""
+        self.updatedAt : datetime = ""
     
     def _AuthorFromDict(self, data):
         if data["data"]["type"] != "author" or not data:
