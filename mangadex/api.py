@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 
 import json
-from mangadex.models import ScanlationGroup
 import requests
 
 from typing import Tuple, List
@@ -18,7 +17,7 @@ except ImportError:
     from urllib import urlencode
 
 
-from mangadex import (ApiError, ApiClientError, Manga, Tag, Chapter, User, UserError, ChapterError, Author)
+from mangadex import (ApiError, ApiClientError, Manga, Tag, Chapter, User, UserError, ChapterError, Author, ScanlationGroup)
 
 class Api():
     def __init__(self, timeout = 5):
@@ -61,12 +60,12 @@ class Api():
         data = self._parse_data(content if isinstance(content, basestring) else content.decode('utf-8'))
         return data
 
-    def _build_url(self, url, params):
+    def _build_url(self, url, params) -> str:
         if params and len(params) > 0:
             url = url + '?' + self._encode_parameters(params)
         return url
 
-    def _encode_parameters(self, params):
+    def _encode_parameters(self, params) -> str:
         if params is None:
             return None
         else:
@@ -250,7 +249,7 @@ class Api():
         resp = self._request_url(url, "GET", params = kwargs, headers=self.bearer)
         return self._create_manga_list(resp)
     
-    def get_my_follwed_groups(self, **kwargs) -> List[ScanlationGroup]:
+    def get_my_followed_groups(self, **kwargs) -> List[ScanlationGroup]:
         url = f"{self.URL}/user/follows/group"
         resp = self._request_url(url, "GET", params=kwargs, headers= self.bearer)
         return self._create_group_list(resp)
@@ -259,4 +258,3 @@ class Api():
         url = f"{self.URL}/user/follows/user"
         resp = self._request_url(url, "GET", params=kwargs, headers=self.bearer)
         return self._create_user_list(resp)
-        
