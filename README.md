@@ -118,6 +118,13 @@ api.login(username = USERNAME, password = PASSWORD)
 ```
 It is recomended that you add this values to you path for security reasons.
 
+## Your User Info
+Get your user info
+
+```py
+my_user = api.me()
+```
+
 ## Get Logged User Followed Manga List
 
 Get your manga follow list!
@@ -144,4 +151,12 @@ The list of the users you follow
 
 ```py
 followed_users = api.get_my_followed_users()
+```
+
+## Get chapters marked as read from a manga
+
+Get a list of the capters marked as read for a given manga
+
+```py
+read_chapters = api.get_manga_read_markes(id = "the manga id")
 ```
