@@ -376,7 +376,7 @@ class Api():
 
         Params
         -----------
-        chapter `Chapter`. The chapter 
+        chapter : `Chapter`. The chapter 
 
         Returns
         -----------
@@ -398,8 +398,28 @@ class Api():
 
         return image_urls
 
-    def get_author(self, **kwargs) -> Author:
+    def get_author(self, **kwargs) -> List[Author]:
         """
+        Get the author List
+
+        Parameters
+        ------------
+
+        limit : `int`
+        offset : `int`
+        ids : `string`. Array of ids 
+        name : `str`
+
+        Returns
+        -----------
+        `List[Author]`. A list of Author objects
+
+        Raises
+        ------------
+        `ApiError`
+
+        `AuthorError`
+
         """
         url = f"{self.URL}/author"
         resp = self._request_url(url, "GET", kwargs)
@@ -407,6 +427,22 @@ class Api():
 
     def get_author_by_id(self, id : str) -> Author:
         """
+        Get's an author by its id
+
+        Parameters
+        -------------
+
+        id `str` The id of the author
+
+        Returns
+        ------------
+        `Author`
+
+        Raises
+        ------------
+        `ApiError`
+
+        `AuthorError`
         """
         url = f"{self.URL}/author/{id}"
         resp = self._request_url(url, "GET")
@@ -414,6 +450,21 @@ class Api():
     
     def get_user(self, id : str) -> User:
         """
+        Get User by its id
+
+        Parameters
+        ------------
+        id `str` The user id
+
+        Returns
+        ------------
+        `User`
+
+        Raises
+        ------------
+        `ApiError`
+
+        `UserError`
         """
         url = f"{self.URL}/user/{id}"
         resp = self._request_url(url, "GET")
@@ -421,11 +472,29 @@ class Api():
 
     def login(self, username : str, password : str):
         """
+        Method to login into the website
+
+        Parameters
+        ---------------
+        username `str` your username
+
+        password `str` your password
+
+        Raises
+        ---------------
+        `ApiError`
+
         """
         self._auth_handler(json_payload= {"username" : username, "password" : password})
 
     def me(self) -> User:
         """
+        Get your user info
+
+        Return
+        ---------
+        `User`
+
         """
         url = f"{self.URL}/user/me"
         resp = self._request_url(url, "GET", headers= self.bearer)
@@ -433,6 +502,18 @@ class Api():
 
     def get_my_mangalist(self, **kwargs) -> List[Manga]:
         """
+        Get the mangas you follow
+
+        Parameters
+        -------------
+        limit `int`
+
+        offset `int`
+
+        Returns
+        -------------
+        `List[Manga]`
+
         """
         url = f"{self.URL}/user/follows/manga"
         resp = self._request_url(url, "GET", params = kwargs, headers=self.bearer)
@@ -440,6 +521,17 @@ class Api():
     
     def get_my_followed_groups(self, **kwargs) -> List[ScanlationGroup]:
         """
+        Get the Scanlination Groups you follow
+
+        Parameters
+        -------------
+        limit `int`
+
+        offset `int`
+
+        Returns
+        -------------
+        `List[ScanlationGroup]`
         """
         url = f"{self.URL}/user/follows/group"
         resp = self._request_url(url, "GET", params=kwargs, headers= self.bearer)
@@ -447,6 +539,18 @@ class Api():
 
     def get_my_followed_users(self, **kwargs) -> List[User]:
         """
+        Get the users you follow
+
+        Parameters
+        -------------
+        limit `int`
+
+        offset `int`
+
+        Returns
+        -------------
+        `List[User]`
+        
         """
         url = f"{self.URL}/user/follows/user"
         resp = self._request_url(url, "GET", params=kwargs, headers=self.bearer)
