@@ -1,8 +1,10 @@
 from setuptools import setup, find_packages
 
-VERSION = '0.0.2'
+VERSION = '1.0.0'
 DESCRIPTION = 'Python wrapper for the mangadex API'
-LONG_DESCRIPTION = 'A python wrapper fot the mangadex API V5'
+with open("README.md", "r") as f:
+    LONG_DESCRIPTION = f.read()
+
 
 #setting up
 setup(
@@ -13,8 +15,18 @@ setup(
     long_description = LONG_DESCRIPTION,
     packages = find_packages(),
     install_requires = ["requests", "urllib"],
-
+    license = "MIT",
     keywords = ['python', 'mangadex'],
-    clasifiers = ["Development Status :: "]
+    clasifiers = [
+        "License :: MIT License",
+        "Operating System :: OS Independent",
+        "Programming Languaje :: Python :: 3.6",
+        "Programming Languaje :: Python :: 3.7",
+        "Programming Languaje :: Python :: 3.8",
+        "Programming Languaje :: Python :: 3.9",
+        "Topic :: Internet",
+        "Topic :: Library",
+        "Topic :: Wrapper"
+        ]
 
 )
