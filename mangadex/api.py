@@ -51,7 +51,7 @@ class Api():
                 raise
         elif method == "DELETE":
             try:
-                resp = requests.post(url, headers= headers, timeout=self.timeout)
+                resp = requests.delete(url, headers= headers, timeout=self.timeout)
             except requests.RequestException as e:
                 print(f"An error has occured: {e}")
                 raise
@@ -590,3 +590,100 @@ class Api():
         url = f"{self.URL}/manga/status"
         resp = self._request_url(url, "GET", params={"status": status}, headers=self.bearer)
         return resp["statuses"]
+    
+
+    def follow_manga(self, id  : str) -> None:
+        """
+        Follow a manga
+
+        Paramerets
+        --------------
+
+        id : `str`. The manga id
+
+        Returns
+        -------------
+        `None`
+
+        Raises
+        -------------
+        `ApiError`
+        """
+        url = f"{self.URL}/manga/{id}/follow"
+        self._request_url(url, "POST", headers=self.bearer)
+    
+    def unfollow_manga(self, id : str) -> None:
+        """
+        Unfollow a Manga
+
+        Parameters
+        -------------
+        id : `str`. The manga id
+
+        Returns
+        ------------
+        `None`
+
+        Raises
+        -----------
+        `ApiError`
+        """
+        
+        url = f"{self.URL}/manga/{id}/follow"
+        self._request_url(url, "DELETE", headers=self.bearer)
+
+    def update_manga_reading_status(self, id : str, status : str ) -> None:
+        """
+        Update the reading stauts of a manga
+
+        Parameters
+        -------------
+
+        id : `str`. The manga id
+        status : `str`. Values : `"reading"` `"on_hold"` `"plan_to_read"` `"dropped"` `"re_reading"` `"completed"`
+
+        Returns
+        -------------
+        `None`
+
+        Raises
+        -------------
+        `ApiError`
+        """
+        url = f"{self.URL}/manga/{id}/status"
+        self._request_url(url, "POST", params={"status" : status}, headers=self.bearer)
+
+    
+    def add_manga_in_custom_list(self, id : str, listId :str) -> None:
+        """
+        Adds a manga to a custom list
+
+        Parameters
+        --------------
+        id : `str`. The manga id
+        listId : `str`. The list id
+
+        Returns
+        -------------
+        `None`
+ 
+        """
+        url = f"{self.URL}/{id}/list{listId}"
+        self._request_url(url, "POST", headers=self.bearer)
+    
+    def remove_manga_from_custom_list(self, id : str, listId : str) -> None:
+        """
+        Removes a manga from a custom list
+
+        Parameters
+        ------------
+        id : `str`. The manga id
+        listId : `str`. The list id
+
+        Returns
+        ------------
+        `None`
+
+        """
+        url = f"{self.URL}/manga/{id}/list/{listId}"
+        self._request_url(url, "DELETE", headers=self.bearer)
