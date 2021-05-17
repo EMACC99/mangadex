@@ -114,7 +114,7 @@ The list of the manga tags
 
 Method to login to the website
 ```py
-api.login(username = USERNAME, password = PASSWORD)
+>>> api.login(username = USERNAME, password = PASSWORD)
 ```
 It is recomended that you add this values to you path for security reasons.
 
@@ -122,7 +122,7 @@ It is recomended that you add this values to you path for security reasons.
 Get your user info
 
 ```py
-my_user = api.me()
+>>> my_user = api.me()
 ```
 
 ## Get Logged User Followed Manga List
@@ -130,7 +130,7 @@ my_user = api.me()
 Get your manga follow list!
 
 ```py
-follow_list = api.get_my_mangalist()
+>>> follow_list = api.get_my_mangalist()
 ```
 This functions, as well as most of the other ones accept optional parameters.
 This are:
@@ -142,7 +142,7 @@ This are:
 Get the list of the Scanlination group you follow!
 
 ```py
-scangroups_followlist = api.get_my_followed_groups()
+>>> scangroups_followlist = api.get_my_followed_groups()
 ```
 
 ## Get Logged User Followed Users
@@ -150,7 +150,7 @@ scangroups_followlist = api.get_my_followed_groups()
 The list of the users you follow
 
 ```py
-followed_users = api.get_my_followed_users()
+>>> followed_users = api.get_my_followed_users()
 ```
 
 ## Get chapters marked as read from a manga
@@ -158,5 +158,21 @@ followed_users = api.get_my_followed_users()
 Get a list of the capters marked as read for a given manga
 
 ```py
-read_chapters = api.get_manga_read_markes(id = "the manga id")
+>>> read_chapters = api.get_manga_read_markes(id = "the manga id")
+```
+
+##  Get all followed manga reading status
+
+Get a list of the all the manga reading stauts
+
+```py
+>>> my_manga_reading_stauts = api.get_all_manga_reading_status()
+```
+
+## Get a speficif manga reading status
+
+Get the reading status of a specific manga
+
+```py
+>>> manga_reading_status = api.get_manga_reading_status(id = "the manga id")
 ```
