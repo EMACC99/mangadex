@@ -3,7 +3,7 @@ from __future__ import absolute_import
 import json
 import requests
 
-from typing import Tuple, List
+from typing import Dict, Tuple, List
 
 try:
     basestring
@@ -543,9 +543,9 @@ class Api():
 
         Parameters
         -------------
-        limit `int`
+        limit : `int`
 
-        offset `int`
+        offset : `int`
 
         Returns
         -------------
@@ -555,3 +555,38 @@ class Api():
         url = f"{self.URL}/user/follows/user"
         resp = self._request_url(url, "GET", params=kwargs, headers=self.bearer)
         return self._create_user_list(resp)
+
+    def get_manga_reading_status(self, id : str) -> str:
+        """
+        Get a manga reading status given its id
+
+        Parameters
+        ------------
+        id : `str`. The manga id
+
+        Returns
+        ------------
+        `str` The manga reading status
+
+        """
+        url = f"{self.URL}/manga/{id}/status"
+        resp = self._request_url(url, "GET", headers=self.bearer)
+        return resp["status"]
+
+    def get_all_manga_reading_status(self, status : str = None) -> Dict[str, str]:
+        """
+        Get all Manga followed by the user reading status
+
+        Parameters
+        ------------
+
+        status : `str`. Optional. Values : `"reading"` `"on_hold"` `"plan_to_read"` `"dropped"` `"re_reading"` `"completed"`
+
+        Returns
+        -----------
+
+        `Dict[str,str]` A dictionary with the Manga id and its status
+        """
+        url = f"{self.URL}/manga/status"
+        resp = self._request_url(url, "GET", params={"status": status}, headers=self.bearer)
+        return resp["statuses"]
