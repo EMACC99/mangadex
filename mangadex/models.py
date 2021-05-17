@@ -30,7 +30,6 @@ class Manga():
 
     def _MangaFromDict(self, data : dict):
         if data["data"]["type"] != 'manga' or not data:
-            # print("The type is not a manga")
             raise MangaError("The data provides is not a Manga")
         
         attributes = data["data"]["attributes"]
