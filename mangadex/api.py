@@ -654,7 +654,7 @@ class Api():
         self._request_url(url, "POST", params={"status" : status}, headers=self.bearer)
 
     
-    def add_manga_in_custom_list(self, id : str, listId :str) -> None:
+    def add_manga_to_custom_list(self, id : str, listId :str) -> None:
         """
         Adds a manga to a custom list
 
