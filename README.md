@@ -212,3 +212,55 @@ Removes a manga from a custom list
 >>> api.remove_manga_from_custom_list(id = "the manga id", listId = "the list id")
 ```
 
+## Create  a custom list
+
+```py
+>>> api.create_customlist() #this will create a custom list with no special parameters
+```
+### Query parameters:
+* `name`. The custom list name
+* `visibility`. The visibility of the custom list. Default public
+* `manga`. The list of manga ids
+
+## Get custom list
+```py
+>>> api.get_customlist(id = "th custom list id")
+```
+
+## Update custom list
+```py
+>>> api.update_customlist(id = "the custom list id")
+```
+
+### Query parameters:
+* `name`. The custom list name
+* `visibility`. Values : `"public"` `"private"`
+
+## Delete custom list
+
+```py
+>>> api.delete_customlist(id = "the custom list id")
+```
+
+## Get User Custom list
+```py
+>>> api.get_user_customlists(id = "the user id")
+```
+
+### QueryParams:
+
+* `limit`. The limit of custom lists to return
+* `offset`. The amout of offset
+
+## Get custom list manga feed:
+```py
+>>> api.get_customlist_manga_feed(id = "the custom list id")
+```
+ ### QueryParams:
+
+* limit
+* offset
+* locales
+* createdAtSince. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
+* updatedAtSince. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
+* publishAtSince. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
