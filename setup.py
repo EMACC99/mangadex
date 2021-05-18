@@ -9,7 +9,6 @@ with open("README.md", "r") as f:
 #setting up
 setup(
     name = 'mangadex',
-    packages =["mangadex"],
     version = VERSION,
     author = "Eduardo Ceja",
     description = DESCRIPTION,
