@@ -1,9 +1,10 @@
 from __future__ import absolute_import
 
 import json
+from mangadex.models import CustomList
 import requests
 
-from typing import Dict, Tuple, List
+from typing import Coroutine, Dict, Tuple, List
 
 try:
     basestring
@@ -36,14 +37,14 @@ class Api():
             params = {}
         params = {k: v.decode("utf-8") if isinstance(v, bytes) else v for k, v in params.items()}
         
-        if method == 'GET':
+        if method == "GET":
             url = self._build_url(url, params)
             try:
                 resp = requests.get(url, headers=headers, timeout=self.timeout)
             except requests.RequestException as e:
                 print(f"An error has occured: {e}")
                 raise
-        elif method == 'POST':
+        elif method == "POST":
             try:
                 resp = requests.post(url, json = params, headers=headers, timeout=self.timeout)
             except requests.RequestException as e:
@@ -55,6 +56,13 @@ class Api():
             except requests.RequestException as e:
                 print(f"An error has occured: {e}")
                 raise
+        elif method == "PUT":
+            try:
+                resp = requests.put(url, headers=headers, params=params, timeout=self.timeout)
+            except requests.RequestException as e:
+                print(f"An error has occured: {e}")
+                raise
+
         content = resp.content
         data = self._parse_data(content if isinstance(content, basestring) else content.decode('utf-8'))
         return data
@@ -152,7 +160,6 @@ class Api():
         user_list = []
         for elem in resp:
             user_list.append(self._create_user(elem))
-
         return user_list
 
     def _create_group(self, elem) ->  ScanlationGroup:
@@ -165,9 +172,20 @@ class Api():
         group_list = []
         for elem in resp:
             group_list.append(self._create_group(elem))
-        
         return group_list  
 
+    def _create_customlist(self, elem) -> CustomList:
+        custom_list = CustomList()
+        custom_list._ListFromDict(elem)
+        return custom_list
+
+    def _create_customlist_list(self, resp) -> List[CustomList]:
+        resp = resp["results"]
+        custom_lists = []
+        for elem in resp:
+            custom_lists.append(self._create_customlist(elem))
+        return custom_lists
+    
     def get_manga_list(self, **kwargs) -> List[Manga]:
         """
         Search a List of Manga
@@ -175,6 +193,8 @@ class Api():
         Parameters
         -------------
         This parameters may be used by ohter methods
+        ### QueryParams:
+
         limit : `int`
         offset : `int`
         title : `str`
@@ -292,6 +312,8 @@ class Api():
         
         id `str`, Required. The manga id
 
+        ### QueryParams:
+
         limit : `int`
         offset : `int`
         locales : `List[str]`
@@ -318,6 +340,8 @@ class Api():
 
         Parameters
         -----------
+        ### QueryParams:
+
         limit : `int`
         offset : `int`
         title : `str`
@@ -654,7 +678,7 @@ class Api():
         self._request_url(url, "POST", params={"status" : status}, headers=self.bearer)
 
     
-    def add_manga_to_custom_list(self, id : str, listId :str) -> None:
+    def add_manga_to_customlist(self, id : str, listId :str) -> None:
         """
         Adds a manga to a custom list
 
@@ -671,7 +695,7 @@ class Api():
         url = f"{self.URL}/{id}/list{listId}"
         self._request_url(url, "POST", headers=self.bearer)
     
-    def remove_manga_from_custom_list(self, id : str, listId : str) -> None:
+    def remove_manga_from_customlist(self, id : str, listId : str) -> None:
         """
         Removes a manga from a custom list
 
@@ -687,3 +711,142 @@ class Api():
         """
         url = f"{self.URL}/manga/{id}/list/{listId}"
         self._request_url(url, "DELETE", headers=self.bearer)
+
+    def create_customlist(self, name : str, visibility : str = "public", manga : List[str] = None, version : int = 1) -> None:
+        """
+        Creates a custom list
+
+        Parameters
+        -------------
+        ### QueryParams:
+
+        name : `str`. The custom list name
+        visibility : `str. The visibility of the custom list
+        manga : `List[str]`. List of manga ids
+
+        Returns
+        -----------
+        `None`
+        """
+        url = f"{self.URL}/list"
+        self._request_url(url, "POST", params={"name" : name, "visibility" : visibility, "manga" : manga, "version" : version})
+
+    def get_customlist(self, id : str) -> CustomList:
+        """
+        Get a custom list by its id
+
+        Parameters
+        ------------
+        id : `str`. The id of the custom list
+
+        Returns
+        ------------
+        `CustomList`
+        
+        """
+        url = f"{self.URL}/list/{id}"
+        resp = self._request_url(url, "GET", headers=self.bearer)
+        return self._create_customlist(resp["result"])
+    
+    def update_customlist(self, id : str, **kwargs) -> CustomList:
+        """
+        Update a custom list
+
+        Parameters
+        ------------
+        id : `str`. The custom list id
+
+        ### QueryParams:
+
+        name : `str`. The custom list name
+        visibility : `str`. Values : `"public"` `"private"`
+
+        Returns
+        -----------
+        `CustomList`
+        """
+        url = f"{self.URL}/list/{id}"
+        resp = self._request_url(url, "PUT", params= kwargs, headers=self.bearer)
+        return self._create_customlist(resp["result"])
+        
+    def delete_customlist(self, id : str) -> None:
+        """
+        Deletes a Custom List
+
+        Parameters
+        ------------
+        id : `str`. The custom list id
+
+        Returns
+        ----------
+        `None`
+        """
+        url = f"{self.URL}/list{id}"
+        self._request_url(url, "DELETE", headers=self.bearer)
+    
+    def get_my_customlists(self, **kwargs) -> List[CustomList]:
+        """
+        Get my custom lists
+
+        Parameters
+        ------------
+        ### QueryParams:
+
+        limit : `int`. The limit of custom lists to return
+        offset : `int`. The amout of offset
+
+        Returns
+        ----------
+        `List[CustomList]`
+
+        """
+        url = f"{self.URL}/user/list"
+        resp = self._request_url(url, "GET", params=kwargs, headers=self.bearer)
+        return self._create_customlist_list(resp)
+
+    def get_user_customlists(self, id : str, **kwargs) -> List[CustomList]:
+        """
+        Get a user's custom list. This will list only public custom lists
+
+        Parameters
+        ------------
+        id : `str`. the User id
+
+        ### QueryParams:
+
+        limit : `int`. The limit of custom lists to return
+        offset : `int`. The amout of offset
+
+        Returns
+        ----------
+        `List[CustomList]`
+        """
+        url = f"{self.URL}/user/{id}/list"
+        resp = self._request_url(url, "GET", params=kwargs, headers=self.bearer)
+        return self._create_customlist_list(resp)
+    
+    def get_customlist_manga_feed(self, id : str, **kwargs) -> List[Chapter]:
+        """
+        Get the chapter feed of a given custom list. 
+
+        Paramters
+        ------------
+        id : `str`. The custom list id
+
+        ### QueryParams:
+
+        limit : `str`.
+        offset : `int`
+        locales : `List[str]`
+        createdAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
+        updatedAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
+        publishAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
+
+        Returns
+        -----------
+        `List[Chapter]`
+
+        """
+        url = f"{self.URL}/user/{id}/feed"
+        resp = self._request_url(url, "GET", params=kwargs, headers=self.bearer)
+        return  self._create_chapter_list(resp)

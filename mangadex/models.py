@@ -5,7 +5,7 @@ from future.utils import raise_with_traceback
 
 from typing import Dict, List
 
-from mangadex import (MangaError, TagError, ChapterError, AuthorError, ScanlationGroupError, UserError)
+from mangadex import (MangaError, TagError, ChapterError, AuthorError, ScanlationGroupError, UserError, CustomListError)
 
 class Manga():
     def __init__(self) -> None:
@@ -184,3 +184,26 @@ class ScanlationGroup():
     
     def __repr__(self) -> str:
         return f"ScanlationGroup(id = {self.id}, name = {self.name}, leader = {self.leader}, createdAt = {self.createdAt}, updatedAt = {self.updatedAt})"
+
+class CustomList():
+    def __init__(self) -> None:
+        self.id : str = ""
+        self.name : str = ""
+        self.visibility : str = ""
+        self.owner : User = None
+        self.mangas : List[Manga] = None
+
+    def _ListFromDict(self, data):
+        if data["data"]["type"] != "custom_list" or not data:
+            raise CustomListError("The data provided is not a Custom List")
+        
+        attributes = data["data"]["attributes"]
+
+        self.id = data["data"]["id"]
+        self.name = attributes["name"]
+        self.visibility = attributes["visibility"]
+        self.owner = User()
+        self.owner._UserFromDict(attributes["owner"])
+    
+    def __repr__(self) -> str:
+        return f"CustomList(id = {self.id}, name = {self.name}, visibility = {self.visibility}, owner = {self.owner}, Manga = List[Manga])"

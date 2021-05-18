@@ -20,3 +20,6 @@ class ScanlationGroupError(Exception):
 
 class UserError(Exception):
     pass
+
+class CustomListError(Exception):
+    pass
