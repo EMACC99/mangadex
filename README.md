@@ -169,10 +169,46 @@ Get a list of the all the manga reading stauts
 >>> my_manga_reading_stauts = api.get_all_manga_reading_status()
 ```
 
-## Get a speficif manga reading status
+## Get a specific manga reading status
 
 Get the reading status of a specific manga
 
 ```py
 >>> manga_reading_status = api.get_manga_reading_status(id = "the manga id")
 ```
+## Update Manga reading status
+
+```py
+>>> api.update_manga_reading_status(id = "the manga id", status = "the new reading status")
+```
+The `status` parameter can take the following values:
+`"reading"` `"on_hold"` `"plan_to_read"` `"dropped"` `"re_reading"` `"completed"` 
+## Follow a manga
+
+Follow a manga
+```py
+>>> api.follow_manga(id = "the manga id")
+```
+
+## Unfollow a manga
+Un follows a manga
+```py
+>>>api.unfollow_manga(id = "the manga id")
+```
+
+## Add manga to custom list
+
+Add a manga to a custom list
+
+```py
+>>> api.add_manga_to_custom_list(id = "the manga id", listId = "the list id")
+```
+
+## Remove a manga from custom list
+
+Removes a manga from a custom list
+
+```py
+>>> api.remove_manga_from_custom_list(id = "the manga id", listId = "the list id")
+```
+
