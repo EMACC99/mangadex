@@ -835,7 +835,7 @@ class Api():
 
         ### QueryParams:
 
-        limit : `str`.
+        limit : `int`. 
         offset : `int`
         locales : `List[str]`
         createdAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
