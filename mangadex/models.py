@@ -27,7 +27,7 @@ class Manga():
         self.version = 1
         self.createdAt : datetime = ""
         self.updatedAt : datetime = ""
-
+        
     def _MangaFromDict(self, data : dict):
         if data["data"]["type"] != 'manga' or not data:
             raise MangaError("The data provides is not a Manga")
@@ -111,7 +111,7 @@ class Chapter():
     
     def __repr__(self) -> str:
         temp1 =  f"Chapter(id = {self.id}, title = {self.title}, volume = {self.volume}, chapter = {self.chapter}, translatedLanguage = {self.translatedLanguage}, hash = {self.hash} \n"
-        temp2 = f"data = {self.data}, publishAt = {self.publishAt}, createdAt = {self.createdAt}, uploadedAt = {self.updatedAt}, sacanlation_group_id = {self.sacanlation_group_id}, Mangaid = {self.Mangaid}, uploader = {self.uploader})"
+        temp2 = f"data = List[filenames], publishAt = {self.publishAt}, createdAt = {self.createdAt}, uploadedAt = {self.updatedAt}, sacanlation_group_id = {self.sacanlation_group_id}, Mangaid = {self.Mangaid}, uploader = {self.uploader})"
         return temp1 + temp2
 
 class User():
