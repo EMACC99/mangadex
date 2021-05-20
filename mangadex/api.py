@@ -266,7 +266,90 @@ class Api():
         url = f"{self.URL}/manga/random"
         resp = self._request_url(url, "GET")
         return self._create_manga(resp)
+
+    def create_manga(self, title : str, **kwargs) -> Manga:
+        """
+        Creates a manga
+
+        Params
+        -----------
+        title : `str`. The manga title
+
+        ### Body Schema
+        altTitles :
+        """
+        url = f"{self.URL}/manga"
+        kwargs["title"] = title
+        resp = self._request_url(url, "POST", params=kwargs, headers=self.bearer)
+        return  self._create_manga(resp)
+
+    def get_manga_volumes_and_chapters(self, id : str) -> Dict[str, str]:
+        """
+        Get a manga volumes and chapters
+
+        Parameters
+        ------------
+        id : `str`. The manga id
+
+        Returns
+        ------------
+        `Dict[str, str]`. A dictionary with the volumes and the chapter id's
+        """
+        url = f"{self.URL}/manga/{id}/aggregate"
+        resp = self._request_url(url, "GET")
+        return resp["result"]
+
+    def update_manga(self, id : str, ObjReturn : bool = False ,**kwargs) -> Manga:
+        """
+        Updates a manga parameters
+
+        Parameters
+        -------------
+        ### Required parameters
+        id : `str`. The manga id
+        version : `int`
+        ObjReturn : `bool`. `True` if you want a Manga Object return
+
+        ### Optional Parameters
+        title : `Dict[str,str]`. The manga title
+        altTitles : `List[Dict[str,str]]`. The alt titles
+        description : `Dict[str,str]`. The alt titles in different languages
+        authors : `List[str]`. The list of author id's
+        artists : `List[str]`. The list of artist id's
+        links : `Dict[str,str]`. The links in differents sites (al, ap, bw, mu, etc). Please refer to the [documentation](https://api.mangadex.org/docs.html#section/Static-data/Manga-links-data)
+        originalLanguage : `str`. The original Language
+        lastVolume : `str`. The last volume
+        lastChapter : `str`. The last chapter
+        publicationDemographic : `str`.
+        status : `str`.
+        year : `int`.
+        contentRating : `str`.
+        modNotes : `str`
+
+        Returns
+        ------------
+        `Manga`. A manga object if `ObjReturn` is set to `True`
+        """
+        url = f"{self.URL}/manga/{id}"
+        resp = self._request_url(url, "PUT", params=kwargs, headers=self.bearer)
+        if ObjReturn:
+            return self._create_manga(resp)
     
+    def delete_manga(self, id : str) -> None:
+        """
+        Deletes a manga
+        
+        Parameters
+        ------------
+        id : `str`. The manga id
+
+        Returns
+        -----------
+        `None`
+        """
+        url = f"{self.URL}/manga{id}"
+        self._request_url(url, "DELETE", headers=self.bearer)
+
     def get_manga_read_markes(self, id : str) -> List[Chapter]: # this needs a performance update
         """
         A list of Chapter Id's That are marked fro the given manga Id
@@ -350,7 +433,7 @@ class Api():
         manga : `str`
         volume : `str`
         chapter : `str`
-        tranlatedLanguaje : `str`
+        translatedLanguage : `str`
         createdAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
         updatedAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
         publishAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
@@ -471,7 +554,67 @@ class Api():
         url = f"{self.URL}/author/{id}"
         resp = self._request_url(url, "GET")
         return self._create_author(resp)
+
+    def create_author(self, name : str, version : int, ObjReturn : bool = False) -> Author:
+        """
+        Creates an Author
+
+        Parameters
+        --------------
+        name : `str`. The author name
+        version : `int`. The version of the author
+        ObjReturn : `bool`.  `True` if you want a Author Object return
+
+        Returns
+        --------------
+        `Author` if `ObjReturn` is `True`
+        """
+        url = f"{self.URL}/author"
+        params = {"name" : name, "version" : version}
+        resp = self._request_url(url, "POST", params=params, headers=self.bearer)
+        if ObjReturn:
+            return self._create_author(resp)
     
+    def update_author(self, id : str, version : int, name : str = None, ObjReturn : bool = False) -> Author:
+        """
+        Updates an Author
+
+        Parameters
+        -------------
+        id : `str`. Required. The author id
+        version : `int`. Required
+        name : `str`. 
+        ObjReturn : `bool`.  `True` if you want a Author Object return
+
+        Returns
+        -----------
+        `Author` if `ObjReturn` is `True`
+        """
+        url = f"{self.URL}/author/{id}"
+        params  = {"version" : version}
+        if name is not None:
+            params["name"] = name
+        resp = self._request_url(url, "PUT", params=params, headers=self.bearer)
+
+        if ObjReturn:
+            return self._create_author(resp)
+        
+    def delete_author(self, id : str) -> None:
+        """
+        Deletes an author
+
+        Paratemets
+        ---------------
+        id : `str`. Required. The author id
+
+        Returns
+        --------------
+        `None`
+        """
+        url = f"{self.URL}/author/{id}"
+        self._request_url(url, "DELETE", headers=self.bearer)
+    
+
     def get_user(self, id : str) -> User:
         """
         Get User by its id
@@ -493,6 +636,37 @@ class Api():
         url = f"{self.URL}/user/{id}"
         resp = self._request_url(url, "GET")
         return self._create_user(resp)
+    
+    def scanlation_group_list(self, limit : int = None, offset : int = None, group_ids : List[str] = None, name : str = None) -> List[ScanlationGroup]:
+        """
+        Get the scanlation groups list
+
+        Parameters
+        --------------
+        ### Optional
+
+        limit : `int`
+        offset : `int`
+        group_ids : `List[str]`
+        name : `str`
+
+        Returns
+        -------------
+        `List[ScanlationGroup]`
+        """
+        url = f"{self.URL}/group"
+        params = {}
+        if limit is not None:
+            params["limit"] = limit
+        if offset is not None:
+            params["offset"] = offset
+        if group_ids is not None:
+            params["ids"] = group_ids
+        if name is not None:
+            params["name"] = name
+        
+        resp = self._request_url(url, "GET", params=params)
+        return self._create_group_list(resp)
 
     def login(self, username : str, password : str):
         """
