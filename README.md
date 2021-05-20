@@ -297,3 +297,20 @@ Removes a manga from a custom list
 * createdAtSince. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
 * updatedAtSince. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
 * publishAtSince. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
+
+## Create Author
+
+```py
+>>> api.create_author(name = "author name", version = 1, ObjReturn = False)
+```
+## Update Author
+
+```py
+>>> api.update_author(id = "the author id", version = "int with the version", name = "author's name", ObjReturn = False)
+```
+
+## Delete Author
+
+```py
+>>> api.delete_author(id = "the author id")
+```
