@@ -275,8 +275,24 @@ class Api():
         -----------
         title : `str`. The manga title
 
-        ### Body Schema
-        altTitles :
+        ### Optional Parameters
+        altTitles : `List[Dict[str,str]]`. The alt titles
+        description : `Dict[str,str]`. The alt titles in different languages
+        authors : `List[str]`. The list of author id's
+        artists : `List[str]`. The list of artist id's
+        links : `Dict[str,str]`. The links in differents sites (al, ap, bw, mu, etc). Please refer to the [documentation](https://api.mangadex.org/docs.html#section/Static-data/Manga-links-data)
+        originalLanguage : `str`. The original Language
+        lastVolume : `str`. The last volume
+        lastChapter : `str`. The last chapter
+        publicationDemographic : `str`.
+        status : `str`.
+        year : `int`.
+        contentRating : `str`.
+        modNotes : `str`
+
+        Returns
+        ------------
+        `Manga`. A manga object if `ObjReturn` is set to `True`
         """
         url = f"{self.URL}/manga"
         kwargs["title"] = title
