@@ -65,6 +65,12 @@ Get the chapter, or chapters from the feed of a specific manga.
   2018-03-19 01:32:00+00:00, sacanlation_group_id = 59957a04-fa91-4099-921d-7e7988a19acb, Mangaid = 0001183c-2089-48e9-96b7-d48db5f1a611, uploader = 
   e19519ce-8c5f-4d7c-8280-704a87d34429)]
 ```
+## Get manga volumnes and chapters
+Get a manga volumes and chapters
+
+```py
+>>> api.get_manga_volumes_and_chapters(id = "the manga id")
+```
 
 ## Get Chapter
 
@@ -107,6 +113,15 @@ The list of the manga tags
 ```py
 >>> tag_list = api.tag_list()
 ```
+
+## Get scanlation group list
+
+Get a Scanlation Group list
+
+```py
+>>> api.scanlation_group_list()
+```
+
 
 # Private Calls
 
@@ -191,11 +206,29 @@ Follow a manga
 ```
 
 ## Unfollow a manga
-Un follows a manga
+Unfollows a manga
 ```py
 >>>api.unfollow_manga(id = "the manga id")
 ```
 
+## Create manga
+Creates a manga
+```py
+>>> api.create_manga(title = "manga title", )
+```
+## Update Manga
+Updates a manga
+
+```py
+>>> api.update_manga(id = "the manga id")
+```
+
+## Delete Manga
+Deletes manga
+
+```py
+>>> api.delete_manga(id = "the manga id")
+```
 ## Add manga to custom list
 
 Add a manga to a custom list
@@ -256,7 +289,7 @@ Removes a manga from a custom list
 ```py
 >>> api.get_customlist_manga_feed(id = "the custom list id")
 ```
- ### QueryParams:
+### QueryParams:
 
 * limit
 * offset
