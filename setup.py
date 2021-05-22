@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 VERSION = '1.4.0'
 DESCRIPTION = 'Python wrapper for the mangadex API'
-with open("README.md", "r") as f:
+with open("README.md", "r", encoding="utf8") as f:
     LONG_DESCRIPTION = f.read()
 
 
@@ -31,5 +31,7 @@ setup(
         "Topic :: Internet",
         "Topic :: Library",
         "Topic :: Wrapper"
-        ]
+        ],
+    zip_safe = False,
+    python_requires = ">=3.6"
 )
