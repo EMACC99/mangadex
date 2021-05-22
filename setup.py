@@ -15,7 +15,7 @@ setup(
     long_description = LONG_DESCRIPTION,
     long_description_content_type = "text/markdown",
     packages = find_packages(),
-    install_requires = ["requests", "urllib"],
+    install_requires = ["requests"],
     source = "https://github.com/EMACC99/mangadex",
     download_url = "https://github.com/EMACC99/mangadex/releases",
     license = "MIT",
