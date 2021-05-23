@@ -5,7 +5,7 @@ from future.utils import raise_with_traceback
 
 from typing import Dict, List
 
-from mangadex import (MangaError, TagError, ChapterError, AuthorError, ScanlationGroupError, UserError, CustomListError)
+from mangadex import (MangaError, TagError, ChapterError, AuthorError, ScanlationGroupError, UserError, CustomListError, CoverArtError)
 
 class Manga():
     def __init__(self) -> None:
@@ -207,3 +207,29 @@ class CustomList():
     
     def __repr__(self) -> str:
         return f"CustomList(id = {self.id}, name = {self.name}, visibility = {self.visibility}, owner = {self.owner}, Manga = List[Manga])"
+
+class CoverArt():
+    def __init__(self) -> None:
+        self.id : str = ""
+        self.volume : str = None
+        self.fileName : str = ""
+        self.description : str = None
+        self.createdAt : datetime = None
+        self.updatedAt : datetime = None
+
+    def _CoverFromDict(self, data):
+        if data["data"]["type"] != "cover_art" or not data:
+            raise CoverArtError("The data provided is not a Custom List")
+        
+        attributes = data["data"]["attibutes"]
+
+        self.id = data["data"]["id"]
+        self.volume = attributes["volume"]
+        self.fileName = attributes["fileName"]
+        self.description = attributes["descritpion"]
+        self.createdAt = parse(attributes["createdAt"])
+        self.updatedAt = parse(attributes["updatedAt"])
+
+    def __repr__(self) -> str:
+        return f"CoverArt(id = {self.id}, volume = {self.volume}, fileName = {self.fileName}, description = {self.description}, createdAt = {self.createdAt}, updatedAt = {self.updatedAt})"
+    

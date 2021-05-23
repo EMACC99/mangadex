@@ -23,3 +23,6 @@ class UserError(Exception):
 
 class CustomListError(Exception):
     pass
+
+class CoverArtError(Exception):
+    pass

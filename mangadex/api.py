@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 
 import json
-from mangadex.models import CustomList
 import requests
 
 from typing import Coroutine, Dict, Tuple, List
@@ -17,7 +16,7 @@ except ImportError:
     from urlparse import urlparse
     from urllib import urlencode
 
-from mangadex import (ApiError, ApiClientError, Manga, Tag, Chapter, User, UserError, ChapterError, Author, ScanlationGroup)
+from mangadex import (ApiError, ApiClientError, Manga, Tag, Chapter, User, UserError, ChapterError, Author, ScanlationGroup, CoverArt, CustomList)
 
 class Api():
     def __init__(self, timeout = 5):
@@ -185,7 +184,13 @@ class Api():
         for elem in resp:
             custom_lists.append(self._create_customlist(elem))
         return custom_lists
-    
+
+    def _createCoverImage(self, elem) -> CoverArt:
+        raise NotImplementedError
+
+    def _createCoverImageList(self, resp) -> List[CoverArt]:
+        raise NotImplementedError
+
     def get_manga_list(self, **kwargs) -> List[Manga]:
         """
         Search a List of Manga
@@ -415,7 +420,7 @@ class Api():
 
         limit : `int`
         offset : `int`
-        locales : `List[str]`
+        translatedLanguage : `List[str]`. The translated laguages to query
         createdAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
         updatedAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
 
@@ -1027,7 +1032,7 @@ class Api():
 
         limit : `int`. 
         offset : `int`
-        locales : `List[str]`
+        translatedLanguage : `List[str]`. The translated laguages to query
         createdAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
         updatedAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
         publishAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
@@ -1040,3 +1045,35 @@ class Api():
         url = f"{self.URL}/user/{id}/feed"
         resp = self._request_url(url, "GET", params=kwargs, headers=self.bearer)
         return  self._create_chapter_list(resp)
+
+    def get_coverart_list(self, **kwargs):
+        url = f"{self.URL}/cover"
+        resp = self._request_url(url, "GET", params=kwargs)
+        return self._createCoverImageList(resp)
+    
+    def upload_cover(self, manga_id : str, file : str, ObjReturn : bool = False):
+        url = f"{self.URL}/cover/{manga_id}"
+        resp = self._request_url(url, "POST", params = {"file" : file}, headers= self.bearer)
+        
+        return self._createCoverImage(resp) if ObjReturn else None
+
+    def edit_cover(self, coverId : str, description : str, volume : str = None, version : int = None, ObjReturn : bool = False):
+        if version is None:
+            raise ValueError("Version cannot be null")
+        
+        params = {"volume" : volume, "version" : version}
+        if description is not None:
+            params["description"] = description
+
+        url = f"{self.URL}/cover/{coverId}"
+        resp = self._request_url(url, "PUt", params=params, headers=self.bearer)
+
+        return self._createCoverImage(resp) if ObjReturn else None
+    
+    def delete_cover(self, coverId : str):
+        if not coverId:
+            raise ValueError("coverId cannot be empty")
+        
+        url = f"{self.URL}/cover/{coverId}"
+        self._request_url(url, "DELETE", headers= self.bearer)
+    
