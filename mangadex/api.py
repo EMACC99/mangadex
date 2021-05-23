@@ -3,7 +3,7 @@ from __future__ import absolute_import
 import json
 import requests
 
-from typing import Coroutine, Dict, Tuple, List
+from typing import Coroutine, Dict, KeysView, Tuple, List
 
 try:
     basestring
@@ -95,12 +95,54 @@ class Api():
         return data
     
     def _check_api_error(self, data : dict): 
+        if type(data) == list:
+            data = data[0]
         if "result" in data.keys():
             if data['result'] == 'error' or 'error' in data:
                 raise ApiError(data['errors'])
             if isinstance(data, (list, tuple)) and len(data) > 0:
                 if 'error' in data:
                     raise ApiError(data['errors'])
+
+    def _parse_manga_params(self, params : dict):
+        if "authors" in params:
+            temp = params.pop("authors")
+            params["authors[]"] = temp
+        if "artist" in params:
+            temp = params.pop("artist")
+            params["artist[]"] = temp
+        if "excludedTags" in params:
+            temp = params.pop("excludedTags")
+            params["excludedTags[]"] = temp
+        if "originalLanguage" in params:
+            temp = params.pop("originalLanguage")
+            params["originalLanguage[]"] = temp
+        if "includedTags" in params:
+            temp = params.pop("includedTags")
+            params["includedTags[]"] = temp
+        if "publicationDemographic" in params:
+            temp = params.pop("publicationDemographic")
+            params["publicationDemographic[]"] = temp
+        if "ids" in params:
+            temp  = params.pop("ids")
+            params["ids[]"] = temp
+        if "altTitles" in params:
+            temp = params.pop("altTitles")
+            params["altTitles[]"] = temp
+        if "description" in params:
+            temp = params.pop("description")
+            params["description[]"] = temp
+        if "authors" in params:
+            temp = params.pop("authors")
+            params["authors[]"] = temp
+        if "artists" in params:
+            temp = params.pop("artists")
+            params["artists[]"] = temp
+        if "translatedLanguage" in params:
+            temp = params.pop("translatedLanguage")
+            params["translatedLanguage[]"] = temp
+        
+        return params
 
     def _create_manga(self, elem) -> Manga:
         manga = Manga()
@@ -206,7 +248,7 @@ class Api():
         authors : `List[str]`
         artist : `List[str]`
         year : `int`
-        includeTags : `List[str]`
+        includedTags : `List[str]`
         includedTagsMode: `str`. Default `"AND"`. Enum: `"AND"` `"OR"`
         excludedTags : `List[str]`
         exludedTagsMode : `str`. Default `"AND"`, Enum : `"AND"`, `"OR"`
@@ -227,9 +269,11 @@ class Api():
         `ApiError`
 
         `MangaError`
-        """
+        """            
+        params = kwargs
+        params = self._parse_manga_params(params)
         url = f"{self.URL}/manga"
-        resp = self._request_url(url, 'GET', params=kwargs)
+        resp = self._request_url(url, 'GET', params=params)
         return self._create_manga_list(resp)
 
     def view_manga_by_id(self, id: str)-> Manga:
@@ -299,6 +343,7 @@ class Api():
         ------------
         `Manga`. A manga object if `ObjReturn` is set to `True`
         """
+        kwargs = self._parse_manga_params(kwargs)
         url = f"{self.URL}/manga"
         kwargs["title"] = title
         resp = self._request_url(url, "POST", params=kwargs, headers=self.bearer)
@@ -351,6 +396,7 @@ class Api():
         ------------
         `Manga`. A manga object if `ObjReturn` is set to `True`
         """
+        kwargs = self._parse_manga_params(kwargs)
         url = f"{self.URL}/manga/{id}"
         resp = self._request_url(url, "PUT", params=kwargs, headers=self.bearer)
         if ObjReturn:
@@ -434,6 +480,7 @@ class Api():
 
         `ChapterError`
         """
+        kwargs = self._parse_manga_params(kwargs)
         url = f"{self.URL}/manga/{id}/feed"
         resp = self._request_url(url, "GET", params = kwargs)
         return self._create_chapter_list(resp)
@@ -469,6 +516,9 @@ class Api():
 
         `ChapterError`
         """
+        if "groups" in kwargs:
+            temp = kwargs.pop("groups")
+            kwargs["groups[]"] = temp
         url = f"{self.URL}/chapter"
         resp = self._request_url(url, "GET", params= kwargs)
         return self._create_chapter_list(resp)
@@ -675,6 +725,7 @@ class Api():
         -------------
         `List[ScanlationGroup]`
         """
+        
         url = f"{self.URL}/group"
         params = {}
         if limit is not None:
@@ -682,7 +733,7 @@ class Api():
         if offset is not None:
             params["offset"] = offset
         if group_ids is not None:
-            params["ids"] = group_ids
+            params["ids[]"] = group_ids
         if name is not None:
             params["name"] = name
         
@@ -924,7 +975,11 @@ class Api():
         `None`
         """
         url = f"{self.URL}/list"
-        self._request_url(url, "POST", params={"name" : name, "visibility" : visibility, "manga" : manga, "version" : version})
+        params = {"name" : name, "version" : version}
+        params["visibility"] =  visibility
+        params["manga[]"] = manga
+
+        self._request_url(url, "POST", params=params)
 
     def get_customlist(self, id : str) -> CustomList:
         """
