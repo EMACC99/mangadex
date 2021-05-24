@@ -3,7 +3,7 @@ from __future__ import absolute_import
 import json
 import requests
 
-from typing import Coroutine, Dict, KeysView, Tuple, List
+from typing import Dict, KeysView, Tuple, List, Union
 
 try:
     basestring
@@ -228,10 +228,16 @@ class Api():
         return custom_lists
 
     def _createCoverImage(self, elem) -> CoverArt:
-        raise NotImplementedError
+        coverImage = CoverArt()
+        coverImage._CoverFromDict(elem)
+        return coverImage
 
     def _createCoverImageList(self, resp) -> List[CoverArt]:
-        raise NotImplementedError
+        resp = resp["results"]
+        coverimage_list = []
+        for elem in resp:
+            coverimage_list.append(self._createCoverImage(elem))
+        return coverimage_list
 
     def get_manga_list(self, **kwargs) -> List[Manga]:
         """
@@ -1102,17 +1108,44 @@ class Api():
         return  self._create_chapter_list(resp)
 
     def get_coverart_list(self, **kwargs):
+        """
+        Get the list of cover arts (like the manga feed)
+        """
+        if "manga" in kwargs:
+            temp = kwargs.pop("manga")
+            kwargs["manga[]"] = temp 
         url = f"{self.URL}/cover"
         resp = self._request_url(url, "GET", params=kwargs)
         return self._createCoverImageList(resp)
     
+    def get_single_cover(self, cover : CoverArt):
+        url = f"{self.URL}/cover/{cover.id}"
+        resp = self._request_url(url, "GET")
+        return resp
+        
     def upload_cover(self, manga_id : str, file : str, ObjReturn : bool = False):
         url = f"{self.URL}/cover/{manga_id}"
         resp = self._request_url(url, "POST", params = {"file" : file}, headers= self.bearer)
         
         return self._createCoverImage(resp) if ObjReturn else None
 
-    def edit_cover(self, coverId : str, description : str, volume : str = None, version : int = None, ObjReturn : bool = False):
+    def edit_cover(self, coverId : str, description : str, volume : str = None, version : int = None, ObjReturn : bool = False) -> Union[None, CoverArt]:
+        """
+        Edit a cover parameters
+
+        Parameters
+        ------------
+        coverId : `str`. The coverId
+        description : `str`. The cover description
+        volume : `str`. The volume representing the volume
+        version : `int`. The version of the cover
+        ObjReturn : `bool`. Default `False`. If set to `True`, it will return a CoverArt
+
+        Returns
+        -----------
+        `CoverArt` if `ObjReturn` set to `True`
+        
+        """
         if version is None:
             raise ValueError("Version cannot be null")
         
@@ -1125,10 +1158,43 @@ class Api():
 
         return self._createCoverImage(resp) if ObjReturn else None
     
-    def delete_cover(self, coverId : str):
+    def delete_cover(self, coverId : Union[str , CoverArt]):
+        """
+        Deletes a cover
+
+        Params
+        -----------
+        coverId : `str` | `CoverArt`. The cover id or the cover object
+        """
         if not coverId:
             raise ValueError("coverId cannot be empty")
-        
+        if type(coverId) == CoverArt:
+            coverId = coverId.id
         url = f"{self.URL}/cover/{coverId}"
         self._request_url(url, "DELETE", headers= self.bearer)
     
+    def fetch_cover_image(self, manga : Union[Manga, str], cover : Union[CoverArt, str], quality : str = "source") -> str:
+        """
+        Returns the url of a cover art
+
+        Parameters
+        -------------
+        manga : `str` | `Manga`. the manga id or the manga object
+        cover : `str` | `CoverArt`. Ther cover id or a cover object
+
+        Returns
+        -----------
+        url : `str`. The cover url
+        """
+        if type(manga) == Manga:
+            manga = manga.id
+        if type(cover) == CoverArt:
+            cover = cover.fileName
+        url = f"https://uploads.mangadex.org/covers/{manga}/{cover}"
+        
+        if quality == "medium":
+            url = f"{url}.512.jpg"
+        elif quality == "small":
+            url = f"{url}.256.jpg"
+        
+        return url

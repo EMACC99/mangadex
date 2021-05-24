@@ -27,7 +27,10 @@ class Manga():
         self.version = 1
         self.createdAt : datetime = ""
         self.updatedAt : datetime = ""
-        
+        self.author : str = ""
+        self.artist : str = ""
+        self.coverId : str = ""
+
     def _MangaFromDict(self, data : dict):
         if data["data"]["type"] != 'manga' or not data:
             raise MangaError("The data provides is not a Manga")
@@ -51,10 +54,14 @@ class Manga():
         self.createdAt = parse(attributes["createdAt"])
         self.updatedAt = parse(attributes["updatedAt"])
 
+        self.authorId  = data["relationships"][0]["id"]
+        self.artistId  = data["relationships"][1]["id"]
+        self.coverId = data["relationships"][2]["id"]
+
     def __repr__(self) -> str:
         temp1 = f"Manga(id = {self.id}, title = {self.title}, altTitles = {self.altTitles}, description = {self.description}, isLocked = {self.isLocked}, links = {self.links}, originalLanguage = {self.originalLanguage} \n"
         temp2 = f"lastVolume = {self.lastVolume}, lastChapter = {self.lastChapter}, publicationDemographic = {self.publicationDemographic}, status = {self.status}, year = {self.year}, contentRating = {self.contentRating} \n"
-        temp3 = f"createdAt = {self.createdAt}, uploadedAt = {self.updatedAt})"
+        temp3 = f"createdAt = {self.createdAt}, uploadedAt = {self.updatedAt}), authorId = {self.author}, artistId = {self.artist}, coverId = {self.coverId}"
         return temp1 + temp2 + temp3
 
 class Tag():
@@ -216,19 +223,21 @@ class CoverArt():
         self.description : str = None
         self.createdAt : datetime = None
         self.updatedAt : datetime = None
+        self.mangaId : str = None
 
     def _CoverFromDict(self, data):
         if data["data"]["type"] != "cover_art" or not data:
             raise CoverArtError("The data provided is not a Custom List")
         
-        attributes = data["data"]["attibutes"]
+        attributes = data["data"]["attributes"]
 
         self.id = data["data"]["id"]
         self.volume = attributes["volume"]
         self.fileName = attributes["fileName"]
-        self.description = attributes["descritpion"]
+        self.description = attributes["description"]
         self.createdAt = parse(attributes["createdAt"])
         self.updatedAt = parse(attributes["updatedAt"])
+        self.mangaId = data["relationships"][0]["id"]
 
     def __repr__(self) -> str:
         return f"CoverArt(id = {self.id}, volume = {self.volume}, fileName = {self.fileName}, description = {self.description}, createdAt = {self.createdAt}, updatedAt = {self.updatedAt})"

@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = '1.5.3'
+VERSION = '1.5.5'
 DESCRIPTION = 'Python wrapper for the mangadex API'
 with open("README.md", "r", encoding="utf8") as f:
     LONG_DESCRIPTION = f.read()
@@ -18,6 +18,7 @@ setup(
     install_requires = ["requests"],
     source = "https://github.com/EMACC99/mangadex",
     download_url = "https://github.com/EMACC99/mangadex/releases",
+    documentation = "https://github.com/EMACC99/mangadex/wiki",
     license = "MIT",
     keywords = ['python', 'mangadex'],
     clasifiers = [
