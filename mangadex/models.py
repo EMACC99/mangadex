@@ -3,9 +3,9 @@ import datetime
 from dateutil.parser import parse
 from future.utils import raise_with_traceback
 
-from typing import Dict, List
+from typing import Dict, List, Union
 
-from mangadex import (MangaError, TagError, ChapterError, AuthorError, ScanlationGroupError, UserError, CustomListError, CoverArtError)
+from mangadex import (MangaError, TagError, ChapterError, AuthorError, ScanlationGroupError, UserError, CustomListError, CoverArtError, URLRequest)
 
 class Manga():
     def __init__(self) -> None:
@@ -58,6 +58,20 @@ class Manga():
         self.artistId  = data["relationships"][1]["id"]
         self.coverId = data["relationships"][2]["id"]
 
+    @staticmethod
+    def _create_manga(elem) -> 'Manga':
+        manga = Manga()
+        manga._MangaFromDict(elem)
+        return manga
+        
+    @staticmethod
+    def _create_manga_list(resp) -> List['Manga']:
+        resp = resp["results"]
+        manga_list = []
+        for elem in resp:
+            manga_list.append(Manga._create_manga(elem))
+        return manga_list
+
     def __repr__(self) -> str:
         temp1 = f"Manga(id = {self.id}, title = {self.title}, altTitles = {self.altTitles}, description = {self.description}, isLocked = {self.isLocked}, links = {self.links}, originalLanguage = {self.originalLanguage} \n"
         temp2 = f"lastVolume = {self.lastVolume}, lastChapter = {self.lastChapter}, publicationDemographic = {self.publicationDemographic}, status = {self.status}, year = {self.year}, contentRating = {self.contentRating} \n"
@@ -78,14 +92,28 @@ class Tag():
         self.id = data["data"]["id"]
         self.name = attributes["name"]
 
+    @staticmethod
+    def _create_tag(elem) -> 'Tag':
+        tag = Tag()
+        tag._TagFromDict(elem)
+        return tag
+
+    @staticmethod
+    def _create_tag_list(resp) -> List['Tag']:
+        tag_list = []
+        for tag in resp:
+            tag_list.append(Tag._create_tag(tag))
+        return tag_list
+
     def __repr__(self) -> str:
         return f"Tag(id = {self.id}, name = {self.name})"
+
 class Chapter():
     def __init__(self) -> None:
         self.id : str = ""
         self.title : str = ""
         self.volume : str = ""
-        self.chapter : str = ""
+        self.chapter : float = None
         self.Mangaid : str = ""
         self.sacanlation_group_id : str = ""
         self.translatedLanguage : str= ""
@@ -105,7 +133,7 @@ class Chapter():
         self.id = data["data"]["id"]
         self.title = attributes["title"]
         self.volume = attributes["volume"]
-        self.chapter = attributes["chapter"]
+        self.chapter = float(attributes["chapter"])
         self.translatedLanguage = attributes["translatedLanguage"]
         self.hash = attributes["hash"]
         self.data = attributes["data"]
@@ -115,7 +143,45 @@ class Chapter():
         self.sacanlation_group_id = data["relationships"][0]["id"]
         self.Mangaid = data["relationships"][1]["id"]
         self.uploader = data["relationships"][2]["id"]
+
+    def fetch_chapter_images(self) -> List[str]: #maybe make this an async function?
+        """
+        Get the image links for the chapter
+        
+        Returns
+        -----------
+        `List[str]`. A list with the links with the chapter images
+
+        NOTE: There links are valid for 15 minutes until you need to renew the token
+
+        Raises
+        -----------
+        `ApiError`
+        """
+        url = f"https://api.mangadex.org/at-home/server/{self.id}"
+        image_server_url = URLRequest._request_url(url, "GET", timeout=5)
+        image_server_url = image_server_url["baseUrl"].replace("\\", "")
+        image_server_url = f"{image_server_url}/data"
+        image_urls = []
+        for filename in self.data:
+            image_urls.append(f"{image_server_url}/{self.hash}/{filename}")
+
+        return image_urls
+
+    @staticmethod
+    def _create_chapter(elem) -> 'Chapter':
+        chap = Chapter()
+        chap._ChapterFromDict(elem)
+        return chap
     
+    @staticmethod
+    def _create_chapter_list(resp) -> List['Chapter']:
+        resp = resp["results"]
+        chap_list = []
+        for elem in resp:
+            chap_list.append(Chapter._create_chapter(elem))
+        return chap_list
+
     def __repr__(self) -> str:
         temp1 =  f"Chapter(id = {self.id}, title = {self.title}, volume = {self.volume}, chapter = {self.chapter}, translatedLanguage = {self.translatedLanguage}, hash = {self.hash} \n"
         temp2 = f"data = List[filenames], publishAt = {self.publishAt}, createdAt = {self.createdAt}, uploadedAt = {self.updatedAt}, sacanlation_group_id = {self.sacanlation_group_id}, Mangaid = {self.Mangaid}, uploader = {self.uploader})"
@@ -134,6 +200,20 @@ class User():
 
         self.id = data["data"]["id"]
         self.username = attributes["username"]
+
+    @staticmethod
+    def _create_user(elem) -> 'User':
+        user = User()
+        user._UserFromDict(elem)
+        return user
+
+    @staticmethod    
+    def _create_user_list(resp) -> List['User']:
+        resp = resp["results"]
+        user_list = []
+        for elem in resp:
+            user_list.append(User._create_user(elem))
+        return user_list
 
     def __repr__(self) -> str:
         return f"User(id = {self.id}, username = {self.username})"
@@ -159,7 +239,21 @@ class Author():
         self.bio = attributes["biography"]
         self.createdAt = parse(attributes["createdAt"])
         self.updatedAt = parse(attributes["updatedAt"])
-    
+
+    @staticmethod
+    def _create_author(elem) -> 'Author':
+        author = Author()
+        author._AuthorFromDict(elem)
+        return author
+
+    @staticmethod
+    def _create_authors_list(self, resp) -> List['Author']:
+        resp = resp["results"]
+        authors_list = []
+        for elem in resp:
+            authors_list.append(Author._create_author(elem))
+        return authors_list
+
     def __repr__(self) -> str:
         return f"Author(id = {self.id}, name = {self.name}, imageUrl = {self.imageUrl}, createdAt = {self.createdAt}, updatedAt = {self.updatedAt})"
 
@@ -189,6 +283,20 @@ class ScanlationGroup():
         self.createdAt = parse(attributes["createdAt"])
         self.updatedAt = parse(attributes["updatedAt"])
     
+    @staticmethod
+    def _create_group(elem) ->  'ScanlationGroup':
+        group = ScanlationGroup()
+        group._ScanlationFromDict(elem)
+        return group
+
+    @staticmethod
+    def _create_group_list(resp)-> List['ScanlationGroup']:
+        resp = resp["results"]
+        group_list = []
+        for elem in resp:
+            group_list.append(ScanlationGroup._create_group(elem))
+        return group_list  
+
     def __repr__(self) -> str:
         return f"ScanlationGroup(id = {self.id}, name = {self.name}, leader = {self.leader}, createdAt = {self.createdAt}, updatedAt = {self.updatedAt})"
 
@@ -212,6 +320,20 @@ class CustomList():
         self.owner = User()
         self.owner._UserFromDict(attributes["owner"])
     
+    @staticmethod
+    def _create_customlist(elem) -> 'CustomList':
+        custom_list = CustomList()
+        custom_list._ListFromDict(elem)
+        return custom_list
+
+    @staticmethod
+    def _create_customlist_list(resp) -> List['CustomList']:
+        resp = resp["results"]
+        custom_lists = []
+        for elem in resp:
+            custom_lists.append(CustomList._create_customlist(elem))
+        return custom_lists
+
     def __repr__(self) -> str:
         return f"CustomList(id = {self.id}, name = {self.name}, visibility = {self.visibility}, owner = {self.owner}, Manga = List[Manga])"
 
@@ -238,7 +360,41 @@ class CoverArt():
         self.createdAt = parse(attributes["createdAt"])
         self.updatedAt = parse(attributes["updatedAt"])
         self.mangaId = data["relationships"][0]["id"]
+    
+    def fetch_cover_image(self, quality : str = "source") -> str:
+        """
+        Returns the url of a cover art
+
+        Parametes
+        -------------
+        quality : `str`. Values : `medium`,  `small`
+
+        Returns
+        -----------
+        url : `str`. The cover url
+        """
+        url = f"https://uploads.mangadex.org/covers/{self.mangaId}/{self.fileName}"
+        
+        if quality == "medium":
+            url = f"{url}.512.jpg"
+        elif quality == "small":
+            url = f"{url}.256.jpg"
+        
+        return url
+
+    @staticmethod
+    def _createCoverImage(elem) -> 'CoverArt':
+        coverImage = CoverArt()
+        coverImage._CoverFromDict(elem)
+        return coverImage
+
+    @staticmethod
+    def _createCoverImageList(resp) -> List['CoverArt']:
+        resp = resp["results"]
+        coverimage_list = []
+        for elem in resp:
+            coverimage_list.append(CoverArt._createCoverImage(elem))
+        return coverimage_list
 
     def __repr__(self) -> str:
-        return f"CoverArt(id = {self.id}, volume = {self.volume}, fileName = {self.fileName}, description = {self.description}, createdAt = {self.createdAt}, updatedAt = {self.updatedAt})"
-    
+        return f"CoverArt(id = {self.id}, mangaId = {self.mangaId}, volume = {self.volume}, fileName = {self.fileName}, description = {self.description}, createdAt = {self.createdAt}, updatedAt = {self.updatedAt})"

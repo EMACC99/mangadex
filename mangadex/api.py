@@ -1,22 +1,8 @@
 from __future__ import absolute_import
 
-import json
-import requests
+from typing import Dict, Tuple, List, Union
 
-from typing import Dict, KeysView, Tuple, List, Union
-
-try:
-    basestring
-except NameError:
-    from past.builtins import basestring
-
-try:
-    from urllib.parse import urlparse, urlencode
-except ImportError:
-    from urlparse import urlparse
-    from urllib import urlencode
-
-from mangadex import (ApiError, ApiClientError, Manga, Tag, Chapter, User, UserError, ChapterError, Author, ScanlationGroup, CoverArt, CustomList)
+from mangadex import (Manga, Tag, Chapter, User, UserError, ChapterError, Author, ScanlationGroup, CoverArt, CustomList, URLRequest, TagError)
 
 class Api():
     def __init__(self, timeout = 5):
@@ -26,85 +12,13 @@ class Api():
 
     def _auth_handler(self, json_payload) -> None:
         url = f"{self.URL}/auth/login"
-        auth = self._request_url(url, "POST", params = json_payload)
+        auth = URLRequest._request_url(url, "POST", params = json_payload, timeout=self.timeout)
         token = auth['token']['session']
         bearer = {"Authorization" : f"Bearer {token}"}
         self.bearer = bearer
 
-    def _request_url(self, url, method, params = None, headers = None) -> dict:
-        if params is None:
-            params = {}
-        params = {k: v.decode("utf-8") if isinstance(v, bytes) else v for k, v in params.items()}
-        
-        if method == "GET":
-            url = self._build_url(url, params)
-            try:
-                resp = requests.get(url, headers=headers, timeout=self.timeout)
-            except requests.RequestException as e:
-                print(f"An error has occured: {e}")
-                raise
-        elif method == "POST":
-            try:
-                resp = requests.post(url, json = params, headers=headers, timeout=self.timeout)
-            except requests.RequestException as e:
-                print(f"An error has occured: {e}")
-                raise
-        elif method == "DELETE":
-            try:
-                resp = requests.delete(url, headers= headers, timeout=self.timeout)
-            except requests.RequestException as e:
-                print(f"An error has occured: {e}")
-                raise
-        elif method == "PUT":
-            try:
-                resp = requests.put(url, headers=headers, params=params, timeout=self.timeout)
-            except requests.RequestException as e:
-                print(f"An error has occured: {e}")
-                raise
-
-        content = resp.content
-        data = self._parse_data(content if isinstance(content, basestring) else content.decode('utf-8'))
-        return data
-
-    def _build_url(self, url, params) -> str:
-        if params and len(params) > 0:
-            url = url + '?' + self._encode_parameters(params)
-        return url
-
-    def _encode_parameters(self, params) -> str:
-        if params is None:
-            return None
-        else:
-            params_tuple = []
-            for k,v in params.items():
-                if v is None:
-                    continue
-                if isinstance(v, (list,tuple)):
-                    for _ in v:
-                        params_tuple.append((k,_))
-                else:
-                    params_tuple.append((k,v))
-            return urlencode(params_tuple)
-
-    def _parse_data(self, content):
-        try:
-            data = json.loads(content)
-            self._check_api_error(data)
-        except:
-            raise    
-        return data
-    
-    def _check_api_error(self, data : dict): 
-        if type(data) == list:
-            data = data[0]
-        if "result" in data.keys():
-            if data['result'] == 'error' or 'error' in data:
-                raise ApiError(data['errors'])
-            if isinstance(data, (list, tuple)) and len(data) > 0:
-                if 'error' in data:
-                    raise ApiError(data['errors'])
-
-    def _parse_manga_params(self, params : dict):
+    @staticmethod
+    def _parse_manga_params(params : dict):
         if "authors" in params:
             temp = params.pop("authors")
             params["authors[]"] = temp
@@ -141,103 +55,7 @@ class Api():
         if "translatedLanguage" in params:
             temp = params.pop("translatedLanguage")
             params["translatedLanguage[]"] = temp
-        
         return params
-
-    def _create_manga(self, elem) -> Manga:
-        manga = Manga()
-        manga._MangaFromDict(elem)
-        return manga
-
-    def _create_manga_list(self, resp) -> List[Manga]:
-        resp = resp["results"]
-        manga_list = []
-        for elem in resp:
-            manga_list.append(self._create_manga(elem))
-        return manga_list
-
-    def _create_tag(self, elem) -> Tag:
-        tag = Tag()
-        tag._TagFromDict(elem)
-        return tag
-
-    def _create_tag_list(self, resp) -> List[Tag]:
-        tag_list = []
-        for tag in resp:
-            tag_list.append(self._create_tag(tag))
-        return tag_list
-
-    def _create_chapter(self, elem) -> Chapter:
-        chap = Chapter()
-        chap._ChapterFromDict(elem)
-        return chap
-
-    def _create_chapter_list(self, resp) -> List[Chapter]:
-        resp = resp["results"]
-        chap_list = []
-        for elem in resp:
-            chap_list.append(self._create_chapter(elem))
-        return chap_list
-    
-    def _create_author(self, elem) -> Author:
-        author = Author()
-        author._AuthorFromDict(elem)
-        return author
-
-    def _create_authors_list(self, resp) -> List[Author]:
-        resp = resp["results"]
-        authors_list = []
-        for elem in resp:
-            authors_list.append(self._create_author(elem))
-        return authors_list
-
-    def _create_user(self, elem) -> User:
-        user = User()
-        user._UserFromDict(elem)
-        return user
-    
-    def _create_user_list(self, resp) -> List[User]:
-        resp = resp["results"]
-        user_list = []
-        for elem in resp:
-            user_list.append(self._create_user(elem))
-        return user_list
-
-    def _create_group(self, elem) ->  ScanlationGroup:
-        group = ScanlationGroup()
-        group._ScanlationFromDict(elem)
-        return group
-
-    def _create_group_list(self, resp)-> List[ScanlationGroup]:
-        resp = resp["results"]
-        group_list = []
-        for elem in resp:
-            group_list.append(self._create_group(elem))
-        return group_list  
-
-    def _create_customlist(self, elem) -> CustomList:
-        custom_list = CustomList()
-        custom_list._ListFromDict(elem)
-        return custom_list
-
-    def _create_customlist_list(self, resp) -> List[CustomList]:
-        resp = resp["results"]
-        custom_lists = []
-        for elem in resp:
-            custom_lists.append(self._create_customlist(elem))
-        return custom_lists
-
-    def _createCoverImage(self, elem) -> CoverArt:
-        coverImage = CoverArt()
-        coverImage._CoverFromDict(elem)
-        return coverImage
-
-    def _createCoverImageList(self, resp) -> List[CoverArt]:
-        resp = resp["results"]
-        coverimage_list = []
-        for elem in resp:
-            coverimage_list.append(self._createCoverImage(elem))
-        return coverimage_list
 
     def get_manga_list(self, **kwargs) -> List[Manga]:
         """
@@ -277,10 +95,10 @@ class Api():
         `MangaError`
         """            
         params = kwargs
-        params = self._parse_manga_params(params)
+        params = Api._parse_manga_params(params)
         url = f"{self.URL}/manga"
-        resp = self._request_url(url, 'GET', params=params)
-        return self._create_manga_list(resp)
+        resp = URLRequest._request_url(url, 'GET', params=params, timeout=self.timeout)
+        return Manga._create_manga_list(resp)
 
     def view_manga_by_id(self, id: str)-> Manga:
         """
@@ -301,8 +119,8 @@ class Api():
         `MangaError`
         """
         url = f"{self.URL}/manga/{id}"
-        resp = self._request_url(url, "GET")
-        return self._create_manga(resp)
+        resp = URLRequest._request_url(url, "GET", timeout=self.timeout)
+        return Manga._create_manga(resp)
     
     def random_manga(self) -> Manga:
         """
@@ -319,14 +137,14 @@ class Api():
         `MangaError`
         """
         url = f"{self.URL}/manga/random"
-        resp = self._request_url(url, "GET")
-        return self._create_manga(resp)
+        resp = URLRequest._request_url(url, "GET", timeout=self.timeout)
+        return Manga._create_manga(resp)
 
     def create_manga(self, title : str, **kwargs) -> Manga:
         """
         Creates a manga
 
-        Params
+        Parameters
         -----------
         title : `str`. The manga title
 
@@ -352,8 +170,8 @@ class Api():
         kwargs = self._parse_manga_params(kwargs)
         url = f"{self.URL}/manga"
         kwargs["title"] = title
-        resp = self._request_url(url, "POST", params=kwargs, headers=self.bearer)
-        return  self._create_manga(resp)
+        resp = URLRequest._request_url(url, "POST", params=kwargs, headers=self.bearer, timeout = self.timeout)
+        return  Manga._create_manga(resp)
 
     def get_manga_volumes_and_chapters(self, id : str) -> Dict[str, str]:
         """
@@ -368,8 +186,8 @@ class Api():
         `Dict[str, str]`. A dictionary with the volumes and the chapter id's
         """
         url = f"{self.URL}/manga/{id}/aggregate"
-        resp = self._request_url(url, "GET")
-        return resp["result"]
+        resp = URLRequest._request_url(url, "GET", timeout = self.timeout)
+        return resp["volumes"]
 
     def update_manga(self, id : str, ObjReturn : bool = False ,**kwargs) -> Manga:
         """
@@ -404,9 +222,9 @@ class Api():
         """
         kwargs = self._parse_manga_params(kwargs)
         url = f"{self.URL}/manga/{id}"
-        resp = self._request_url(url, "PUT", params=kwargs, headers=self.bearer)
+        resp = URLRequest._request_url(url, "PUT", params=kwargs, headers=self.bearer, timeout=self.timeout)
         if ObjReturn:
-            return self._create_manga(resp)
+            return Manga._create_manga(resp)
     
     def delete_manga(self, id : str) -> None:
         """
@@ -421,13 +239,12 @@ class Api():
         `None`
         """
         url = f"{self.URL}/manga{id}"
-        self._request_url(url, "DELETE", headers=self.bearer)
+        URLRequest._request_url(url, "DELETE", headers=self.bearer, timeout= self.timeout)
 
     def get_manga_read_markes(self, id : str) -> List[Chapter]: # this needs a performance update
         """
         A list of Chapter Id's That are marked fro the given manga Id
         
-
         Parameters
         ------------
         id : `str`. The Manga id
@@ -437,7 +254,7 @@ class Api():
         `List[Chapters]`. A list of chapters that are marked as read
         """
         url = f"{self.URL}/manga/{id}/read"
-        resp = self._request_url(url, "GET", headers=self.bearer)
+        resp = URLRequest._request_url(url, "GET", timeout= self.timeout ,headers=self.bearer)
         chap_ids = resp["data"]
         return [self.get_chapter(chap) for chap in chap_ids] # I think this is 
 
@@ -456,8 +273,8 @@ class Api():
         `TagError`
         """
         url = f"{self.URL}/manga/tag"
-        resp = self._request_url(url, "GET")
-        return self._create_tag_list(resp)
+        resp = URLRequest._request_url(url, "GET", timeout = self.timeout)
+        return Tag._create_tag_list(resp)
     
     def manga_feed(self, id : str, **kwargs) -> List[Chapter]:
         """
@@ -465,7 +282,6 @@ class Api():
 
         Parameters
         ------------
-        
         id `str`, Required. The manga id
 
         ### QueryParams:
@@ -488,8 +304,8 @@ class Api():
         """
         kwargs = self._parse_manga_params(kwargs)
         url = f"{self.URL}/manga/{id}/feed"
-        resp = self._request_url(url, "GET", params = kwargs)
-        return self._create_chapter_list(resp)
+        resp = URLRequest._request_url(url, "GET", timeout = self.timeout, params = kwargs)
+        return Chapter._create_chapter_list(resp)
 
     def chapter_list(self, **kwargs) -> List[Chapter]:
         """
@@ -518,21 +334,19 @@ class Api():
 
         Raises
         -------------
-        `ApiError`
-
+        `ApiError` \n
         `ChapterError`
         """
         if "groups" in kwargs:
             temp = kwargs.pop("groups")
             kwargs["groups[]"] = temp
         url = f"{self.URL}/chapter"
-        resp = self._request_url(url, "GET", params= kwargs)
-        return self._create_chapter_list(resp)
+        resp = URLRequest._request_url(url, "GET", timeout= self.timeout, params= kwargs)
+        return Chapter._create_chapter_list(resp)
 
     def get_chapter(self, id: str) -> Chapter:
         """
         Get a Chapter by its id
-
 
         Parameters
         ------------
@@ -547,48 +361,17 @@ class Api():
         `ApiError`
 
         `ChapterError`
-
         """
         url = f"{self.URL}/chapter/{id}"
-        resp = self._request_url(url, "GET")
-        return self._create_chapter(resp)
+        resp = URLRequest._request_url(url, "GET", timeout = self.timeout)
+        return Chapter._create_chapter(resp)
         
-
-    def fetch_chapter_images(self, chapter : Chapter) -> List[str]: #maybe make this an async function?
-        """
-        Get the image links for a given chapter
-
-        Params
-        -----------
-        chapter : `Chapter`. The chapter 
-
-        Returns
-        -----------
-        `List[str]`. A list with the links with the chapter images
-
-        NOTE: There links are valid for 15 minutes until you need to renew the token
-
-        Raises
-        -----------
-        `ApiError`
-        """
-        url = f"{self.URL}/at-home/server/{chapter.id}"
-        image_server_url = self._request_url(url, "GET")
-        image_server_url = image_server_url["baseUrl"].replace("\\", "")
-        image_server_url = f"{image_server_url}/data"
-        image_urls = []
-        for filename in chapter.data:
-            image_urls.append(f"{image_server_url}/{chapter.hash}/{filename}")
-
-        return image_urls
-
     def get_author(self, **kwargs) -> List[Author]:
         """
         Get the author List
 
         Parameters
         ------------
-
         limit : `int`
         offset : `int`
         ids : `string`. Array of ids 
@@ -600,14 +383,12 @@ class Api():
 
         Raises
         ------------
-        `ApiError`
-
+        `ApiError` \n
         `AuthorError`
-
         """
         url = f"{self.URL}/author"
-        resp = self._request_url(url, "GET", kwargs)
-        return self._create_authors_list(resp)
+        resp = URLRequest._request_url(url, "GET", timeout=self.timeout ,params = kwargs)
+        return Author._create_authors_list(resp)
 
     def get_author_by_id(self, id : str) -> Author:
         """
@@ -615,7 +396,6 @@ class Api():
 
         Parameters
         -------------
-
         id `str` The id of the author
 
         Returns
@@ -624,13 +404,12 @@ class Api():
 
         Raises
         ------------
-        `ApiError`
-
+        `ApiError` \n
         `AuthorError`
         """
         url = f"{self.URL}/author/{id}"
-        resp = self._request_url(url, "GET")
-        return self._create_author(resp)
+        resp = URLRequest._request_url(url, "GET", timeout=self.timeout)
+        return Author._create_author(resp)
 
     def create_author(self, name : str, version : int, ObjReturn : bool = False) -> Author:
         """
@@ -648,9 +427,9 @@ class Api():
         """
         url = f"{self.URL}/author"
         params = {"name" : name, "version" : version}
-        resp = self._request_url(url, "POST", params=params, headers=self.bearer)
+        resp = URLRequest._request_url(url, "POST", timeout=self.timeout, params=params, headers=self.bearer)
         if ObjReturn:
-            return self._create_author(resp)
+            return Author._create_author(resp)
     
     def update_author(self, id : str, version : int, name : str = None, ObjReturn : bool = False) -> Author:
         """
@@ -671,16 +450,16 @@ class Api():
         params  = {"version" : version}
         if name is not None:
             params["name"] = name
-        resp = self._request_url(url, "PUT", params=params, headers=self.bearer)
+        resp = URLRequest._request_url(url, "PUT", timeout = self.timeout, params=params, headers=self.bearer)
 
         if ObjReturn:
-            return self._create_author(resp)
+            return Author._create_author(resp)
         
     def delete_author(self, id : str) -> None:
         """
         Deletes an author
 
-        Paratemets
+        Parameters
         ---------------
         id : `str`. Required. The author id
 
@@ -689,8 +468,7 @@ class Api():
         `None`
         """
         url = f"{self.URL}/author/{id}"
-        self._request_url(url, "DELETE", headers=self.bearer)
-    
+        URLRequest._request_url(url, "DELETE", headers=self.bearer)
 
     def get_user(self, id : str) -> User:
         """
@@ -706,13 +484,12 @@ class Api():
 
         Raises
         ------------
-        `ApiError`
-
+        `ApiError` \n
         `UserError`
         """
         url = f"{self.URL}/user/{id}"
-        resp = self._request_url(url, "GET")
-        return self._create_user(resp)
+        resp = URLRequest._request_url(url, "GET")
+        return User._create_user(resp)
     
     def scanlation_group_list(self, limit : int = None, offset : int = None, group_ids : List[str] = None, name : str = None) -> List[ScanlationGroup]:
         """
@@ -731,7 +508,6 @@ class Api():
         -------------
         `List[ScanlationGroup]`
         """
-        
         url = f"{self.URL}/group"
         params = {}
         if limit is not None:
@@ -743,8 +519,8 @@ class Api():
         if name is not None:
             params["name"] = name
         
-        resp = self._request_url(url, "GET", params=params)
-        return self._create_group_list(resp)
+        resp = URLRequest._request_url(url, "GET", timeout = self.timeout ,params=params)
+        return ScanlationGroup._create_group_list(resp)
 
     def login(self, username : str, password : str):
         """
@@ -752,14 +528,12 @@ class Api():
 
         Parameters
         ---------------
-        username `str` your username
-
+        username `str` your username. \n
         password `str` your password
 
         Raises
         ---------------
         `ApiError`
-
         """
         self._auth_handler(json_payload= {"username" : username, "password" : password})
 
@@ -770,11 +544,10 @@ class Api():
         Return
         ---------
         `User`
-
         """
         url = f"{self.URL}/user/me"
-        resp = self._request_url(url, "GET", headers= self.bearer)
-        return self._create_user(resp)
+        resp = URLRequest._request_url(url, "GET", timeout = self.timeout, headers = self.bearer)
+        return User._create_user(resp)
 
     def get_my_mangalist(self, **kwargs) -> List[Manga]:
         """
@@ -789,11 +562,10 @@ class Api():
         Returns
         -------------
         `List[Manga]`
-
         """
         url = f"{self.URL}/user/follows/manga"
-        resp = self._request_url(url, "GET", params = kwargs, headers=self.bearer)
-        return self._create_manga_list(resp)
+        resp = URLRequest._request_url(url, "GET", timeout= self.timeout, params = kwargs, headers=self.bearer)
+        return Manga._create_manga_list(resp)
     
     def get_my_followed_groups(self, **kwargs) -> List[ScanlationGroup]:
         """
@@ -810,8 +582,8 @@ class Api():
         `List[ScanlationGroup]`
         """
         url = f"{self.URL}/user/follows/group"
-        resp = self._request_url(url, "GET", params=kwargs, headers= self.bearer)
-        return self._create_group_list(resp)
+        resp = URLRequest._request_url(url, "GET", timeout = self.timeout,  params=kwargs, headers= self.bearer)
+        return ScanlationGroup._create_group_list(resp)
 
     def get_my_followed_users(self, **kwargs) -> List[User]:
         """
@@ -829,8 +601,8 @@ class Api():
         
         """
         url = f"{self.URL}/user/follows/user"
-        resp = self._request_url(url, "GET", params=kwargs, headers=self.bearer)
-        return self._create_user_list(resp)
+        resp = URLRequest._request_url(url, "GET", timeout= self.timeout ,params=kwargs, headers=self.bearer)
+        return User._create_user_list(resp)
 
     def get_manga_reading_status(self, id : str) -> str:
         """
@@ -846,7 +618,7 @@ class Api():
 
         """
         url = f"{self.URL}/manga/{id}/status"
-        resp = self._request_url(url, "GET", headers=self.bearer)
+        resp = URLRequest._request_url(url, "GET", headers=self.bearer, timeout=self.timeout)
         return resp["status"]
 
     def get_all_manga_reading_status(self, status : str = None) -> Dict[str, str]:
@@ -864,10 +636,9 @@ class Api():
         `Dict[str,str]` A dictionary with the Manga id and its status
         """
         url = f"{self.URL}/manga/status"
-        resp = self._request_url(url, "GET", params={"status": status}, headers=self.bearer)
+        resp = URLRequest._request_url(url, "GET", params={"status": status}, headers=self.bearer, timeout= self.timeout)
         return resp["statuses"]
     
-
     def follow_manga(self, id  : str) -> None:
         """
         Follow a manga
@@ -886,11 +657,11 @@ class Api():
         `ApiError`
         """
         url = f"{self.URL}/manga/{id}/follow"
-        self._request_url(url, "POST", headers=self.bearer)
+        URLRequest._request_url(url, "POST", headers=self.bearer, timeout=self.timeout)
     
     def unfollow_manga(self, id : str) -> None:
         """
-        Unfollow a Manga
+        Unfollows a Manga
 
         Parameters
         -------------
@@ -904,9 +675,8 @@ class Api():
         -----------
         `ApiError`
         """
-        
         url = f"{self.URL}/manga/{id}/follow"
-        self._request_url(url, "DELETE", headers=self.bearer)
+        URLRequest._request_url(url, "DELETE", headers=self.bearer, timeout=self.timeout)
 
     def update_manga_reading_status(self, id : str, status : str ) -> None:
         """
@@ -927,9 +697,8 @@ class Api():
         `ApiError`
         """
         url = f"{self.URL}/manga/{id}/status"
-        self._request_url(url, "POST", params={"status" : status}, headers=self.bearer)
+        URLRequest._request_url(url, "POST", params={"status" : status}, headers=self.bearer, timeout=self.timeout)
 
-    
     def add_manga_to_customlist(self, id : str, listId :str) -> None:
         """
         Adds a manga to a custom list
@@ -942,10 +711,9 @@ class Api():
         Returns
         -------------
         `None`
- 
         """
         url = f"{self.URL}/{id}/list{listId}"
-        self._request_url(url, "POST", headers=self.bearer)
+        URLRequest._request_url(url, "POST", headers=self.bearer, timeout=self.timeout)
     
     def remove_manga_from_customlist(self, id : str, listId : str) -> None:
         """
@@ -959,10 +727,9 @@ class Api():
         Returns
         ------------
         `None`
-
         """
         url = f"{self.URL}/manga/{id}/list/{listId}"
-        self._request_url(url, "DELETE", headers=self.bearer)
+        URLRequest._request_url(url, "DELETE", headers=self.bearer, timeout=self.timeout)
 
     def create_customlist(self, name : str, visibility : str = "public", manga : List[str] = None, version : int = 1) -> None:
         """
@@ -984,8 +751,7 @@ class Api():
         params = {"name" : name, "version" : version}
         params["visibility"] =  visibility
         params["manga[]"] = manga
-
-        self._request_url(url, "POST", params=params)
+        URLRequest._request_url(url, "POST", params=params, timeout=self.timeout)
 
     def get_customlist(self, id : str) -> CustomList:
         """
@@ -1001,8 +767,8 @@ class Api():
         
         """
         url = f"{self.URL}/list/{id}"
-        resp = self._request_url(url, "GET", headers=self.bearer)
-        return self._create_customlist(resp["result"])
+        resp = URLRequest._request_url(url, "GET", headers=self.bearer, timeout=self.timeout)
+        return CustomList._create_customlist(resp["result"])
     
     def update_customlist(self, id : str, **kwargs) -> CustomList:
         """
@@ -1022,8 +788,8 @@ class Api():
         `CustomList`
         """
         url = f"{self.URL}/list/{id}"
-        resp = self._request_url(url, "PUT", params= kwargs, headers=self.bearer)
-        return self._create_customlist(resp["result"])
+        resp = URLRequest._request_url(url, "PUT", params= kwargs, headers=self.bearer, timeout=self.timeout)
+        return CustomList._create_customlist(resp["result"])
         
     def delete_customlist(self, id : str) -> None:
         """
@@ -1038,7 +804,7 @@ class Api():
         `None`
         """
         url = f"{self.URL}/list{id}"
-        self._request_url(url, "DELETE", headers=self.bearer)
+        URLRequest._request_url(url, "DELETE", headers=self.bearer, timeout=self.timeout)
     
     def get_my_customlists(self, **kwargs) -> List[CustomList]:
         """
@@ -1057,8 +823,8 @@ class Api():
 
         """
         url = f"{self.URL}/user/list"
-        resp = self._request_url(url, "GET", params=kwargs, headers=self.bearer)
-        return self._create_customlist_list(resp)
+        resp = URLRequest._request_url(url, "GET", params=kwargs, headers=self.bearer, timeout=self.timeout)
+        return CustomList._create_customlist_list(resp)
 
     def get_user_customlists(self, id : str, **kwargs) -> List[CustomList]:
         """
@@ -1078,8 +844,8 @@ class Api():
         `List[CustomList]`
         """
         url = f"{self.URL}/user/{id}/list"
-        resp = self._request_url(url, "GET", params=kwargs, headers=self.bearer)
-        return self._create_customlist_list(resp)
+        resp = URLRequest._request_url(url, "GET", params=kwargs, headers=self.bearer, timeout=self.timeout)
+        return CustomList._create_customlist_list(resp)
     
     def get_customlist_manga_feed(self, id : str, **kwargs) -> List[Chapter]:
         """
@@ -1101,11 +867,10 @@ class Api():
         Returns
         -----------
         `List[Chapter]`
-
         """
         url = f"{self.URL}/user/{id}/feed"
-        resp = self._request_url(url, "GET", params=kwargs, headers=self.bearer)
-        return  self._create_chapter_list(resp)
+        resp = URLRequest._request_url(url, "GET", params=kwargs, headers=self.bearer, timeout = self.timeout)
+        return  Chapter._create_chapter_list(resp)
 
     def get_coverart_list(self, **kwargs):
         """
@@ -1115,19 +880,19 @@ class Api():
             temp = kwargs.pop("manga")
             kwargs["manga[]"] = temp 
         url = f"{self.URL}/cover"
-        resp = self._request_url(url, "GET", params=kwargs)
-        return self._createCoverImageList(resp)
+        resp = URLRequest._request_url(url, "GET", params=kwargs, timeout= self.timeout)
+        return CoverArt._createCoverImageList(resp)
     
-    def get_single_cover(self, cover : CoverArt):
-        url = f"{self.URL}/cover/{cover.id}"
-        resp = self._request_url(url, "GET")
-        return resp
+    def get_cover(self, coverId : str) -> CoverArt:
+        
+        url = f"{self.URL}/cover/{coverId}"
+        resp = URLRequest._request_url(url, "GET", timeout=self.timeout)
+        return CoverArt._createCoverImage(resp)
         
     def upload_cover(self, manga_id : str, file : str, ObjReturn : bool = False):
         url = f"{self.URL}/cover/{manga_id}"
-        resp = self._request_url(url, "POST", params = {"file" : file}, headers= self.bearer)
-        
-        return self._createCoverImage(resp) if ObjReturn else None
+        resp = URLRequest._request_url(url, "POST", params = {"file" : file}, headers= self.bearer, timeout=self.timeout)
+        return CoverArt._createCoverImage(resp) if ObjReturn else None
 
     def edit_cover(self, coverId : str, description : str, volume : str = None, version : int = None, ObjReturn : bool = False) -> Union[None, CoverArt]:
         """
@@ -1144,7 +909,6 @@ class Api():
         Returns
         -----------
         `CoverArt` if `ObjReturn` set to `True`
-        
         """
         if version is None:
             raise ValueError("Version cannot be null")
@@ -1154,9 +918,8 @@ class Api():
             params["description"] = description
 
         url = f"{self.URL}/cover/{coverId}"
-        resp = self._request_url(url, "PUt", params=params, headers=self.bearer)
-
-        return self._createCoverImage(resp) if ObjReturn else None
+        resp = URLRequest._request_url(url, "PUt", params=params, headers=self.bearer, timeout=self.timeout)
+        return CoverArt._createCoverImage(resp) if ObjReturn else None
     
     def delete_cover(self, coverId : Union[str , CoverArt]):
         """
@@ -1171,30 +934,4 @@ class Api():
         if type(coverId) == CoverArt:
             coverId = coverId.id
         url = f"{self.URL}/cover/{coverId}"
-        self._request_url(url, "DELETE", headers= self.bearer)
-    
-    def fetch_cover_image(self, manga : Union[Manga, str], cover : Union[CoverArt, str], quality : str = "source") -> str:
-        """
-        Returns the url of a cover art
-
-        Parameters
-        -------------
-        manga : `str` | `Manga`. the manga id or the manga object
-        cover : `str` | `CoverArt`. Ther cover id or a cover object
-
-        Returns
-        -----------
-        url : `str`. The cover url
-        """
-        if type(manga) == Manga:
-            manga = manga.id
-        if type(cover) == CoverArt:
-            cover = cover.fileName
-        url = f"https://uploads.mangadex.org/covers/{manga}/{cover}"
-        
-        if quality == "medium":
-            url = f"{url}.512.jpg"
-        elif quality == "small":
-            url = f"{url}.256.jpg"
-        
-        return url
+        URLRequest._request_url(url, "DELETE", headers= self.bearer, timeout=self.timeout)
