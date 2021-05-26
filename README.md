@@ -93,9 +93,9 @@ If you want the chpaters of a given Manga, you'll need to specify the [feed endp
 
 ## Chapter Images
 
-Return the links for the chapter images fot a given Chapter Object
+Return the links for the chapter images fot a given Chapter Object. This is a Chapter method
 ```py
->>> chapter_images = api.fetch_chapter_images(Chapter)
+>>> Chapter.fetch_chapter_images()
 ```
 
 ## Get User
@@ -104,7 +104,6 @@ Get a User by id
 ```py
 >>> user = api.get_user(id = "id of user")
 ```
-
 
 ## Tag List
 
@@ -122,7 +121,26 @@ Get a Scanlation Group list
 >>> api.scanlation_group_list()
 ```
 
+## Cover Images List
+Get the cover image list
+```py
+>>> api.get_coverart_list()
+```
 
+## Get Cover by Id
+```py
+>>> api.get_cover(coverId = "the cover id")
+```
+
+## Edit Cover
+```py
+>>> api.edit_cover(coverId = "the cover id", description = "the cover description, can be null", volume = "the volume number", version = "int, the cover version")
+```
+## Get cover image link
+```py
+>>> CoverArt.fetch_cover_image()
+```
+This is a CoverArt method that returns the cover image url of that object
 # Private Calls
 
 ## Login
@@ -187,12 +205,10 @@ Get a list of the all the manga reading stauts
 ## Get a specific manga reading status
 
 Get the reading status of a specific manga
-
 ```py
 >>> manga_reading_status = api.get_manga_reading_status(id = "the manga id")
 ```
 ## Update Manga reading status
-
 ```py
 >>> api.update_manga_reading_status(id = "the manga id", status = "the new reading status")
 ```
@@ -218,35 +234,29 @@ Creates a manga
 ```
 ## Update Manga
 Updates a manga
-
 ```py
 >>> api.update_manga(id = "the manga id")
 ```
 
 ## Delete Manga
 Deletes manga
-
 ```py
 >>> api.delete_manga(id = "the manga id")
 ```
 ## Add manga to custom list
 
 Add a manga to a custom list
-
 ```py
 >>> api.add_manga_to_custom_list(id = "the manga id", listId = "the list id")
 ```
 
 ## Remove a manga from custom list
-
 Removes a manga from a custom list
-
 ```py
 >>> api.remove_manga_from_custom_list(id = "the manga id", listId = "the list id")
 ```
 
 ## Create  a custom list
-
 ```py
 >>> api.create_customlist() #this will create a custom list with no special parameters
 ```
@@ -270,7 +280,6 @@ Removes a manga from a custom list
 * `visibility`. Values : `"public"` `"private"`
 
 ## Delete custom list
-
 ```py
 >>> api.delete_customlist(id = "the custom list id")
 ```
@@ -290,7 +299,6 @@ Removes a manga from a custom list
 >>> api.get_customlist_manga_feed(id = "the custom list id")
 ```
 ### QueryParams:
-
 * limit
 * offset
 * locales
@@ -299,18 +307,15 @@ Removes a manga from a custom list
 * publishAtSince. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
 
 ## Create Author
-
 ```py
 >>> api.create_author(name = "author name", version = 1, ObjReturn = False)
 ```
 ## Update Author
-
 ```py
 >>> api.update_author(id = "the author id", version = "int with the version", name = "author's name", ObjReturn = False)
 ```
 
 ## Delete Author
-
 ```py
 >>> api.delete_author(id = "the author id")
 ```
