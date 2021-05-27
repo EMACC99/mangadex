@@ -46,7 +46,9 @@ class URLRequest():
             except requests.RequestException as e:
                 print(f"An error has occured: {e}")
                 raise
-
+        if not resp.ok:
+            raise ApiError(resp)
+            
         content = resp.content
         data = URLRequest._parse_data(content if isinstance(content, basestring) else content.decode('utf-8'))
         return data
