@@ -39,7 +39,9 @@ The usage is like this
 >>> manga_list = api.get_manga_list(title = "You manga title here")
 ```
 
-**NOTE**: The search rigth now is faulty but tahts is an api problem. At the moment the only parameters that work are: `title`, `limit` and `offset`
+~~**NOTE**: The search rigth now is faulty but tahts is an api problem. At the moment the only parameters that work are: `title`, `limit` and `offset`~~
+
+The search is now working so the above is no longer true
 
 ## Getting a manga by its id
 ```py
