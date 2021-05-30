@@ -889,8 +889,11 @@ class Api():
         resp = URLRequest._request_url(url, "GET", timeout=self.timeout)
         return CoverArt._createCoverImage(resp)
         
-    def upload_cover(self, manga_id : str, file : str, ObjReturn : bool = False):
+    def upload_cover(self, manga_id : str, filename : str, ObjReturn : bool = False):
         url = f"{self.URL}/cover/{manga_id}"
+        with open(filename, 'rb') as f:
+            file = f.read()
+
         resp = URLRequest._request_url(url, "POST", params = {"file" : file}, headers= self.bearer, timeout=self.timeout)
         return CoverArt._createCoverImage(resp) if ObjReturn else None
 
