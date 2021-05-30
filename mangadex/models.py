@@ -33,7 +33,7 @@ class Manga():
 
     def _MangaFromDict(self, data : dict):
         if data["data"]["type"] != 'manga' or not data:
-            raise MangaError("The data provides is not a Manga")
+            raise MangaError(data=data, message="The data probvided is not a Manga")
         
         attributes = data["data"]["attributes"]
 
@@ -85,7 +85,7 @@ class Tag():
 
     def _TagFromDict(self, data : dict):
         if data["data"]["type"] != 'tag' or not data:
-            raise TagError("The data provided is not a Tag")
+            raise TagError(data=data, message="The data probvided is not a Tag")
         
         attributes = data["data"]["attributes"]
 
@@ -126,7 +126,7 @@ class Chapter():
     
     def _ChapterFromDict(self, data):
         if data["data"]["type"] != 'chapter' or not data:
-            raise ChapterError("The data probvided is not a Tag")
+            raise ChapterError(data = data, mmessage="The data probvided is not a Chapter")
 
         attributes = data["data"]["attributes"]
 
@@ -194,7 +194,7 @@ class User():
 
     def _UserFromDict(self, data):
         if data["data"]["type"] != "user" or not data:
-            raise UserError("The data provided is not an author")
+            raise UserError(data = data, message="The data provided is not a User")
         
         attributes = data["data"]["attributes"]
 
@@ -229,7 +229,7 @@ class Author():
     
     def _AuthorFromDict(self, data):
         if data["data"]["type"] != "author" or not data:
-            raise AuthorError("The data provided is not an author")
+            raise AuthorError(data = data, message= f"The data provided is not Author is : {data['data']['type']}")
     
         attributes = data["data"]["attributes"]
 

@@ -18,26 +18,57 @@ class ApiError(Exception):
 class ApiClientError(Exception):
     pass
 
-class MangaError(Exception):
-    pass
+class BaseError(Exception):
+    def __init__(self, data : dict, message : str = None) -> None:
+        self.data = data
+        self.message = message
+        super(BaseError, self).__init__(self.message)
+    
+class MangaError(BaseError):
+    def __init__(self, data: dict, message: str) -> None:
+        super(MangaError, self).__init__(data, message=message)
+        self.data = data
+        self.message = message
 
-class TagError(Exception):
-    pass
+class TagError(BaseError):
+    def __init__(self, data: dict, message: str) -> None:
+        super(TagError, self).__init__(data, message=message)
+        self.data = data
+        self.message = message
+    
 
-class ChapterError(Exception):
-    pass
+class ChapterError(BaseError):
+    def __init__(self, data: dict, message: str) -> None:
+        super(ChapterError, self).__init__(data, message=message)
+        self.data
+        self.message
+    
+class AuthorError(BaseError):
+    def __init__(self, data: dict, message: str) -> None:
+        super(AuthorError, self).__init__(data, message=message)
+        self.data
+        self.message
 
-class AuthorError(Exception):
-    pass
+class ScanlationGroupError(BaseError):
+    def __init__(self, data: dict, message: str) -> None:
+        super(ScanlationGroupError, self).__init__(data, message=message)
+        self.data = data
+        self.message = message
 
-class ScanlationGroupError(Exception):
-    pass
+class UserError(BaseError):
+    def __init__(self, data: dict, message: str) -> None:
+        super(UserError,self).__init__(data, message=message)
+        self.data = data
+        self.message = message
 
-class UserError(Exception):
-    pass
+class CustomListError(BaseError):
+    def __init__(self, data: dict, message: str) -> None:
+        super(CustomListError, self).__init__(data, message)
+        self.data = data
+        self.message = message
 
-class CustomListError(Exception):
-    pass
-
-class CoverArtError(Exception):
-    pass
+class CoverArtError(BaseError):
+    def __init__(self, data: dict, message: str) -> None:
+        super(CoverArtError, self).__init__(data, message=message)
+        self.data = data
+        self.message = message
