@@ -884,12 +884,35 @@ class Api():
         return CoverArt._createCoverImageList(resp)
     
     def get_cover(self, coverId : str) -> CoverArt:
-        
+        """
+        Gets a cover image
+
+        Parameters
+        --------------
+        coverId : `str`. The cover id
+
+        Returns
+        --------------
+        `CoverArt`. A cover art object
+        """
         url = f"{self.URL}/cover/{coverId}"
         resp = URLRequest._request_url(url, "GET", timeout=self.timeout)
         return CoverArt._createCoverImage(resp)
         
     def upload_cover(self, manga_id : str, filename : str, ObjReturn : bool = False):
+        """
+        Uploads a cover 
+
+        Parameters
+        --------------
+        manga_id : `str`
+        filename : `str`
+        ObjReturn : `bool`
+
+        Returns
+        -------------
+        `CoverArt` if `ObjReturn = True`
+        """
         url = f"{self.URL}/cover/{manga_id}"
         with open(filename, 'rb') as f:
             file = f.read()
