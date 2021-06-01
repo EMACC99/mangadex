@@ -4,6 +4,8 @@ from typing import Dict, Tuple, List, Union
 
 from mangadex import (Manga, Tag, Chapter, User, UserError, ChapterError, Author, ScanlationGroup, CoverArt, CustomList, URLRequest, TagError)
 
+import re #for validating email and prevent spam
+
 class Api():
     def __init__(self, timeout = 5):
         self.URL = 'https://api.mangadex.org'
@@ -234,9 +236,6 @@ class Api():
         ------------
         id : `str`. The manga id
 
-        Returns
-        -----------
-        `None`
         """
         url = f"{self.URL}/manga{id}"
         URLRequest._request_url(url, "DELETE", headers=self.bearer, timeout= self.timeout)
@@ -462,10 +461,6 @@ class Api():
         Parameters
         ---------------
         id : `str`. Required. The author id
-
-        Returns
-        --------------
-        `None`
         """
         url = f"{self.URL}/author/{id}"
         URLRequest._request_url(url, "DELETE", headers=self.bearer)
@@ -598,7 +593,6 @@ class Api():
         Returns
         -------------
         `List[User]`
-        
         """
         url = f"{self.URL}/user/follows/user"
         resp = URLRequest._request_url(url, "GET", timeout= self.timeout ,params=kwargs, headers=self.bearer)
@@ -615,7 +609,6 @@ class Api():
         Returns
         ------------
         `str` The manga reading status
-
         """
         url = f"{self.URL}/manga/{id}/status"
         resp = URLRequest._request_url(url, "GET", headers=self.bearer, timeout=self.timeout)
@@ -627,12 +620,10 @@ class Api():
 
         Parameters
         ------------
-
         status : `str`. Optional. Values : `"reading"` `"on_hold"` `"plan_to_read"` `"dropped"` `"re_reading"` `"completed"`
 
         Returns
         -----------
-
         `Dict[str,str]` A dictionary with the Manga id and its status
         """
         url = f"{self.URL}/manga/status"
@@ -643,14 +634,10 @@ class Api():
         """
         Follow a manga
 
-        Paramerets
+        Parameters
         --------------
 
         id : `str`. The manga id
-
-        Returns
-        -------------
-        `None`
 
         Raises
         -------------
@@ -666,10 +653,6 @@ class Api():
         Parameters
         -------------
         id : `str`. The manga id
-
-        Returns
-        ------------
-        `None`
 
         Raises
         -----------
@@ -688,10 +671,6 @@ class Api():
         id : `str`. The manga id
         status : `str`. Values : `"reading"` `"on_hold"` `"plan_to_read"` `"dropped"` `"re_reading"` `"completed"`
 
-        Returns
-        -------------
-        `None`
-
         Raises
         -------------
         `ApiError`
@@ -707,10 +686,6 @@ class Api():
         --------------
         id : `str`. The manga id
         listId : `str`. The list id
-
-        Returns
-        -------------
-        `None`
         """
         url = f"{self.URL}/{id}/list{listId}"
         URLRequest._request_url(url, "POST", headers=self.bearer, timeout=self.timeout)
@@ -723,10 +698,6 @@ class Api():
         ------------
         id : `str`. The manga id
         listId : `str`. The list id
-
-        Returns
-        ------------
-        `None`
         """
         url = f"{self.URL}/manga/{id}/list/{listId}"
         URLRequest._request_url(url, "DELETE", headers=self.bearer, timeout=self.timeout)
@@ -742,10 +713,6 @@ class Api():
         name : `str`. The custom list name
         visibility : `str. The visibility of the custom list
         manga : `List[str]`. List of manga ids
-
-        Returns
-        -----------
-        `None`
         """
         url = f"{self.URL}/list"
         params = {"name" : name, "version" : version}
@@ -764,7 +731,6 @@ class Api():
         Returns
         ------------
         `CustomList`
-        
         """
         url = f"{self.URL}/list/{id}"
         resp = URLRequest._request_url(url, "GET", headers=self.bearer, timeout=self.timeout)
@@ -798,10 +764,6 @@ class Api():
         Parameters
         ------------
         id : `str`. The custom list id
-
-        Returns
-        ----------
-        `None`
         """
         url = f"{self.URL}/list{id}"
         URLRequest._request_url(url, "DELETE", headers=self.bearer, timeout=self.timeout)
@@ -820,7 +782,6 @@ class Api():
         Returns
         ----------
         `List[CustomList]`
-
         """
         url = f"{self.URL}/user/list"
         resp = URLRequest._request_url(url, "GET", params=kwargs, headers=self.bearer, timeout=self.timeout)
@@ -851,7 +812,7 @@ class Api():
         """
         Get the chapter feed of a given custom list. 
 
-        Paramters
+        Parameters
         ------------
         id : `str`. The custom list id
 
@@ -911,7 +872,7 @@ class Api():
 
         Returns
         -------------
-        `CoverArt` if `ObjReturn = True`
+        `CoverArt` if `ObjReturn` set to `True`
         """
         url = f"{self.URL}/cover/{manga_id}"
         with open(filename, 'rb') as f:
@@ -961,3 +922,82 @@ class Api():
             coverId = coverId.id
         url = f"{self.URL}/cover/{coverId}"
         URLRequest._request_url(url, "DELETE", headers= self.bearer, timeout=self.timeout)
+
+    def create_account(self, username : str, password : str, email : str, ObjReturn : bool = False):
+        """
+        Creates an account
+
+        Parameters
+        ---------------
+        username : `str`.
+        password : `str`.
+        email : `str`.
+        ObjReturn : `bool`.
+
+        Return
+        -------------
+        `User` if `ObjReturn` set to `True`
+        """
+        url = f"{self.URL}/account/create"
+        email_regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$' # regular expression for email
+        if re.search(email_regex, email) is not None:
+            raise ValueError("The email provided is not valid")
+        params = {"username" : username, "password" : password, "email" : email}
+        resp = URLRequest._request_url(url, "POST", timeout=self.timeout, params=params)
+        return User._create_user(resp["data"]) if ObjReturn else None
+    
+    def activate_account(self, code : str):
+        """
+        Handles the activation code for the account creation
+
+        Parameters
+        ------------
+        code : `str`. The activation code sent to the email provided
+        """
+        url = f"{self.URL}/account/activate/{code}"
+        URLRequest._request_url(url, "GET", timeout=self.timeout)
+    
+    def resend_activation_code(self, email : str):
+        """
+        Resends the activation code to another email
+
+        Parameters
+        -----------------
+        email : `str`.
+        """
+        email_regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$' # regular expression for email
+        if re.search(email_regex, email) is not None:
+            raise ValueError("The email provided is not valid")
+        params = {"email" : email}
+        url = f"{self.URL}/account/activate/resend"
+        URLRequest._request_url(url, "POST", timeout=self.timeout, params=params)
+    
+    def recover_account(self, email : str):
+        """
+        Recover an existing account
+
+        Parameters
+        --------------
+        email : `str`.
+        """
+        email_regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
+        if re.search(email_regex, email) is not None:
+            raise ValueError("The email provided is not valid")
+        params = {"email" : email}
+        url = f"{self.URL}/account/recover"
+        URLRequest._request_url(url, "POST", params=params)
+
+    def complete_account_recover(self, code : str, newPassword : str):
+        """
+        Completes the account recover process
+
+        Parameters
+        --------------
+        code : `str`. The code sended to the email given in `recover_account`
+        newPassword : `str`. The new password for the account
+        """
+        if len(newPassword) < 8:
+            raise ValueError("Password must have at least 8 characters")
+        url = f"{self.URL}/account/recover/{code}"
+        params = {"newPassword" : newPassword}
+        URLRequest._request_url(url, "POST", timeout=self.timeout, params=params)
