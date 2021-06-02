@@ -860,7 +860,7 @@ class Api():
         resp = URLRequest._request_url(url, "GET", timeout=self.timeout)
         return CoverArt._createCoverImage(resp)
         
-    def upload_cover(self, manga_id : str, filename : str, ObjReturn : bool = False):
+    def upload_cover(self, manga_id : str, filename : str, ObjReturn : bool = False) -> Union[CoverArt, None]:
         """
         Uploads a cover 
 
@@ -905,7 +905,7 @@ class Api():
             params["description"] = description
 
         url = f"{self.URL}/cover/{coverId}"
-        resp = URLRequest._request_url(url, "PUt", params=params, headers=self.bearer, timeout=self.timeout)
+        resp = URLRequest._request_url(url, "PUT", params=params, headers=self.bearer, timeout=self.timeout)
         return CoverArt._createCoverImage(resp) if ObjReturn else None
     
     def delete_cover(self, coverId : Union[str , CoverArt]):
@@ -923,7 +923,7 @@ class Api():
         url = f"{self.URL}/cover/{coverId}"
         URLRequest._request_url(url, "DELETE", headers= self.bearer, timeout=self.timeout)
 
-    def create_account(self, username : str, password : str, email : str, ObjReturn : bool = False):
+    def create_account(self, username : str, password : str, email : str, ObjReturn : bool = False) -> Union[User, None]:
         """
         Creates an account
 
