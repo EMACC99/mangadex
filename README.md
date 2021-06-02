@@ -143,6 +143,38 @@ Get the cover image list
 >>> CoverArt.fetch_cover_image()
 ```
 This is a CoverArt method that returns the cover image url of that object
+
+## Create account
+
+To create an account
+```py
+>>> api.create_account(username = "your username", password = "your password", email = "youremail@example.com", ObjReturn = False)
+```
+This will send you an activation code, this is the one to pass to `activate_account`.
+
+```py
+>>> api.acticate_account(code = "the code sent")
+```
+
+If you need another activation code:
+
+```py
+>>> api.resend_activation_code(email = "anotheremail@example.com")
+```
+
+## Account recovery
+
+To recover and account
+
+```py
+>> api.recover_account(email = "youremail@example.com")
+```
+
+This will send you and activation code that you need
+```py
+>>> api.complete_account_recover(code = "the code sent to you", newPassword = "the new password for the account")
+```
+
 # Private Calls
 
 ## Login
