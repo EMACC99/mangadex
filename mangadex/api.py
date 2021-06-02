@@ -20,7 +20,7 @@ class Api():
         self.bearer = bearer
 
     @staticmethod
-    def _parse_manga_params(params : dict):
+    def _parse_manga_params(params : dict) -> dict:
         if "authors" in params:
             temp = params.pop("authors")
             params["authors[]"] = temp
@@ -940,8 +940,11 @@ class Api():
         """
         url = f"{self.URL}/account/create"
         email_regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$' # regular expression for email
-        if re.search(email_regex, email) is not None:
+        if re.search(email_regex, email) is None:
             raise ValueError("The email provided is not valid")
+        
+        if len(password) < 8:
+            raise ValueError("Password must have at least 8 characters")
         params = {"username" : username, "password" : password, "email" : email}
         resp = URLRequest._request_url(url, "POST", timeout=self.timeout, params=params)
         return User._create_user(resp["data"]) if ObjReturn else None
@@ -981,7 +984,7 @@ class Api():
         email : `str`.
         """
         email_regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
-        if re.search(email_regex, email) is not None:
+        if re.search(email_regex, email) is None:
             raise ValueError("The email provided is not valid")
         params = {"email" : email}
         url = f"{self.URL}/account/recover"
