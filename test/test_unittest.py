@@ -13,7 +13,7 @@ class TestApi():
     api = mangadex.Api()
     timeout = 5
     def test_SearchManga(self):
-        # we're going to search for thge iris zero
+        # we're going to search for the iris zero
         resp = self.api.get_manga_list(title = "iris zero", limit = 1)[0]
 
         try:
@@ -33,8 +33,8 @@ class TestApi():
             saved_resp = read_json_files("saved_get_chapter_response.json")
         finally:
             print("File not found, test failed")
-        saved_resp = mangadex.Chapter._create_chapter(saved_resp),  "The Chapter Objects are not equal"
-        assert resp == saved_resp
+        saved_resp = mangadex.Chapter._create_chapter(saved_resp)
+        assert resp == saved_resp,  "The Chapter Objects are not equal"
     
     def test_GetAuthor(self):
         raise NotImplementedError
