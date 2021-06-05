@@ -203,7 +203,7 @@ class Chapter():
         other_vals = [other.id, other.hash, other.Mangaid, other.chapter]
         return all((me == other for me,other in zip(my_vals, other_vals)))
 
-    def __ne__(self, other: object) -> bool:
+    def __ne__(self, other: 'Chapter') -> bool:
         return not self.__eq__(other)
     
 
