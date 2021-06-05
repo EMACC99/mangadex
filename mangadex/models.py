@@ -72,6 +72,14 @@ class Manga():
             manga_list.append(Manga._create_manga(elem))
         return manga_list
 
+    def __eq__(self, other : 'Manga') -> bool:
+        my_vals = [self.id, self.title, self.createdAt, self.authorId]
+        other_vals = [other.id, other.title, other.createdAt, other.authorId]
+        return all((me == other for me, other in zip(my_vals, other_vals)))
+    
+    def __ne__(self, other: object) -> bool:
+        return not self.__eq__(other)
+
     def __repr__(self) -> str:
         temp1 = f"Manga(id = {self.id}, title = {self.title}, altTitles = {self.altTitles}, description = {self.description}, isLocked = {self.isLocked}, links = {self.links}, originalLanguage = {self.originalLanguage} \n"
         temp2 = f"lastVolume = {self.lastVolume}, lastChapter = {self.lastChapter}, publicationDemographic = {self.publicationDemographic}, status = {self.status}, year = {self.year}, contentRating = {self.contentRating} \n"
@@ -104,6 +112,14 @@ class Tag():
         for tag in resp:
             tag_list.append(Tag._create_tag(tag))
         return tag_list
+
+    def __eq__(self, other : 'Tag') -> bool:
+        my_vals = [self.id, self.name]
+        other_vals = [other.id, other.name]
+        return all((me == other for me,other in zip(my_vals, other_vals)))
+
+    def __ne__(self, other: 'Tag') -> bool:
+        return not self.__eq__(other)
 
     def __repr__(self) -> str:
         return f"Tag(id = {self.id}, name = {self.name})"
@@ -182,6 +198,15 @@ class Chapter():
             chap_list.append(Chapter._create_chapter(elem))
         return chap_list
 
+    def __eq__(self, other: 'Chapter') -> bool:
+        my_vals = [self.id, self.hash, self.Mangaid, self.chapter]
+        other_vals = [other.id, other.hash, other.Mangaid, other.chapter]
+        return all((me == other for me,other in zip(my_vals, other_vals)))
+
+    def __ne__(self, other: object) -> bool:
+        return not self.__eq__(other)
+    
+
     def __repr__(self) -> str:
         temp1 =  f"Chapter(id = {self.id}, title = {self.title}, volume = {self.volume}, chapter = {self.chapter}, translatedLanguage = {self.translatedLanguage}, hash = {self.hash} \n"
         temp2 = f"data = List[filenames], publishAt = {self.publishAt}, createdAt = {self.createdAt}, uploadedAt = {self.updatedAt}, sacanlation_group_id = {self.sacanlation_group_id}, Mangaid = {self.Mangaid}, uploader = {self.uploader})"
@@ -214,6 +239,14 @@ class User():
         for elem in resp:
             user_list.append(User._create_user(elem))
         return user_list
+
+    def __eq__(self, other: 'User') -> bool:
+        my_vals = [self.id, self.username]
+        other_vals = [other.id, other.username]
+        return all((me == other for me,other in zip(my_vals, other_vals)))
+
+    def __ne__(self, other: 'User') -> bool:
+        return not self.__eq__(other)
 
     def __repr__(self) -> str:
         return f"User(id = {self.id}, username = {self.username})"
@@ -253,6 +286,14 @@ class Author():
         for elem in resp:
             authors_list.append(Author._create_author(elem))
         return authors_list
+
+    def __eq__(self, other: 'Author') -> bool:
+        my_vals = [self.id ,self.name]
+        other_vals = [other.id, other.name]
+        return all((me == other for me,other in zip(my_vals, other_vals)))
+
+    def __ne__(self, other: 'Author') -> bool:
+        return not self.__eq__(other)
 
     def __repr__(self) -> str:
         return f"Author(id = {self.id}, name = {self.name}, imageUrl = {self.imageUrl}, createdAt = {self.createdAt}, updatedAt = {self.updatedAt})"
@@ -297,6 +338,14 @@ class ScanlationGroup():
             group_list.append(ScanlationGroup._create_group(elem))
         return group_list  
 
+    def __eq__(self, other: 'ScanlationGroup') -> bool:
+        my_vals = []
+        other_vals = []
+        return all((me == other for me,other in zip(my_vals, other_vals)))
+    
+    def __ne__(self, other: 'ScanlationGroup') -> bool:
+        return not self.__eq__(other)
+        
     def __repr__(self) -> str:
         return f"ScanlationGroup(id = {self.id}, name = {self.name}, leader = {self.leader}, createdAt = {self.createdAt}, updatedAt = {self.updatedAt})"
 
