@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = '2.1.3'
+VERSION = '2.2.0'
 DESCRIPTION = 'Python wrapper for the mangadex API'
 with open("README.md", "r", encoding="utf8") as f:
     LONG_DESCRIPTION = f.read()
@@ -14,7 +14,7 @@ setup(
     long_description = LONG_DESCRIPTION,
     long_description_content_type = "text/markdown",
     packages = find_packages(),
-    install_requires = ["requests"],
+    install_requires = ["requests", "future", "python-dateutil", "pytest"],
     source = "https://github.com/EMACC99/mangadex",
     download_url = "https://github.com/EMACC99/mangadex/releases",
     documentation = "https://github.com/EMACC99/mangadex/wiki",
