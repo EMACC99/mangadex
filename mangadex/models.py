@@ -50,7 +50,7 @@ class Manga():
         self.status = attributes["status"]
         self.year = attributes["year"]
         self.contentRating = attributes["contentRating"]
-        self.tags = attributes["tags"]
+        self.tags = Tag._create_tag_list(attributes["tags"])
         self.createdAt = parse(attributes["createdAt"])
         self.updatedAt = parse(attributes["updatedAt"])
 
@@ -90,15 +90,21 @@ class Tag():
     def __init__(self) -> None:
         self.id : str= ""
         self.name : Dict[str, str] = {}
-
+        self.description : str = ""
+        self.group : str = ""
     def _TagFromDict(self, data : dict):
-        if data["data"]["type"] != 'tag' or not data:
-            raise TagError(data=data, message="The data probvided is not a Tag")
+        if "data" in data:
+            data = data["data"]
         
-        attributes = data["data"]["attributes"]
+        if data["type"] != 'tag' or not data:
+            raise TagError(data=data, message="The data provided is not a Tag")
+        
+        attributes = data["attributes"]
 
-        self.id = data["data"]["id"]
+        self.id = data["id"]
         self.name = attributes["name"]
+        self.description = attributes["description"]
+        self.group = attributes["group"]
 
     @staticmethod
     def _create_tag(elem) -> 'Tag':
@@ -141,8 +147,9 @@ class Chapter():
         self.publishAt : datetime = ""
     
     def _ChapterFromDict(self, data):
+
         if data["data"]["type"] != 'chapter' or not data:
-            raise ChapterError(data = data, mmessage="The data probvided is not a Chapter")
+            raise ChapterError(data = data, mmessage="The data provided is not a Chapter")
 
         attributes = data["data"]["attributes"]
 
@@ -206,7 +213,6 @@ class Chapter():
     def __ne__(self, other: 'Chapter') -> bool:
         return not self.__eq__(other)
     
-
     def __repr__(self) -> str:
         temp1 =  f"Chapter(id = {self.id}, title = {self.title}, volume = {self.volume}, chapter = {self.chapter}, translatedLanguage = {self.translatedLanguage}, hash = {self.hash} \n"
         temp2 = f"data = List[filenames], publishAt = {self.publishAt}, createdAt = {self.createdAt}, uploadedAt = {self.updatedAt}, sacanlation_group_id = {self.sacanlation_group_id}, Mangaid = {self.Mangaid}, uploader = {self.uploader})"
@@ -218,12 +224,15 @@ class User():
         self.username :str = ""
 
     def _UserFromDict(self, data):
-        if data["data"]["type"] != "user" or not data:
+        if "data" in data:
+            data = data["data"]
+
+        if data["type"] != "user" or not data:
             raise UserError(data = data, message="The data provided is not a User")
         
-        attributes = data["data"]["attributes"]
+        attributes = data["attributes"]
 
-        self.id = data["data"]["id"]
+        self.id = data["id"]
         self.username = attributes["username"]
 
     @staticmethod
@@ -259,6 +268,7 @@ class Author():
         self.bio : Dict[str,  str] = {}
         self.createdAt : datetime = ""
         self.updatedAt : datetime = ""
+        self.mangas : List[str] = []
     
     def _AuthorFromDict(self, data):
         if data["data"]["type"] != "author" or not data:
@@ -272,6 +282,7 @@ class Author():
         self.bio = attributes["biography"]
         self.createdAt = parse(attributes["createdAt"])
         self.updatedAt = parse(attributes["updatedAt"])
+        self.mangas =  [manga["id"] for manga in data["relationships"] if manga["type"] == "manga"] # better keep it like this to not consume computing time
 
     @staticmethod
     def _create_author(elem) -> 'Author':
