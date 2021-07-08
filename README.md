@@ -32,7 +32,7 @@ description = {'en': 'Tokyo in the 90s, the city center has been suffering from 
 isLocked = False, links = {'al': '38734', 'ap': 'eight', 'kt': '17709', 'mu': '6521', 'mal': '8734'}, originalLanguage = ja 
 lastVolume = None, lastChapter = 37.6, publicationDemographic = seinen, status = completed, year = None, contentRating = safe 
 ```
-You can algo use the `get_manga_list()` method to search for manga. 
+You can also use the `get_manga_list()` method to search for manga. 
 
 The usage is like this
 ```py
