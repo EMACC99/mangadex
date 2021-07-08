@@ -95,7 +95,7 @@ If you want the chpaters of a given Manga, you'll need to specify the [feed endp
 
 ## Chapter Images
 
-Return the links for the chapter images fot a given Chapter Object. This is a Chapter method
+Return the links for the chapter images for a given Chapter Object. This is a Chapter method
 ```py
 >>> Chapter.fetch_chapter_images()
 ```
