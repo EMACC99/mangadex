@@ -12,6 +12,10 @@ def read_json_files(filename : str, mode :str = "r") -> dict:
 class TestApi():
     api = mangadex.Api()
     timeout = 5
+    
+    def test_mangaList(self):
+        self.api.get_manga_list(limit = 1)[0]
+        
     def test_SearchManga(self):
         # we're going to search for the iris zero
         failed = False
