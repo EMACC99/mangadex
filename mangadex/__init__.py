@@ -7,6 +7,6 @@ from .models import (Manga, Tag, Chapter, User, ScanlationGroup, Author, CustomL
 from .api import (Api)
 
 __author__ = 'Eduardo Ceja'
-__version__ = "2.2.0"
+__version__ = "2.3.0"
 __license__ = "MIT"
 __copytight__ = "Copyright (c) 2021 Eduardo Ceja"

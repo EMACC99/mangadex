@@ -41,7 +41,11 @@ class Manga():
         self.title = attributes["title"]
         self.altTitles = attributes["altTitles"]
         self.description = attributes["description"]
-        self.isLocked = attributes["isLocked"]
+        try:
+            self.isLocked = attributes["isLocked"]
+        except KeyError:
+            pass
+        
         self.links = attributes["links"]
         self.originalLanguage = attributes["originalLanguage"]
         self.lastVolume = attributes["lastVolume"]
@@ -63,7 +67,7 @@ class Manga():
         manga = Manga()
         manga._MangaFromDict(elem)
         return manga
-        
+    
     @staticmethod
     def _create_manga_list(resp) -> List['Manga']:
         resp = resp["results"]
@@ -323,13 +327,20 @@ class ScanlationGroup():
             raise ScanlationGroupError("The data provided is not an scanlation group")
 
         attributes = data["data"]["attributes"]
-
+        relationships = data["relationships"]
         self.id = data["data"]["id"]
         self.name = attributes["name"]
 
         leader = User()
-        leader.id = attributes["leader"]["id"]
-        leader.username = attributes["leader"]["attributes"]["username"] #didn't use the _UserFromDict method becasue the api response is different
+        for elem in relationships:
+            try:
+                if elem["type"] == "leader":
+                    leader.id = elem["id"]
+                    break
+            except KeyError:
+                continue
+
+        # leader.username = attributes["leader"]["attributes"]["username"] #didn't use the _UserFromDict method becasue the api response is different
         self.leader =  leader
 
         self.createdAt = parse(attributes["createdAt"])
