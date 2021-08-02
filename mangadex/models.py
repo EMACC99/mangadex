@@ -27,8 +27,8 @@ class Manga():
         self.version = 1
         self.createdAt : datetime = ""
         self.updatedAt : datetime = ""
-        self.author : str = ""
-        self.artist : str = ""
+        self.authorId : List[str] = []
+        self.artistId : List[str] = []
         self.coverId : str = ""
 
     def _MangaFromDict(self, data : dict):
@@ -58,9 +58,14 @@ class Manga():
         self.createdAt = parse(attributes["createdAt"])
         self.updatedAt = parse(attributes["updatedAt"])
 
-        self.authorId  = data["relationships"][0]["id"]
-        self.artistId  = data["relationships"][1]["id"]
-        self.coverId = data["relationships"][2]["id"]
+        for elem in data["relationships"]:
+            if elem['type'] == 'author':
+                self.authorId.append(elem['id'])
+            elif elem['type'] == 'artist':
+                self.artistId.append(elem['id'])
+            elif elem['type'] == 'cover_art':
+                self.coverId = elem['id']
+
 
     @staticmethod
     def _create_manga(elem) -> 'Manga':
@@ -87,7 +92,7 @@ class Manga():
     def __repr__(self) -> str:
         temp1 = f"Manga(id = {self.id}, title = {self.title}, altTitles = {self.altTitles}, description = {self.description}, isLocked = {self.isLocked}, links = {self.links}, originalLanguage = {self.originalLanguage} \n"
         temp2 = f"lastVolume = {self.lastVolume}, lastChapter = {self.lastChapter}, publicationDemographic = {self.publicationDemographic}, status = {self.status}, year = {self.year}, contentRating = {self.contentRating} \n"
-        temp3 = f"createdAt = {self.createdAt}, uploadedAt = {self.updatedAt}), authorId = {self.author}, artistId = {self.artist}, coverId = {self.coverId}"
+        temp3 = f"createdAt = {self.createdAt}, uploadedAt = {self.updatedAt}), authorId = {self.authorId}, artistId = {self.artistId}, coverId = {self.coverId}"
         return temp1 + temp2 + temp3
 
 class Tag():
@@ -160,7 +165,7 @@ class Chapter():
         self.id = data["data"]["id"]
         self.title = attributes["title"]
         self.volume = attributes["volume"]
-        self.chapter = float(attributes["chapter"])
+        self.chapter = float(attributes["chapter"]) if attributes['chapter'] is not None else None
         self.translatedLanguage = attributes["translatedLanguage"]
         self.hash = attributes["hash"]
         self.data = attributes["data"]
