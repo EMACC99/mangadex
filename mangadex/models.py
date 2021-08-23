@@ -146,7 +146,7 @@ class Chapter():
         self.volume : str = ""
         self.chapter : float = None
         self.Mangaid : str = ""
-        self.sacanlation_group_id : str = ""
+        self.scanlation_group_id : str = ""
         self.translatedLanguage : str= ""
         self.hash : str = ""
         self.data : List[str] = []
@@ -172,7 +172,7 @@ class Chapter():
         self.publishAt = parse(attributes["publishAt"])
         self.createdAt = parse(attributes["createdAt"])
         self.updatedAt = parse(attributes["updatedAt"])
-        self.sacanlation_group_id = data["relationships"][0]["id"]
+        self.scanlation_group_id = data["relationships"][0]["id"]
         self.Mangaid = data["relationships"][1]["id"]
         self.uploader = data["relationships"][2]["id"]
 
@@ -224,7 +224,7 @@ class Chapter():
     
     def __repr__(self) -> str:
         temp1 =  f"Chapter(id = {self.id}, title = {self.title}, volume = {self.volume}, chapter = {self.chapter}, translatedLanguage = {self.translatedLanguage}, hash = {self.hash} \n"
-        temp2 = f"data = List[filenames], publishAt = {self.publishAt}, createdAt = {self.createdAt}, uploadedAt = {self.updatedAt}, sacanlation_group_id = {self.sacanlation_group_id}, Mangaid = {self.Mangaid}, uploader = {self.uploader})"
+        temp2 = f"data = List[filenames], publishAt = {self.publishAt}, createdAt = {self.createdAt}, uploadedAt = {self.updatedAt}, scanlation_group_id = {self.scanlation_group_id}, Mangaid = {self.Mangaid}, uploader = {self.uploader})"
         return temp1 + temp2
 
 class User():
