@@ -57,6 +57,10 @@ class Api():
         if "translatedLanguage" in params:
             temp = params.pop("translatedLanguage")
             params["translatedLanguage[]"] = temp
+        if "status" in params:
+            params["status[]"] = params.pop("status")
+        if "contentRating" in params:
+            params["contentRating[]"] = params.pop("contentRating")
         return params
 
     def get_manga_list(self, **kwargs) -> List[Manga]:
@@ -169,26 +173,30 @@ class Api():
         ------------
         `Manga`. A manga object if `ObjReturn` is set to `True`
         """
-        kwargs = self._parse_manga_params(kwargs)
+        params = self._parse_manga_params(kwargs)
         url = f"{self.URL}/manga"
-        kwargs["title"] = title
-        resp = URLRequest._request_url(url, "POST", params=kwargs, headers=self.bearer, timeout = self.timeout)
+        params["title"] = title
+        resp = URLRequest._request_url(url, "POST", params=params, headers=self.bearer, timeout = self.timeout)
         return  Manga._create_manga(resp)
 
-    def get_manga_volumes_and_chapters(self, id : str) -> Dict[str, str]:
+    def get_manga_volumes_and_chapters(self, id : str, **kwargs) -> Dict[str, str]:
         """
         Get a manga volumes and chapters
 
         Parameters
         ------------
         id : `str`. The manga id
+        translatedLanguage : `List[str]`
 
         Returns
         ------------
         `Dict[str, str]`. A dictionary with the volumes and the chapter id's
         """
+        params = None
+        if "translatedLanguage" in kwargs:
+            params = {"translatedLanguage[]" : kwargs["translatedLanguage"]}
         url = f"{self.URL}/manga/{id}/aggregate"
-        resp = URLRequest._request_url(url, "GET", timeout = self.timeout)
+        resp = URLRequest._request_url(url, "GET", timeout = self.timeout, params = params)
         return resp["volumes"]
 
     def update_manga(self, id : str, ObjReturn : bool = False ,**kwargs) -> Manga:
@@ -306,6 +314,17 @@ class Api():
         resp = URLRequest._request_url(url, "GET", timeout = self.timeout, params = kwargs)
         return Chapter._create_chapter_list(resp)
 
+    @staticmethod
+    def _parse_chapter_list_args(params : Dict[str, str]) -> Dict[str,str]:
+        if "groups" in params:
+            params["groups[]"] =  params.pop("groups")
+        if "volume" in params:
+            params["volume[]"] = params.pop("volume")
+        if "translatedLanguage" in params:
+            params["translatedLanguage[]"] = params.pop("translatedLanguage")
+
+        return params
+
     def chapter_list(self, **kwargs) -> List[Chapter]:
         """
         The list of chapters. To get the chpaters of a specific manga the manga parameter must be provided
@@ -317,12 +336,12 @@ class Api():
         limit : `int`
         offset : `int`
         title : `str`
-        groups : `[str]`
+        groups : `List[str]`
         uploader : `str`    
         manga : `str`
-        volume : `str`
+        volume : `str | List[str]`
         chapter : `str`
-        translatedLanguage : `str`
+        translatedLanguage : `List[str]`
         createdAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
         updatedAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
         publishAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
@@ -336,11 +355,9 @@ class Api():
         `ApiError` \n
         `ChapterError`
         """
-        if "groups" in kwargs:
-            temp = kwargs.pop("groups")
-            kwargs["groups[]"] = temp
+        params =  Api._parse_chapter_list_args(kwargs)
         url = f"{self.URL}/chapter"
-        resp = URLRequest._request_url(url, "GET", timeout= self.timeout, params= kwargs)
+        resp = URLRequest._request_url(url, "GET", timeout= self.timeout, params= params)
         return Chapter._create_chapter_list(resp)
 
     def get_chapter(self, id: str) -> Chapter:
@@ -373,7 +390,7 @@ class Api():
         ------------
         limit : `int`
         offset : `int`
-        ids : `string`. Array of ids 
+        ids : List[`str`]. Array of ids 
         name : `str`
 
         Returns
@@ -385,6 +402,9 @@ class Api():
         `ApiError` \n
         `AuthorError`
         """
+        if "ids" in kwargs:
+            kwargs["ids[]"] = kwargs.pop("ids")
+        
         url = f"{self.URL}/author"
         resp = URLRequest._request_url(url, "GET", timeout=self.timeout ,params = kwargs)
         return Author._create_authors_list(resp)
@@ -572,10 +592,13 @@ class Api():
 
         offset `int`
 
+        translatedLanguage : `List[str]`
         Returns
         -------------
         `List[ScanlationGroup]`
         """
+        if "translatedLanguage" in kwargs: 
+            kwargs['translatedLanguage[]'] = kwargs.pop("translatedLanguage")
         url = f"{self.URL}/user/follows/group"
         resp = URLRequest._request_url(url, "GET", timeout = self.timeout,  params=kwargs, headers= self.bearer)
         return ScanlationGroup._create_group_list(resp)
@@ -720,14 +743,19 @@ class Api():
         params["manga[]"] = manga
         URLRequest._request_url(url, "POST", params=params, timeout=self.timeout)
 
-    def get_customlist(self, id : str) -> CustomList:
+    def get_customlist(self, id : str, **kwargs) -> CustomList:
         """
         Get a custom list by its id
 
         Parameters
         ------------
         id : `str`. The id of the custom list
-
+        limit : int
+        offset : int
+        translatedLanguage : List[str]
+        createdAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
+        updatedAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
+        publishAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
         Returns
         ------------
         `CustomList`
@@ -833,15 +861,35 @@ class Api():
         resp = URLRequest._request_url(url, "GET", params=kwargs, headers=self.bearer, timeout = self.timeout)
         return  Chapter._create_chapter_list(resp)
 
+
+    @staticmethod
+    def _parse_coverart_params(params : Dict[str,str]) -> Dict[str, str]:
+        if "manga" in params:
+            params["manga[]"] = params.pop("manga")
+        if "ids" in params:
+            params["ids[]"] = params.pop("ids")
+        if "uploaders" in params:
+            params["uploaders[]"] = params.pop("uploaders")
+
+        return params
     def get_coverart_list(self, **kwargs):
         """
         Get the list of cover arts (like the manga feed)
+
+        Optional parameters
+        -------------------------
+
+        manga : List[str]. Manga ids
+        
+        ids : List[str]. Cover ids
+
+        uploaders : List[str]. User ids
+
         """
-        if "manga" in kwargs:
-            temp = kwargs.pop("manga")
-            kwargs["manga[]"] = temp 
+
+        params = Api._parse_coverart_params(kwargs)
         url = f"{self.URL}/cover"
-        resp = URLRequest._request_url(url, "GET", params=kwargs, timeout= self.timeout)
+        resp = URLRequest._request_url(url, "GET", params = params, timeout= self.timeout)
         return CoverArt._createCoverImageList(resp)
     
     def get_cover(self, coverId : str) -> CoverArt:
