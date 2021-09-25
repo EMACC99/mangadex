@@ -89,7 +89,7 @@ class TestApi():
 
         assert resp == saved_response
     
-    def test_getUser(self):
+    def test_GetUser(self):
         with open("test/user_data.txt", "r") as f:
             user_id = f.readline().strip('\n')
             username = f.readline().strip('\n')
@@ -98,6 +98,21 @@ class TestApi():
         assert user.username == username, "This user is invalid"
 
 
+    def test_GetCoverArtList(self):
+        self.api.get_coverart_list()
+
+
+    def test_GetMangaCoverArt(self):
+        random_manga = self.api.random_manga()
+        self.api.get_cover(random_manga.coverId)
+
+
+    def test_GetUserCustomLists(self):
+        with open("test/user_data.txt", "r") as f:
+            user_id = f.readline().strip('\n')
+        
+        self.api.get_user_customlists(user_id)
+    
 class Test_private_api():
     api = mangadex.Api()
     timeout = 5
@@ -138,3 +153,8 @@ class Test_private_api():
         self.login()
 
         self.api.unfollow_manga(id = manga_id)
+
+    def test_GetMyCustomLists(self):
+        self.login()
+
+        self.api.get_my_customlists()
