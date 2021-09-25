@@ -836,32 +836,6 @@ class Api():
         resp = URLRequest._request_url(url, "GET", params=kwargs, headers=self.bearer, timeout=self.timeout)
         return CustomList._create_customlist_list(resp)
     
-    def get_customlist_manga_feed(self, id : str, **kwargs) -> List[Chapter]:
-        """
-        Get the chapter feed of a given custom list. 
-
-        Parameters
-        ------------
-        id : `str`. The custom list id
-
-        ### QueryParams:
-
-        limit : `int`. 
-        offset : `int`
-        translatedLanguage : `List[str]`. The translated laguages to query
-        createdAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
-        updatedAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
-        publishAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
-
-        Returns
-        -----------
-        `List[Chapter]`
-        """
-        url = f"{self.URL}/user/{id}/feed"
-        resp = URLRequest._request_url(url, "GET", params=kwargs, headers=self.bearer, timeout = self.timeout)
-        return  Chapter._create_chapter_list(resp)
-
-
     @staticmethod
     def _parse_coverart_params(params : Dict[str,str]) -> Dict[str, str]:
         if "manga" in params:
