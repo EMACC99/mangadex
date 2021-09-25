@@ -128,7 +128,12 @@ class Tag():
     @staticmethod
     def _create_tag_list(resp) -> List['Tag']:
         tag_list = []
-        for tag in resp["data"]:
+        try:
+            resp = resp["data"]
+        except (TypeError, KeyError):
+            pass
+    
+        for tag in resp:
             tag_list.append(Tag._create_tag(tag))
         return tag_list
 
@@ -183,7 +188,10 @@ class Chapter():
         self.updatedAt = parse(attributes["updatedAt"])
         self.scanlation_group_id = data["relationships"][0]["id"]
         self.Mangaid = data["relationships"][1]["id"]
-        self.uploader = data["relationships"][2]["id"]
+        try:
+            self.uploader = data["relationships"][2]["id"]
+        except IndexError:
+            pass
 
     def fetch_chapter_images(self) -> List[str]: #maybe make this an async function?
         """
