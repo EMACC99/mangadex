@@ -328,18 +328,6 @@ Removes a manga from a custom list
 * `limit`. The limit of custom lists to return
 * `offset`. The amout of offset
 
-## Get custom list manga feed:
-```py
->>> api.get_customlist_manga_feed(id = "the custom list id")
-```
-### QueryParams:
-* limit
-* offset
-* locales
-* createdAtSince. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
-* updatedAtSince. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
-* publishAtSince. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
-
 ## Create Author
 ```py
 >>> api.create_author(name = "author name", version = 1, ObjReturn = False)
