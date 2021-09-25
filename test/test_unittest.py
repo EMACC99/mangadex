@@ -27,6 +27,9 @@ class TestApi():
 
         assert resp == saved_resp, "The Manga objects are not equal"
     
+    def test_RandomManga(self):
+        self.api.random_manga()
+
     def test_GetMangaChapter(self):
         ch_id = "015979c8-ffa4-4afa-b48e-3da6d10279b0"
         resp = self.api.get_chapter(id = ch_id)
