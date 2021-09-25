@@ -410,20 +410,24 @@ class CustomList():
         self.id : str = ""
         self.name : str = ""
         self.visibility : str = ""
-        self.owner : User = None
-        self.mangas : List[Manga] = None
+        self.owner : str = ""
+        self.mangas : List[str] = []
 
     def _ListFromDict(self, data):
         if data["type"] != "custom_list" or not data:
             raise CustomListError("The data provided is not a Custom List")
         
         attributes = data["attributes"]
+        relationships = data["relationships"]
 
         self.id = data["id"]
         self.name = attributes["name"]
         self.visibility = attributes["visibility"]
-        self.owner = User()
-        self.owner._UserFromDict(attributes["owner"])
+        for elem in relationships:
+            if elem["type"] == "user":
+                self.owner = elem["id"]
+            elif elem["type"] == "manga":
+                self.mangas.append(elem["id"])
     
     @staticmethod
     def _create_customlist(elem) -> 'CustomList':
@@ -453,6 +457,12 @@ class CoverArt():
         self.mangaId : str = None
 
     def _CoverFromDict(self, data):
+
+        try:
+            data = data["data"]
+        except (KeyError, TypeError):
+            pass
+
         if data["type"] != "cover_art" or not data:
             raise CoverArtError("The data provided is not a Custom List")
         
