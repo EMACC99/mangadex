@@ -85,12 +85,52 @@ class TestApi():
         saved_response = mangadex.ScanlationGroup._create_group_list(raw_response)
 
         assert resp == saved_response
+    
+    def test_getUser(self):
+        user_id = "ca65f18b-9f99-4f8b-bead-9ab49af9cc05"
+        user = self.api.get_user(id = user_id)
+
+        assert user.username == "EMACC", "This user is invalid" # this is my mangadex username
+
+
+
+class Test_private_api():
+    api = mangadex.Api()
+    timeout = 5
+    
+    def login(self):
+        credentials = read_json_files("test/credentials.txt")
+        self.api.login(credentials["username"], credentials["password"])
+
+
+    def test_GetMangaReadingStatus(self):
+        self.login()
+
+        manga_id = "35c33279-395d-4d9f-abec-93893c28ab29"
+        self.api.get_manga_read_markes(id = manga_id)
+
+    def test_GetAllMangaReadingStatus(self):
+        self.login()
+
+        self.api.get_all_manga_reading_status()
         
-    # def test_GetChapter(self):
-    #     raise NotImplementedError
 
-    # def test_FetchCoverImages(self):
-    #     raise NotImplementedError
+    def test_GetMyMangaList(self):
+        self.login()
+        
+        self.api.get_my_mangalist()
 
-    # def test_(self):
-    #     raise NotImplementedError
+
+    def test_FollowManga(self):
+        manga_id = "32d76d19-8a05-4db0-9fc2-e0b0648fe9d0" # solo leveling
+
+        self.login()
+
+        self.api.follow_manga(id = manga_id)
+
+    def test_UnfollowManga(self):
+        manga_id = "32d76d19-8a05-4db0-9fc2-e0b0648fe9d0" # solo leveling
+
+        self.login()
+
+        self.api.unfollow_manga(id = manga_id)
