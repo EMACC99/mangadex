@@ -90,11 +90,12 @@ class TestApi():
         assert resp == saved_response
     
     def test_getUser(self):
-        user_id = "ca65f18b-9f99-4f8b-bead-9ab49af9cc05"
+        with open("user_data.txt", "r") as f:
+            user_id = f.readline()
+            username = f.readline()
         user = self.api.get_user(id = user_id)
 
-        assert user.username == "EMACC", "This user is invalid" # this is my mangadex username
-
+        assert user.username == username, "This user is invalid"
 
 
 class Test_private_api():
