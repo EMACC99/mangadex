@@ -503,7 +503,7 @@ class Api():
         `UserError`
         """
         url = f"{self.URL}/user/{id}"
-        resp = URLRequest._request_url(url, "GET")
+        resp = URLRequest._request_url(url, "GET", timeout = self.timeout)
         return User._create_user(resp)
     
     def scanlation_group_list(self, limit : int = None, offset : int = None, group_ids : List[str] = None, name : str = None) -> List[ScanlationGroup]:
