@@ -32,12 +32,12 @@ class Manga():
         self.coverId : str = ""
 
     def _MangaFromDict(self, data : dict):
-        if data["data"]["type"] != 'manga' or not data:
+        if data["type"] != 'manga' or not data:
             raise MangaError(data=data, message="The data probvided is not a Manga")
         
-        attributes = data["data"]["attributes"]
+        attributes = data["attributes"]
 
-        self.id = data["data"]["id"]
+        self.id = data["id"]
         self.title = attributes["title"]
         self.altTitles = attributes["altTitles"]
         self.description = attributes["description"]
@@ -75,7 +75,7 @@ class Manga():
     
     @staticmethod
     def _create_manga_list(resp) -> List['Manga']:
-        resp = resp["results"]
+        resp = resp["data"]
         manga_list = []
         for elem in resp:
             manga_list.append(Manga._create_manga(elem))
@@ -101,10 +101,14 @@ class Tag():
         self.name : Dict[str, str] = {}
         self.description : str = ""
         self.group : str = ""
+
     def _TagFromDict(self, data : dict):
-        if "data" in data:
-            data = data["data"]
         
+        try:
+            data = data["data"]
+        except KeyError:
+            pass
+
         if data["type"] != 'tag' or not data:
             raise TagError(data=data, message="The data provided is not a Tag")
         
@@ -124,7 +128,7 @@ class Tag():
     @staticmethod
     def _create_tag_list(resp) -> List['Tag']:
         tag_list = []
-        for tag in resp:
+        for tag in resp["data"]:
             tag_list.append(Tag._create_tag(tag))
         return tag_list
 
@@ -157,12 +161,17 @@ class Chapter():
     
     def _ChapterFromDict(self, data):
 
-        if data["data"]["type"] != 'chapter' or not data:
+        try:
+            data = data["data"]
+        except KeyError:
+            pass
+
+        if data["type"] != 'chapter' or not data:
             raise ChapterError(data = data, mmessage="The data provided is not a Chapter")
 
-        attributes = data["data"]["attributes"]
+        attributes = data["attributes"]
 
-        self.id = data["data"]["id"]
+        self.id = data["id"]
         self.title = attributes["title"]
         self.volume = attributes["volume"]
         self.chapter = float(attributes["chapter"]) if attributes['chapter'] is not None else None
@@ -208,7 +217,7 @@ class Chapter():
     
     @staticmethod
     def _create_chapter_list(resp) -> List['Chapter']:
-        resp = resp["results"]
+        resp = resp["data"]
         chap_list = []
         for elem in resp:
             chap_list.append(Chapter._create_chapter(elem))
@@ -252,7 +261,7 @@ class User():
 
     @staticmethod    
     def _create_user_list(resp) -> List['User']:
-        resp = resp["results"]
+        resp = resp["data"]
         user_list = []
         for elem in resp:
             user_list.append(User._create_user(elem))
@@ -280,12 +289,18 @@ class Author():
         self.mangas : List[str] = []
     
     def _AuthorFromDict(self, data):
-        if data["data"]["type"] != "author" or not data:
-            raise AuthorError(data = data, message= f"The data provided is not Author is : {data['data']['type']}")
-    
-        attributes = data["data"]["attributes"]
 
-        self.id = data["data"]["id"]
+        try:
+            data = data["data"]
+        except KeyError:
+            pass
+
+        if data["type"] != "author" or not data:
+            raise AuthorError(data = data, message= f"The data provided is not Author is : {data['type']}")
+    
+        attributes = data["attributes"]
+
+        self.id = data["id"]
         self.name = attributes["name"]
         self.imageUrl = attributes["imageUrl"]
         self.bio = attributes["biography"]
@@ -301,7 +316,7 @@ class Author():
 
     @staticmethod
     def _create_authors_list(self, resp) -> List['Author']:
-        resp = resp["results"]
+        resp = resp["data"]
         authors_list = []
         for elem in resp:
             authors_list.append(Author._create_author(elem))
@@ -328,12 +343,12 @@ class ScanlationGroup():
 
     def _ScanlationFromDict(self, data):
         
-        if data["data"]["type"] != "scanlation_group" or not data:
+        if data["type"] != "scanlation_group" or not data:
             raise ScanlationGroupError("The data provided is not an scanlation group")
 
-        attributes = data["data"]["attributes"]
+        attributes = data["attributes"]
         relationships = data["relationships"]
-        self.id = data["data"]["id"]
+        self.id = data["id"]
         self.name = attributes["name"]
 
         leader = User()
@@ -358,8 +373,8 @@ class ScanlationGroup():
         return group
 
     @staticmethod
-    def _create_group_list(resp)-> List['ScanlationGroup']:
-        resp = resp["results"]
+    def _create_group_list(resp) -> List['ScanlationGroup']:
+        resp = resp["data"]
         group_list = []
         for elem in resp:
             group_list.append(ScanlationGroup._create_group(elem))
@@ -385,12 +400,12 @@ class CustomList():
         self.mangas : List[Manga] = None
 
     def _ListFromDict(self, data):
-        if data["data"]["type"] != "custom_list" or not data:
+        if data["type"] != "custom_list" or not data:
             raise CustomListError("The data provided is not a Custom List")
         
-        attributes = data["data"]["attributes"]
+        attributes = data["attributes"]
 
-        self.id = data["data"]["id"]
+        self.id = data["id"]
         self.name = attributes["name"]
         self.visibility = attributes["visibility"]
         self.owner = User()
@@ -404,7 +419,7 @@ class CustomList():
 
     @staticmethod
     def _create_customlist_list(resp) -> List['CustomList']:
-        resp = resp["results"]
+        resp = resp["data"]
         custom_lists = []
         for elem in resp:
             custom_lists.append(CustomList._create_customlist(elem))
@@ -424,12 +439,12 @@ class CoverArt():
         self.mangaId : str = None
 
     def _CoverFromDict(self, data):
-        if data["data"]["type"] != "cover_art" or not data:
+        if data["type"] != "cover_art" or not data:
             raise CoverArtError("The data provided is not a Custom List")
         
-        attributes = data["data"]["attributes"]
+        attributes = data["attributes"]
 
-        self.id = data["data"]["id"]
+        self.id = data["id"]
         self.volume = attributes["volume"]
         self.fileName = attributes["fileName"]
         self.description = attributes["description"]
@@ -466,7 +481,7 @@ class CoverArt():
 
     @staticmethod
     def _createCoverImageList(resp) -> List['CoverArt']:
-        resp = resp["results"]
+        resp = resp["data"]
         coverimage_list = []
         for elem in resp:
             coverimage_list.append(CoverArt._createCoverImage(elem))
