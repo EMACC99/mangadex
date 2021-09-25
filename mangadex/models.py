@@ -32,6 +32,12 @@ class Manga():
         self.coverId : str = ""
 
     def _MangaFromDict(self, data : dict):
+
+        try:
+            data = data["data"]
+        except (TypeError, KeyError):
+            pass
+        
         if data["type"] != 'manga' or not data:
             raise MangaError(data=data, message="The data probvided is not a Manga")
         
