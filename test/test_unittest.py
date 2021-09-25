@@ -90,9 +90,9 @@ class TestApi():
         assert resp == saved_response
     
     def test_getUser(self):
-        with open("user_data.txt", "r") as f:
-            user_id = f.readline()
-            username = f.readline()
+        with open("test/user_data.txt", "r") as f:
+            user_id = f.readline().strip('\n')
+            username = f.readline().strip('\n')
         user = self.api.get_user(id = user_id)
 
         assert user.username == username, "This user is invalid"
