@@ -4,6 +4,7 @@ from typing import Union, Dict, List
 class ApiError(Exception):
     def __init__(self, resp : Union[Response, dict], message = "The api responded with the error") -> None:
         self.resp = resp
+        self.details = ""
         if type(self.resp) == Response:
             self.code = self.resp.status_code                
         else:
@@ -11,9 +12,9 @@ class ApiError(Exception):
 
         self.message = message
         super().__init__(self.message)
-    
+        self.details = self.resp.text["detail"]
     def __str__(self) -> str:
-        return f"{self.message}: {self.code}"
+        return f"{self.message}: {self.code} \n {self.details}"
 
 class ApiClientError(Exception):
     pass
