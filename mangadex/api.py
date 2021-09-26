@@ -78,9 +78,9 @@ class Api():
         authors : `List[str]`
         artist : `List[str]`
         year : `int`
-        includedTags : `List[str]`
+        includedTags : `List[Tag.id]`
         includedTagsMode: `str`. Default `"AND"`. Enum: `"AND"` `"OR"`
-        excludedTags : `List[str]`
+        excludedTags : `List[Tag.id]`
         exludedTagsMode : `str`. Default `"AND"`, Enum : `"AND"`, `"OR"`
         status : `List[str]`. Items Enum : `"ongoing"`, `"completed"`, `"hiatus"`, `"cancelled"`
         originalLanguage : `List[str]`
