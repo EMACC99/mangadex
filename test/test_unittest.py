@@ -27,6 +27,22 @@ class TestApi():
 
         assert resp == saved_resp, "The Manga objects are not equal"
     
+    def test_SerachMangaWithLotOfArgs(self):
+        tags = self.api.tag_list()
+        wanted_tags = ["Oneshot", "Romance"]
+        not_wanted_tags = ["Loli", "Incest"]
+        wanted_tags_ids = []
+        not_wanted_tags_ids = []
+        for i,t in enumerate(tags):
+            if t.name["en"] in wanted_tags:
+                wanted_tags_ids.append(t.id)
+            elif t.name["en"] in not_wanted_tags:
+                not_wanted_tags_ids.append(t.id)
+
+        manga_list = self.api.get_manga_list(contentRating = ["erotica", "pornographic"], status = ["completed"],
+                                             excludedTags = not_wanted_tags_ids, excludedTagsMode = "AND", 
+                                             includedTags = wanted_tags_ids, includedTagsMode = "AND")
+
     def test_RandomManga(self):
         self.api.random_manga()
 
