@@ -41,14 +41,14 @@ class TagError(BaseError):
 class ChapterError(BaseError):
     def __init__(self, data: dict, message: str) -> None:
         super(ChapterError, self).__init__(data, message=message)
-        self.data
-        self.message
+        self.data = data
+        self.message = message
     
 class AuthorError(BaseError):
     def __init__(self, data: dict, message: str) -> None:
         super(AuthorError, self).__init__(data, message=message)
-        self.data
-        self.message
+        self.data = data
+        self.message = message
 
 class ScanlationGroupError(BaseError):
     def __init__(self, data: dict, message: str) -> None:
