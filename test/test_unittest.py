@@ -57,6 +57,13 @@ class TestApi():
 
         assert resp == saved_resp,  "The Chapter Objects are not equal"
 
+    def test_FetchChapterImages(self):
+        ch_id = "015979c8-ffa4-4afa-b48e-3da6d10279b0"
+
+        resp = self.api.get_chapter(id = ch_id)
+        
+        resp.fetch_chapter_images()
+    
     def test_GetAuthor(self):
 
         author_id = "df765fdc-ea9f-45d0-9191-d95615662d49"
