@@ -16,13 +16,13 @@ except ImportError:
 
 class URLRequest():
     @staticmethod
-    def _request_url(url, method, timeout, params = None, headers = None) -> dict:
+    def request_url(url, method, timeout, params = None, headers = None) -> dict:
         if params is None:
             params = {}
         params = {k: v.decode("utf-8") if isinstance(v, bytes) else v for k, v in params.items()}
         
         if method == "GET":
-            url = URLRequest._build_url(url, params)
+            url = URLRequest.__build_url(url, params)
             try:
                 resp = requests.get(url, headers=headers, timeout= timeout)
             except requests.RequestException as e:
@@ -50,17 +50,17 @@ class URLRequest():
             raise ApiError(resp)
             
         content = resp.content
-        data = URLRequest._parse_data(content if isinstance(content, basestring) else content.decode('utf-8'))
+        data = URLRequest.__parse_data(content if isinstance(content, basestring) else content.decode('utf-8'))
         return data
 
     @staticmethod
-    def _build_url(url, params) -> str:
+    def __build_url(url, params) -> str:
         if params and len(params) > 0:
-            url = url + '?' + URLRequest._encode_parameters(params)
+            url = url + '?' + URLRequest.__encode_parameters(params)
         return url
     
     @staticmethod
-    def _encode_parameters(params) -> str:
+    def __encode_parameters(params) -> str:
         if params is None:
             return None
         else:
@@ -76,7 +76,7 @@ class URLRequest():
             return urlencode(params_tuple)
 
     @staticmethod
-    def _parse_data(content):
+    def __parse_data(content):
         try:
             data = json.loads(content)
             URLRequest._check_api_error(data)
