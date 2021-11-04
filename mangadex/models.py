@@ -214,7 +214,7 @@ class Chapter():
         `ApiError`
         """
         url = f"https://api.mangadex.org/at-home/server/{self.id}"
-        image_server_url = URLRequest._request_url(url, "GET", timeout=5)
+        image_server_url = URLRequest.request_url(url, "GET", timeout=5)
         image_server_url = image_server_url["baseUrl"].replace("\\", "")
         image_server_url = f"{image_server_url}/data"
         image_urls = []
