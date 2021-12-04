@@ -21,7 +21,7 @@ class TestApi():
         url = f"{self.api.URL}/manga"
         raw_response = mangadex.URLRequest.request_url(url, "GET", timeout = self.timeout, params={"limit" : 1, "title" : "iris zero"})
 
-        saved_resp = mangadex.Manga.create_manga(raw_response["data"][0])
+        saved_resp = mangadex.Manga.MangaFromDict(raw_response["data"][0])
 
         assert resp == saved_resp, "The Manga objects are not equal"
     
@@ -46,19 +46,19 @@ class TestApi():
 
     def test_GetMangaChapter(self):
         ch_id = "015979c8-ffa4-4afa-b48e-3da6d10279b0"
-        resp = self.api.get_chapter(id = ch_id)
+        resp = self.api.get_chapter(chapter_id = ch_id)
 
         url = f"{self.api.URL}/chapter/{ch_id}"
         raw_response = mangadex.URLRequest.request_url(url, "GET", timeout = self.timeout, params= {"id" : ch_id})
 
-        saved_resp = mangadex.Chapter._create_chapter(raw_response)        
+        saved_resp = mangadex.Chapter.ChapterFromDict(raw_response)        
 
         assert resp == saved_resp,  "The Chapter Objects are not equal"
 
     def test_FetchChapterImages(self):
         ch_id = "015979c8-ffa4-4afa-b48e-3da6d10279b0"
 
-        resp = self.api.get_chapter(id = ch_id)
+        resp = self.api.get_chapter(chapter_id = ch_id)
         
         resp.fetch_chapter_images()
     
@@ -66,13 +66,13 @@ class TestApi():
 
         author_id = "df765fdc-ea9f-45d0-9191-d95615662d49"
 
-        resp = self.api.get_author_by_id(id = author_id)
+        resp = self.api.get_author_by_id(author_id = author_id)
 
         url = f"{self.api.URL}/author/{author_id}"
 
         raw_respone  = mangadex.URLRequest.request_url(url, "GET", timeout = self.timeout, params = {"id" : author_id})
 
-        saved_resp = mangadex.Author._create_author(raw_respone)
+        saved_resp = mangadex.Author.AuthorFromDict(raw_respone)
 
         assert resp == saved_resp, "The Author Objects are not equal"
     
@@ -81,14 +81,14 @@ class TestApi():
 
         url = f"{self.api.URL}/manga/tag"
         raw_response = mangadex.URLRequest.request_url(url, "GET", timeout = self.timeout)
-        saved_reps = mangadex.Tag._create_tag_list(raw_response)
+        saved_reps = mangadex.Tag.create_tag_list(raw_response)
 
         assert resp == saved_reps, "The test objects are not equal"
 
     def test_GetMangaChaptersAndVolumes(self):
         #lets use iris zero as is in hiatus
         manga_id = "786ff721-8fd3-413d-8e50-938d8b06f917"
-        resp = self.api.get_manga_volumes_and_chapters(id = manga_id)
+        resp = self.api.get_manga_volumes_and_chapters(manga_id = manga_id)
 
         url = f"{self.api.URL}/manga/{manga_id}/aggregate"
         
@@ -106,7 +106,7 @@ class TestApi():
         url = f"{self.api.URL}/group"
         raw_response = mangadex.URLRequest.request_url(url, "GET", timeout = self.timeout, params = {"ids[]" : ids})
 
-        saved_response = mangadex.ScanlationGroup._create_group_list(raw_response)
+        saved_response = mangadex.ScanlationGroup.create_group_list(raw_response)
 
         assert resp == saved_response
     
@@ -114,7 +114,7 @@ class TestApi():
         with open("test/user_data.txt", "r") as f:
             user_id = f.readline().strip('\n')
             username = f.readline().strip('\n')
-        user = self.api.get_user(id = user_id)
+        user = self.api.get_user(user_id = user_id)
 
         assert user.username == username, "This user is invalid"
 
@@ -147,7 +147,7 @@ class Test_private_api():
         self.login()
 
         manga_id = "35c33279-395d-4d9f-abec-93893c28ab29"
-        self.api.get_manga_read_markes(id = manga_id)
+        self.api.get_manga_read_markes(manga_id = manga_id)
 
     def test_GetAllMangaReadingStatus(self):
         self.login()
@@ -166,14 +166,14 @@ class Test_private_api():
 
         self.login()
 
-        self.api.follow_manga(id = manga_id)
+        self.api.follow_manga(manga_id = manga_id)
 
     def test_UnfollowManga(self):
         manga_id = "32d76d19-8a05-4db0-9fc2-e0b0648fe9d0" # solo leveling
 
         self.login()
 
-        self.api.unfollow_manga(id = manga_id)
+        self.api.unfollow_manga(manga_id = manga_id)
 
     def test_GetMyCustomLists(self):
         self.login()
