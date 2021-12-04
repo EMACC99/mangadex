@@ -1,5 +1,3 @@
-import os
-import sys
 import mangadex
 import json
 import pytest
@@ -23,7 +21,7 @@ class TestApi():
         url = f"{self.api.URL}/manga"
         raw_response = mangadex.URLRequest.request_url(url, "GET", timeout = self.timeout, params={"limit" : 1, "title" : "iris zero"})
 
-        saved_resp = mangadex.Manga._create_manga(raw_response["data"][0])
+        saved_resp = mangadex.Manga.create_manga(raw_response["data"][0])
 
         assert resp == saved_resp, "The Manga objects are not equal"
     
@@ -39,8 +37,8 @@ class TestApi():
             elif t.name["en"] in not_wanted_tags:
                 not_wanted_tags_ids.append(t.id)
 
-        manga_list = self.api.get_manga_list(contentRating = ["erotica", "pornographic"], status = ["completed"],
-                                             excludedTags = not_wanted_tags_ids, excludedTagsMode = "AND", 
+        manga_list = self.api.get_manga_list(contentRating = ["erotica", "pornographic"], status = ["completed"], \
+                                             excludedTags = not_wanted_tags_ids, excludedTagsMode = "AND", \
                                              includedTags = wanted_tags_ids, includedTagsMode = "AND")
 
     def test_RandomManga(self):

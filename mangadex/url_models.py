@@ -1,5 +1,8 @@
-import requests
+"""
+Url handler module
+"""
 import json
+import requests
 
 from mangadex import ApiError
 
@@ -15,12 +18,18 @@ except ImportError:
     from urllib import urlencode
 
 class URLRequest():
+    """
+    Handles the request to the server
+    """
     @staticmethod
     def request_url(url, method, timeout, params = None, headers = None) -> dict:
+        """
+        The handler fot GET, POST, PUT and DEL
+        """
         if params is None:
             params = {}
         params = {k: v.decode("utf-8") if isinstance(v, bytes) else v for k, v in params.items()}
-        
+
         if method == "GET":
             url = URLRequest.__build_url(url, params)
             try:
@@ -48,7 +57,7 @@ class URLRequest():
                 raise
         if not resp.ok:
             raise ApiError(resp)
-            
+
         content = resp.content
         data = URLRequest.__parse_data(content if isinstance(content, basestring) else content.decode('utf-8'))
         return data
@@ -58,7 +67,7 @@ class URLRequest():
         if params and len(params) > 0:
             url = url + '?' + URLRequest.__encode_parameters(params)
         return url
-    
+
     @staticmethod
     def __encode_parameters(params) -> str:
         if params is None:
@@ -81,12 +90,12 @@ class URLRequest():
             data = json.loads(content)
             URLRequest._check_api_error(data)
         except:
-            raise    
+            raise
         return data
 
     @staticmethod
-    def _check_api_error(data : dict): 
-        if type(data) == list:
+    def _check_api_error(data : dict):
+        if isinstance(data, list):
             data = data[0]
         if "result" in data.keys():
             if data['result'] == 'error' or 'error' in data:
