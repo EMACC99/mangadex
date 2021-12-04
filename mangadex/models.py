@@ -75,6 +75,7 @@ class Manga():
             elif elem['type'] == 'cover_art':
                 manga.coverId = elem['id']
 
+        return manga
 
     # @classmethod
     # def create_manga(cls,elem) -> 'Manga':
@@ -277,6 +278,7 @@ class User():
         user.id = data["id"]
         user.username = attributes["username"]
 
+        return user
     # @staticmethod
     # def _create_user(elem) -> 'User':
     #     user = User()
@@ -473,7 +475,7 @@ class CoverArt():
     def __init__(self) -> None:
         self.id : str = ""
         self.volume : str = None
-        self.ileName : str = ""
+        self.fileName : str = ""
         self.description : str = None
         self.createdAt : datetime = None
         self.updatedAt : datetime = None
@@ -503,6 +505,7 @@ class CoverArt():
         cover.mangaId = data["relationships"][0]["id"]
 
         return cover
+    
     def fetch_cover_image(self, quality : str = "source") -> str:
         """
         Returns the url of a cover art
