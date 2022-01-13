@@ -1,4 +1,5 @@
-from .errors import (ApiError, ApiClientError, MangaError, TagError, ChapterError, AuthorError, ScanlationGroupError, UserError, CustomListError, CoverArtError)
+from .errors import (ApiError, ApiClientError, MangaError, TagError, ChapterError, \
+                    AuthorError, ScanlationGroupError, UserError, CustomListError, CoverArtError)
 
 from .url_models import (URLRequest)
 

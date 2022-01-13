@@ -1,7 +1,8 @@
 import datetime
 from dateutil.parser import parse
 from typing import Dict, List
-from mangadex import (MangaError, TagError, ChapterError, AuthorError, ScanlationGroupError, UserError, CustomListError, CoverArtError, URLRequest)
+from mangadex import (MangaError, TagError, ChapterError, AuthorError, 
+                    ScanlationGroupError, UserError, CustomListError, CoverArtError, URLRequest)
 
 class Manga():
     def __init__(self) -> None:
@@ -34,10 +35,10 @@ class Manga():
             data = data["data"]
         except (TypeError, KeyError):
             pass
-        
+
         if data["type"] != 'manga' or not data:
             raise MangaError(data=data, message="The data probvided is not a Manga")
-        
+
         attributes = data["attributes"]
 
         manga = cls()
@@ -494,4 +495,6 @@ class CoverArt():
         return coverimage_list
 
     def __repr__(self) -> str:
-        return f"CoverArt(id = {self.id}, mangaId = {self.mangaId}, volume = {self.volume}, fileName = {self.fileName}, description = {self.description}, createdAt = {self.createdAt}, updatedAt = {self.updatedAt})"
+        return f"CoverArt(id = {self.id}, mangaId = {self.mangaId}, volume = {self.volume}, \
+                fileName = {self.fileName}, description = {self.description}, \
+                createdAt = {self.createdAt}, updatedAt = {self.updatedAt})"

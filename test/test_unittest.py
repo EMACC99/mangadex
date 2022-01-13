@@ -19,7 +19,8 @@ class TestApi():
         resp = self.api.get_manga_list(title = "iris zero", limit = 1)[0]
 
         url = f"{self.api.URL}/manga"
-        raw_response = mangadex.URLRequest.request_url(url, "GET", timeout = self.timeout, params={"limit" : 1, "title" : "iris zero"})
+        raw_response = mangadex.URLRequest.request_url(url, "GET", timeout = self.timeout,
+                                                       params = {"limit" : 1, "title" : "iris zero"})
 
         saved_resp = mangadex.Manga.MangaFromDict(raw_response["data"][0])
 
@@ -70,7 +71,8 @@ class TestApi():
 
         url = f"{self.api.URL}/author/{author_id}"
 
-        raw_respone  = mangadex.URLRequest.request_url(url, "GET", timeout = self.timeout, params = {"id" : author_id})
+        raw_respone  = mangadex.URLRequest.request_url(url, "GET", timeout = self.timeout,
+                                                       params = {"id" : author_id})
 
         saved_resp = mangadex.Author.AuthorFromDict(raw_respone)
 
@@ -153,11 +155,10 @@ class Test_private_api():
         self.login()
 
         self.api.get_all_manga_reading_status()
-        
+
 
     def test_GetMyMangaList(self):
         self.login()
-        
         self.api.get_my_mangalist()
 
 
