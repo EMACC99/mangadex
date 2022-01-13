@@ -159,7 +159,8 @@ class Api():
         description : `Dict[str,str]`. The alt titles in different languages
         authors : `List[str]`. The list of author id's
         artists : `List[str]`. The list of artist id's
-        links : `Dict[str,str]`. The links in differents sites (al, ap, bw, mu, etc). Please refer to the [documentation](https://api.mangadex.org/docs.html#section/Static-data/Manga-links-data)
+        links : `Dict[str,str]`. The links in differents sites (al, ap, bw, mu, etc).
+        Please refer to the [documentation](https://api.mangadex.org/docs.html#section/Static-data/Manga-links-data)
         originalLanguage : `str`. The original Language
         lastVolume : `str`. The last volume
         lastChapter : `str`. The last chapter

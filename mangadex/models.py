@@ -1,10 +1,6 @@
 import datetime
-
 from dateutil.parser import parse
-from future.utils import raise_with_traceback
-
-from typing import Dict, List, Union
-
+from typing import Dict, List
 from mangadex import (MangaError, TagError, ChapterError, AuthorError, ScanlationGroupError, UserError, CustomListError, CoverArtError, URLRequest)
 
 class Manga():
@@ -77,12 +73,6 @@ class Manga():
 
         return manga
 
-    # @classmethod
-    # def create_manga(cls,elem) -> 'Manga':
-    #     manga = cls()
-    #     manga._MangaFromDict(elem)
-    #     return manga
-
     @staticmethod
     def create_manga_list(resp) -> List['Manga']:
         resp = resp["data"]
@@ -95,7 +85,7 @@ class Manga():
         my_vals = [self.manga_id, self.title, self.createdAt, self.authorId]
         other_vals = [other.manga_id, other.title, other.createdAt, other.authorId]
         return all((me == other for me, other in zip(my_vals, other_vals)))
-    
+
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
@@ -122,7 +112,7 @@ class Tag():
 
         if data["type"] != 'tag' or not data:
             raise TagError(data=data, message="The data provided is not a Tag")
-        
+
         attributes = data["attributes"]
 
         tag.id = data["id"]
@@ -132,12 +122,6 @@ class Tag():
 
         return tag
 
-    # @classmethod
-    # def create_tag_from (elem) -> 'Tag':
-    #     tag = Tag()
-    #     tag._TagFromDict(elem)
-    #     return tag
-
     @staticmethod
     def create_tag_list(resp) -> List['Tag']:
         tag_list = []
@@ -145,7 +129,7 @@ class Tag():
             resp = resp["data"]
         except (TypeError, KeyError):
             pass
-    
+
         for tag in resp:
             tag_list.append(Tag.TagFromDict(tag))
         return tag_list
@@ -176,7 +160,8 @@ class Chapter():
         self.createdAt : datetime = ""
         self.updatedAt : datetime = ""
         self.publishAt : datetime = ""
-    
+        
+
     @classmethod
     def ChapterFromDict(cls, data) -> 'Chapter':
         chapter = cls()
@@ -195,8 +180,8 @@ class Chapter():
         chapter.volume = attributes["volume"]
         chapter.chapter = float(attributes["chapter"]) if attributes['chapter'] is not None else None
         chapter.translatedLanguage = attributes["translatedLanguage"]
-        chapter.hash = attributes["hash"]
-        chapter.data = attributes["data"]
+        # chapter.hash = attributes["hash"]
+        # chapter.data = attributes["data"]
         chapter.publishAt = parse(attributes["publishAt"])
         chapter.createdAt = parse(attributes["createdAt"])
         chapter.updatedAt = parse(attributes["updatedAt"])
@@ -206,13 +191,13 @@ class Chapter():
             chapter.uploader = data["relationships"][2]["id"]
         except IndexError:
             pass
-            
+
         return chapter
 
     def fetch_chapter_images(self) -> List[str]: #maybe make this an async function?
         """
         Get the image links for the chapter
-        
+
         Returns
         -----------
         `List[str]`. A list with the links with the chapter images
@@ -225,6 +210,8 @@ class Chapter():
         """
         url = f"https://api.mangadex.org/at-home/server/{self.id}"
         image_server_url = URLRequest.request_url(url, "GET", timeout=5)
+        self.hash = image_server_url["chapter"]["hash"]
+        self.data = image_server_url["chapter"]["data"]
         image_server_url = image_server_url["baseUrl"].replace("\\", "")
         image_server_url = f"{image_server_url}/data"
         image_urls = []
@@ -233,12 +220,6 @@ class Chapter():
 
         return image_urls
 
-    # @staticmethod
-    # def _create_chapter(elem) -> 'Chapter':
-    #     chap = Chapter()
-    #     chap._ChapterFromDict(elem)
-    #     return chap
-    
     @staticmethod
     def create_chapter_list(resp) -> List['Chapter']:
         resp = resp["data"]
@@ -248,8 +229,8 @@ class Chapter():
         return chap_list
 
     def __eq__(self, other: 'Chapter') -> bool:
-        my_vals = [self.id, self.hash, self.Mangaid, self.chapter]
-        other_vals = [other.id, other.hash, other.Mangaid, other.chapter]
+        my_vals = [self.id, self.Mangaid, self.chapter]
+        other_vals = [other.id, other.Mangaid, other.chapter]
         return all((me == other for me,other in zip(my_vals, other_vals)))
 
     def __ne__(self, other: 'Chapter') -> bool:
@@ -279,11 +260,6 @@ class User():
         user.username = attributes["username"]
 
         return user
-    # @staticmethod
-    # def _create_user(elem) -> 'User':
-    #     user = User()
-    #     user._UserFromDict(elem)
-    #     return user
 
     @staticmethod    
     def create_user_list(resp) -> List['User']:
@@ -323,7 +299,7 @@ class Author():
 
         if data["type"] != "author" or not data:
             raise AuthorError(data = data, message= f"The data provided is not Author is : {data['type']}")
-    
+
         author = cls()
 
         attributes = data["attributes"]
@@ -337,12 +313,6 @@ class Author():
         author.mangas =  [manga["id"] for manga in data["relationships"] if manga["type"] == "manga"] # better keep it like this to not consume computing time
 
         return author
-    
-    # @staticmethod
-    # def _create_author(elem) -> 'Author':
-        # author = Author()
-        # author._AuthorFromDict(elem)
-        # return author
 
     @staticmethod
     def create_authors_list(resp) -> List['Author']:
@@ -373,7 +343,7 @@ class ScanlationGroup():
 
     @classmethod
     def ScanlationFromDict(cls, data) -> 'ScanlationGroup':
-        
+
         if data["type"] != "scanlation_group" or not data:
             raise ScanlationGroupError(data,"The data provided is not an scanlation group")
 
@@ -400,25 +370,19 @@ class ScanlationGroup():
 
         return scan_group
 
-    # @classmethod
-    # def create_group_from(elem) ->  'ScanlationGroup':
-    #     group = ScanlationGroup()
-    #     group._ScanlationFromDict(elem)
-    #     return group
-
     @staticmethod
     def create_group_list(resp) -> List['ScanlationGroup']:
         resp = resp["data"]
         group_list = []
         for elem in resp:
             group_list.append(ScanlationGroup.ScanlationFromDict(elem))
-        return group_list  
+        return group_list
 
     def __eq__(self, other: 'ScanlationGroup') -> bool:
         my_vals = []
         other_vals = []
         return all((me == other for me,other in zip(my_vals, other_vals)))
-    
+
     def __ne__(self, other: 'ScanlationGroup') -> bool:
         return not self.__eq__(other)
         
@@ -437,7 +401,7 @@ class CustomList():
     def ListFromDict(cls, data):
         if data["type"] != "custom_list" or not data:
             raise CustomListError(data,"The data provided is not a Custom List")
-        
+
         custom_list = cls()
 
         attributes = data["attributes"]
@@ -451,14 +415,8 @@ class CustomList():
                 custom_list.owner = elem["id"]
             elif elem["type"] == "manga":
                 custom_list.mangas.append(elem["id"])
-    
-        return custom_list
 
-    # @staticmethod
-    # def _create_customlist(elem) -> 'CustomList':
-    #     custom_list = CustomList()
-    #     custom_list._ListFromDict(elem)
-    #     return custom_list
+        return custom_list
 
     @staticmethod
     def create_customlist_list(resp) -> List['CustomList']:
@@ -490,8 +448,8 @@ class CoverArt():
             pass
 
         if data["type"] != "cover_art" or not data:
-            raise CoverArtError("The data provided is not a Custom List")
-        
+            raise CoverArtError(data, "The data provided is not a Custom List")
+
         cover = cls()
 
         attributes = data["attributes"]
@@ -519,19 +477,13 @@ class CoverArt():
         url : `str`. The cover url
         """
         url = f"https://uploads.mangadex.org/covers/{self.mangaId}/{self.fileName}"
-        
+
         if quality == "medium":
             url = f"{url}.512.jpg"
         elif quality == "small":
             url = f"{url}.256.jpg"
-        
-        return url
 
-    # @staticmethod
-    # def _createCoverImage(elem) -> 'CoverArt':
-    #     coverImage = CoverArt()
-    #     coverImage._CoverFromDict(elem)
-    #     return coverImage
+        return url
 
     @staticmethod
     def createCoverImageList(resp) -> List['CoverArt']:
