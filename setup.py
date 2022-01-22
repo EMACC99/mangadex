@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = '2.5.1'
+VERSION = '2.5.2'
 DESCRIPTION = 'Python wrapper for the mangadex API'
 with open("README.md", "r", encoding="utf8") as f:
     LONG_DESCRIPTION = f.read()
