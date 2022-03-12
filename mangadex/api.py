@@ -682,7 +682,7 @@ class Api():
         url = f"{self.URL}/manga/{manga_id}/status"
         URLRequest.request_url(url, "POST", params={"status" : status}, headers=self.bearer, timeout=self.timeout)
 
-    def add_manga_to_customlist(self, manga_id : str, listId :str) -> None:
+    def add_manga_to_customlist(self, manga_id : str, list_id :str) -> None:
         """
         Adds a manga to a custom list
 
@@ -691,10 +691,10 @@ class Api():
         id : `str`. The manga id.
         listId : `str`. The list id.
         """
-        url = f"{self.URL}/{manga_id}/list{listId}"
+        url = f"{self.URL}/{manga_id}/list{list_id}"
         URLRequest.request_url(url, "POST", headers=self.bearer, timeout=self.timeout)
 
-    def remove_manga_from_customlist(self, manga_id : str, listId : str) -> None:
+    def remove_manga_from_customlist(self, manga_id : str, list_id : str) -> None:
         """
         Removes a manga from a custom list
 
@@ -703,7 +703,7 @@ class Api():
         id : `str`. The manga id
         listId : `str`. The list id
         """
-        url = f"{self.URL}/manga/{manga_id}/list/{listId}"
+        url = f"{self.URL}/manga/{manga_id}/list/{list_id}"
         URLRequest.request_url(url, "DELETE", headers=self.bearer, timeout=self.timeout)
 
     def create_customlist(self, name : str, visibility : str = "public", manga : List[str] = None, version : int = 1) -> None:
@@ -724,13 +724,13 @@ class Api():
         params["manga[]"] = manga
         URLRequest.request_url(url, "POST", params=params, timeout=self.timeout)
 
-    def get_customlist(self, custom_list_id : str, **kwargs) -> CustomList:
+    def get_customlist(self, customlist_id : str, **kwargs) -> CustomList:
         """
         Get a custom list by its id
 
         Parameters
         ------------
-        custom_list_id : `str`. The id of the custom list
+        customlist_id : `str`. The id of the custom list
         limit : int
         offset : int
         translatedLanguage : List[str]
@@ -741,18 +741,18 @@ class Api():
         ------------
         `CustomList`
         """
-        url = f"{self.URL}/list/{custom_list_id}"
+        url = f"{self.URL}/list/{customlist_id}"
         resp = URLRequest.request_url(url, "GET", headers=self.bearer,
                                       timeout=self.timeout, params=kwargs)
         return CustomList.ListFromDict(resp["result"])
 
-    def update_customlist(self, custom_list_id : str, **kwargs) -> CustomList:
+    def update_customlist(self, customlist_id : str, **kwargs) -> CustomList:
         """
         Update a custom list
 
         Parameters
         ------------
-        custom_list_id : `str`. The custom list id
+        customlist_id : `str`. The custom list id
 
         ### QueryParams:
         name : `str`. The custom list name
@@ -762,7 +762,7 @@ class Api():
         -----------
         `CustomList`
         """
-        url = f"{self.URL}/list/{custom_list_id}"
+        url = f"{self.URL}/list/{customlist_id}"
         resp = URLRequest.request_url(url, "PUT", params= kwargs,
                                     headers=self.bearer, timeout=self.timeout)
         return CustomList.ListFromDict(resp["result"])
@@ -793,7 +793,13 @@ class Api():
         `List[CustomList]`
         """
         url = f"{self.URL}/user/list"
-        resp = URLRequest.request_url(url, "GET", params=kwargs, headers=self.bearer, timeout=self.timeout)
+        resp = URLRequest.request_url(
+            url,
+            "GET",
+            params=kwargs,
+            headers=self.bearer,
+            timeout=self.timeout
+            )
         return CustomList.create_customlist_list(resp)
 
     def get_user_customlists(self, user_id : str, **kwargs) -> List[CustomList]:
@@ -841,19 +847,19 @@ class Api():
         resp = URLRequest.request_url(url, "GET", params = params, timeout= self.timeout)
         return CoverArt.createCoverImageList(resp)
 
-    def get_cover(self, coverId : str) -> CoverArt:
+    def get_cover(self, cover_id : str) -> CoverArt:
         """
         Gets a cover image
 
         Parameters
         --------------
-        coverId : `str`. The cover id
+        cover_id : `str`. The cover id
 
         Returns
         --------------
         `CoverArt`. A cover art object
         """
-        url = f"{self.URL}/cover/{coverId}"
+        url = f"{self.URL}/cover/{cover_id}"
         resp = URLRequest.request_url(url, "GET", timeout=self.timeout)
         return CoverArt.CoverFromDict(resp)
 
