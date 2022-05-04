@@ -31,12 +31,9 @@ This is called mangalist in the [documentation](https://api.mangadex.org/docs.ht
 
 ```py
 >>> manga_list = api.get_manga_list(limit = 1) #limits the query to return just one manga
->>> manga_list
-Manga(id = 0001183c-2089-48e9-96b7-d48db5f1a611, title = {'en': 'Eight'}, altTitles = [{'en': '8 -Eight-'}, {'en': '８－エイト－'}, {'en': 'Eight'}, {'en': 'Eito'}, 
-{'en': 'エイト'}], 
-description = {'en': 'Tokyo in the 90s, the city center has been suffering from a continuing depopulation. Also affected is the Udagawa Junior High School where only six people are left, as their class leader, protector and very good friend Masato just died in an illegal skateboarding race. Five months later Eito Hachiya, nickname: Eight or &quot;8&quot; enrolls in school and wants to find out what happened. He even just looks like Masato! But mysteries surround him: Why does he know all the other six? Why can&rsquo;t they remember him?\r\n\r\nNote: Was cancelled after ~25% of volume 4, the epilogue consists of an alternative ending for Eight.'}, 
-isLocked = False, links = {'al': '38734', 'ap': 'eight', 'kt': '17709', 'mu': '6521', 'mal': '8734'}, originalLanguage = ja 
-lastVolume = None, lastChapter = 37.6, publicationDemographic = seinen, status = completed, year = None, contentRating = safe 
+>>> manga_list[Manga(manga_id = 0001183c-2089-48e9-96b7-d48db5f1a611, title = {'en': 'Eight'}, altTitles = [{'ja': '8（エイト）'}], description = {'en': 'Tokyo in the 90s, the city center has been suffering from a continuing depopulation. Also affected is the Udagawa Junior High School where only six people are left, as their class leader, protector and very good friend Masato just died in an illegal skateboarding race. Five months later Eito Hachiya, nickname: Eight or "8" enrolls in school and wants to find out what happened. He even just looks like Masato! But mysteries surround him: Why does he know all the other six? Why can’t they remember him?  \n  \nNote: Was cancelled after ~25% of volume 4, the epilogue consists of an alternative ending for Eight.'}, isLocked = False, links = {'al': '38734', 'ap': 'eight', 'kt': '17709', 'mu': '6521', 'amz': 'https://www.amazon.co.jp/dp/B07WS2K894', 'mal': '8734', 'raw': 'https://csbs.shogakukan.co.jp/book?book_group_id=14478'}, originalLanguage = ja
+ lastVolume = 4, lastChapter = 37.6, publicationDemographic = seinen, status = completed, year = 2000, contentRating = safe
+ createdAt = 2018-02-04 21:32:02+00:00, uploadedAt = 2022-01-12 21:42:40+00:00), author_id = ['905aaced-1556-4925-bff0-14ea277fb0b1', '905aaced-1556-4925-bff0-14ea277fb0b1'], artist_id = [], cover_id = 51bf2e88-98ac-4fd7-afb5-80edff694d53
 ```
 
 You can also use the `get_manga_list()` method to search for manga.
@@ -69,12 +66,8 @@ Get the chapter, or chapters from the feed of a specific manga.
 
 ```py
 >>> manga_feed = api.manga_feed(manga_id = "0001183c-2089-48e9-96b7-d48db5f1a611", limit = 1)
-[Chapter(id = 015979c8-ffa4-4afa-b48e-3da6d10279b0, title = Navel-Gazing, volume = 3, chapter = 23, translatedLanguage = en, hash = bf986ab3bc4471980430b7c5ec407ee0 
- data = ['x1-fcec4beb464a2071023a92ec1192a3b7e3b7c5ae531fa8cc8a7d874056f509a0.jpg', 'x2-4b3bdefecd786fc64823eb118fb52da5646f44827fa82379b9b710bfe368ecbe.jpg',
-  'x3-7f0fbee875edaaa511f58fdd4c75092e86a88c57722b84bda36adffbda485b9f.jpg', 'x4-933b914b685fcef4b241e91e265293ef520efa34e9da2a8a52344eab360ca6ce.jpg', 
-  'x5-905e50681548041b288d7a985ba5c3415e441ef7e7d87da786edd3206d1f02ef.jpg'], publishAt = 2018-03-19 01:32:00+00:00, createdAt = 2018-03-19 01:32:00+00:00, uploadedAt = 
-  2018-03-19 01:32:00+00:00, scanlation_group_id = 59957a04-fa91-4099-921d-7e7988a19acb, Mangaid = 0001183c-2089-48e9-96b7-d48db5f1a611, uploader = 
-  e19519ce-8c5f-4d7c-8280-704a87d34429)]
+[Chapter(chapter_id = 015979c8-ffa4-4afa-b48e-3da6d10279b0, title = Navel-Gazing, volume = 3, chapter = 23.0, translatedLanguage = en, hash =
+ data = List[filenames], publishAt = 2018-03-19 01:32:00+00:00, createdAt = 2018-03-19 01:32:00+00:00, uploadedAt = 2018-03-19 01:32:00+00:00, group_id = 59957a04-fa91-4099-921d-7e7988a19acb, manga_id = 0001183c-2089-48e9-96b7-d48db5f1a611, uploader = e19519ce-8c5f-4d7c-8280-704a87d34429)]
 ```
 
 ## Get manga volumnes and chapters
@@ -92,8 +85,8 @@ Returns a Chpater Object  by its id
 ```py
 >>> chapter = api.get_chapter(chapter_id = "015979c8-ffa4-4afa-b48e-3da6d10279b0")
 >> chapter
-Chapter(id = 015979c8-ffa4-4afa-b48e-3da6d10279b0, title = Navel-Gazing, volume = 3, chapter = 23, translatedLanguage = en, hash = bf986ab3bc4471980430b7c5ec407ee0 
-data = ['x1-fcec4beb464a2071023a92ec1192a3b7e3b7c5ae531fa8cc8a7d874056f509a0.jpg', 'x2-4b3bdefecd786fc64823eb118fb52da5646f44827fa82379b9b710bfe368ecbe.jpg', 'x3-7f0fbee875edaaa511f58fdd4c75092e86a88c57722b84bda36adffbda485b9f.jpg', 'x4-933b914b685fcef4b241e91e265293ef520efa34e9da2a8a52344eab360ca6ce.jpg', 'x5-905e50681548041b288d7a985ba5c3415e441ef7e7d87da786edd3206d1f02ef.jpg'], publishAt = 2018-03-19 01:32:00+00:00, createdAt = 2018-03-19 01:32:00+00:00, uploadedAt = 2018-03-19 01:32:00+00:00, scanlation_group_id = 59957a04-fa91-4099-921d-7e7988a19acb, Mangaid = 0001183c-2089-48e9-96b7-d48db5f1a611, uploader = e19519ce-8c5f-4d7c-8280-704a87d34429)
+Chapter(chapter_id = 015979c8-ffa4-4afa-b48e-3da6d10279b0, title = Navel-Gazing, volume = 3, chapter = 23.0, translatedLanguage = en, hash =
+data = List[filenames], publishAt = 2018-03-19 01:32:00+00:00, createdAt = 2018-03-19 01:32:00+00:00, uploadedAt = 2018-03-19 01:32:00+00:00, group_id = 59957a04-fa91-4099-921d-7e7988a19acb, manga_id = 0001183c-2089-48e9-96b7-d48db5f1a611, uploader = e19519ce-8c5f-4d7c-8280-704a87d34429)
 ```
 
 ## Chapter List
