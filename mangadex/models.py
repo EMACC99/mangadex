@@ -1,6 +1,7 @@
 import datetime
 from dateutil.parser import parse
 from typing import Dict, List
+from typing_extensions import Self
 from mangadex import (MangaError, TagError, ChapterError, AuthorError, 
                     ScanlationGroupError, UserError, CustomListError, CoverArtError, URLRequest)
 
@@ -284,6 +285,10 @@ class User():
             user_list.append(User.UserFromDict(elem))
         return user_list
 
+    @property
+    def url(self):
+        return f"{MANGADEX_BASEURL}/user/{self.user_id}"
+
     def __eq__(self, other: 'User') -> bool:
         my_vals = [self.user_id, self.username]
         other_vals = [other.user_id, other.username]
@@ -336,6 +341,11 @@ class Author():
         for elem in resp:
             authors_list.append(Author.AuthorFromDict(elem))
         return authors_list
+
+    @property
+    def url(self):
+        return f"{MANGADEX_BASEURL}/author/{self.author_id}"
+
 
     def __eq__(self, other: 'Author') -> bool:
         my_vals = [self.author_id ,self.name]
@@ -392,6 +402,10 @@ class ScanlationGroup():
         for elem in resp:
             group_list.append(ScanlationGroup.ScanlationFromDict(elem))
         return group_list
+
+    @property
+    def url(self):
+        return f"{MANGADEX_BASEURL}/group/{self.group_id}"
 
     def __eq__(self, other: 'ScanlationGroup') -> bool:
         my_vals = []
