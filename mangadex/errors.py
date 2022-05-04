@@ -1,8 +1,8 @@
 from requests import Response
 from typing import Union, Dict, List
-
+from typing_extensions import Self
 class ApiError(Exception):
-    def __init__(self, resp : Union[Response, dict], message = "The api responded with the error") -> None:
+    def __init__(self, resp : Union[Response, dict], message = "The api responded with the error") -> Self:
         self.resp = resp
         self.details = ""
         if type(self.resp) == Response:
