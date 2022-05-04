@@ -34,9 +34,9 @@ class TestApi():
         not_wanted_tags_ids = []
         for i,t in enumerate(tags):
             if t.name["en"] in wanted_tags:
-                wanted_tags_ids.append(t.id)
+                wanted_tags_ids.append(t.tag_id)
             elif t.name["en"] in not_wanted_tags:
-                not_wanted_tags_ids.append(t.id)
+                not_wanted_tags_ids.append(t.tag_id)
 
         manga_list = self.api.get_manga_list(contentRating = ["erotica", "pornographic"], status = ["completed"], \
                                              excludedTags = not_wanted_tags_ids, excludedTagsMode = "AND", \
@@ -127,7 +127,7 @@ class TestApi():
 
     def test_GetMangaCoverArt(self):
         random_manga = self.api.random_manga()
-        self.api.get_cover(random_manga.coverId)
+        self.api.get_cover(random_manga.cover_id)
 
 
     def test_GetUserCustomLists(self):
