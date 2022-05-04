@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import re #for validating email and prevent spam
 from typing import Dict, List, Union
+
 from mangadex import (Manga, Tag, Chapter, User, UserError, ChapterError,
                     Author, ScanlationGroup, CoverArt, CustomList, URLRequest, TagError)
 class Api():
@@ -82,7 +83,7 @@ class Api():
         status : `List[str]`. Items Enum : `"ongoing"`, `"completed"`, `"hiatus"`, `"cancelled"`
         originalLanguage : `List[str]`
         publicationDemographic : `List[str]`. Items Enum: `"shounen"` `"shoujo"` `"josei"` `"seinen"` `"none"`
-        ids :  `List[str]`. Limited to 100 per call
+        manga_ids :  `List[str]`. Limited to 100 per call
         contentRating : `List[str]`. Items Enum : `"safe"` `"suggestive"` `"erotica"` `"pornographic"`
         createdAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
         updatedAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
@@ -884,13 +885,13 @@ class Api():
         resp = URLRequest.request_url(url, "POST", params = {"file" : file}, headers= self.bearer, timeout=self.timeout)
         return CoverArt.CoverFromDict(resp) if ObjReturn else None
 
-    def edit_cover(self, coverId : str, description : str, volume : str = None, version : int = None, ObjReturn : bool = False) -> Union[None, CoverArt]:
+    def edit_cover(self, cover_id : str, description : str, volume : str = None, version : int = None, ObjReturn : bool = False) -> Union[None, CoverArt]:
         """
         Edit a cover parameters
 
         Parameters
         ------------
-        coverId : `str`. The coverId
+        cover_id : `str`. The cover_id
         description : `str`. The cover description
         volume : `str`. The volume representing the volume
         version : `int`. The version of the cover
@@ -907,23 +908,23 @@ class Api():
         if description is not None:
             params["description"] = description
 
-        url = f"{self.URL}/cover/{coverId}"
+        url = f"{self.URL}/cover/{cover_id}"
         resp = URLRequest.request_url(url, "PUT", params=params, headers=self.bearer, timeout=self.timeout)
         return CoverArt.CoverFromDict(resp) if ObjReturn else None
 
-    def delete_cover(self, coverId : Union[str , CoverArt]):
+    def delete_cover(self, cover_id : Union[str , CoverArt]):
         """
         Deletes a cover
 
         Params
         -----------
-        coverId : `str` | `CoverArt`. The cover id or the cover object
+        cover_id : `str` | `CoverArt`. The cover id or the cover object
         """
-        if not coverId:
-            raise ValueError("coverId cannot be empty")
-        if isinstance(coverId, CoverArt):
-            coverId = coverId.id
-        url = f"{self.URL}/cover/{coverId}"
+        if not cover_id:
+            raise ValueError("cover_id cannot be empty")
+        if isinstance(cover_id, CoverArt):
+            cover_id = cover_id.id
+        url = f"{self.URL}/cover/{cover_id}"
         URLRequest.request_url(url, "DELETE", headers= self.bearer, timeout=self.timeout)
 
     def create_account(self, username : str, password : str, email : str, ObjReturn : bool = False) -> Union[User, None]:
