@@ -22,7 +22,7 @@ class URLRequest():
     Handles the request to the server
     """
     @staticmethod
-    def request_url(url, method, timeout, params = None, headers = None) -> dict:
+    def request_url(url : str, method : str, timeout, params : dict = None, headers = None) -> dict:
         """
         The handler fot GET, POST, PUT and DEL
         """
@@ -63,13 +63,13 @@ class URLRequest():
         return data
 
     @staticmethod
-    def __build_url(url, params) -> str:
+    def __build_url(url : str, params : dict) -> str:
         if params and len(params) > 0:
             url = url + '?' + URLRequest.__encode_parameters(params)
         return url
 
     @staticmethod
-    def __encode_parameters(params) -> str:
+    def __encode_parameters(params : dict) -> str:
         if params is None:
             return None
         else:
