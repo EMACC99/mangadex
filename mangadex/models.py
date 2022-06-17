@@ -76,7 +76,10 @@ class Manga():
                 manga.author_id.append(elem['id'])
             elif elem['type'] == 'cover_art':
                 manga.cover_id = elem['id']
-
+        
+        output = {
+            'title': , 'id': manga.
+        }
         return manga
 
     @staticmethod
