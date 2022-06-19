@@ -17,7 +17,7 @@ class Manga():
         self.altTitles : Dict[str, str] = {}
         self.description : Dict[str, str] = {}
         self.isLocked : bool = False
-        self.links : Dict[str, str] = {}
+        self.links : List[str, str] = []
         self.originalLanguage : str = ""
         self.lastVolume : str = ""
         self.lastChapter : str = ""
@@ -57,7 +57,42 @@ class Manga():
         except KeyError:
             pass
         
-        manga.links = attributes["links"]
+        links = attributes["links"]
+        trackers, raws, volumes = [], [], []
+        for link in links:
+            for key in link:
+                if key == 'mal':
+                    trackers.append({'MyAnimeList': link[key]})
+                elif key == 'al':
+                    trackers.append({'AniList': link[key]})
+                elif key == 'ap':
+                    trackers.append({'Anime Planet': link[key]})
+                elif key == 'kt':
+                    trackers.append({'Kitsu': link[key]})
+                elif key == 'mu':
+                    trackers.append({'MangaUpdates': link[key]})
+                elif key == 'nu':
+                    trackers.append({'NovelUpdates': link[key]})
+                # Earlier lines categorize which tracker the series has.
+                # Not all series has all of this trackers so that's why it
+                # can't be mass if..elsed
+                elif key == 'raw':
+                    raws.append({'Raws': link[key]})
+                elif key == 'engtl':
+                    raws.append({'Official English': link[key]})
+                # separates raws source from manga store. Did use append for future-proofing
+                # (and on future support for multiple(yet different) raw sources)
+                else:
+                    volumes.append({key: link['key']})
+
+        if trackers:
+            manga.links.append(trackers)
+        elif raws:
+            manga.links.append(raws)
+        elif volumes:
+            manga.links.append(volumes)
+        else:
+            pass
         manga.originalLanguage = attributes["originalLanguage"]
         manga.lastVolume = attributes["lastVolume"]
         manga.lastChapter = attributes["lastChapter"]
@@ -76,8 +111,26 @@ class Manga():
                 manga.author_id.append(elem['id'])
             elif elem['type'] == 'cover_art':
                 manga.cover_id = elem['id']
-
-        return manga
+        
+        output = {
+            'title': manga.title, 
+            'id': manga.manga_id, 
+            'isLocked': manga.isLocked,
+            'description': manga.description,
+            'altTitles':  manga.altTitles, 
+            'type': [data['type'], manga.originalLanguage],
+            'demographic': [manga.publicationDemographic, manga.contentRating],
+            'status': [manga.status, manga.year, manga.createdAt, manga.updatedAt],
+            'tags': manga.tags, 
+            'links': manga.links
+        }
+        if manga.status == 'completed':
+            output['final'] = [manga.lastVolume, manga.lastVolume]
+        else:
+            pass
+        # will only work if the series is completed since if someone declared 
+        # a final chapter(or final volume), it'll mark the series as completed automatically
+        return output
 
     @staticmethod
     def create_manga_list(resp) -> List['Manga']:
@@ -130,19 +183,38 @@ class Tag():
         tag.name = attributes["name"]
         tag.description = attributes["description"]
         tag.group = attributes["group"]
+        output = {
+            'title': tag.name,
+            'id': tag.tag_id,
+            'description': tag.description,
+            
+        }
 
-        return tag
+        return output
 
     @staticmethod
     def create_tag_list(resp) -> List['Tag']:
-        tag_list = []
+        genre, theme, format = [], [], []
         try:
             resp = resp["data"]
         except (TypeError, KeyError):
             pass
 
         for tag in resp:
-            tag_list.append(Tag.TagFromDict(tag))
+            if tag['group'] == 'genre':
+                genre.append(Tag.TagFromDict(tag))
+            elif tag['group'] == 'theme':
+                theme.append(Tag.TagFromDict(tag))
+            elif tag['group'] == 'format':
+                format.append(Tag.TagFromDict(tag))
+            else:
+                pass
+        tag_list = {
+            'format': format,
+            'genre': genre,
+            'theme': theme
+        }
+                
         return tag_list
 
     def __eq__(self, other : 'Tag') -> bool:
@@ -203,7 +275,25 @@ class Chapter():
         except IndexError:
             pass
 
-        return chapter
+        output = {
+            'title': chapter.title,
+            'id': chapter.chapter_id, 
+            'number': [{'Volume': chapter.volume}, {'Chapter': chapter.chapter}], 
+            'translatedLanguage': chapter.translatedLanguage, 
+            'date': {
+                'publishedAt': chapter.publishAt,
+                'createdAt': chapter.createdAt,
+                'updatedAt': chapter.updatedAt
+            }, 
+            'relationships': {
+                'series': chapter.manga_id,
+                'group': chapter.group_id
+            }
+        }
+        if chapter.uploader:
+            output['uploader'] = chapter.uploader
+
+        return output
 
     def fetch_chapter_images(self) -> List[str]: #maybe make this an async function?
         """
