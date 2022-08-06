@@ -1,31 +1,33 @@
 # mangadex
 
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 A python wrapper for the mangadex API V5. It uses the requests library and all the aditional arguments can be viewed in the [Official Mangadex Documentation](https://api.mangadex.org/docs.html)
 
-# Instaling the API
+## Instaling the API
 
-## PyPI
+### PyPI
 
 ```sh
 pip install --Upgrade mangadex
 ```
 
-## Installing via setuptools
+### Installing via setuptools
 
 ```sh
 python setup.py install --user
 ```
 
-# Using the API
+## Using the API
 
 ```py
 >>> import mangadex
 >>> api = mangadex.Api()
 ```
 
-# Public Calls
+## Public Calls
 
-## Getting the latest manga
+### Getting the latest manga
 
 This is called mangalist in the [documentation](https://api.mangadex.org/docs.html#operation/get-search-manga)
 
@@ -48,19 +50,19 @@ The usage is like this
 
 The search is now working so the above is no longer true
 
-## Getting a manga by its id
+### Getting a manga by its id
 
 ```py
 >>> manga = api.view_manga_by_id(manga_id = "0001183c-2089-48e9-96b7-d48db5f1a611")
 ```
 
-## Random manga
+### Random manga
 
 ```py
 >>> random_manga = api.random_manga()
 ```
 
-## Manga Feed
+### Manga Feed
 
 Get the chapter, or chapters from the feed of a specific manga.
 
@@ -70,7 +72,7 @@ Get the chapter, or chapters from the feed of a specific manga.
  data = List[filenames], publishAt = 2018-03-19 01:32:00+00:00, createdAt = 2018-03-19 01:32:00+00:00, uploadedAt = 2018-03-19 01:32:00+00:00, group_id = 59957a04-fa91-4099-921d-7e7988a19acb, manga_id = 0001183c-2089-48e9-96b7-d48db5f1a611, uploader = e19519ce-8c5f-4d7c-8280-704a87d34429)]
 ```
 
-## Get manga volumnes and chapters
+### Get manga volumnes and chapters
 
 Get a manga volumes and chapters
 
@@ -78,7 +80,7 @@ Get a manga volumes and chapters
 >>> api.get_manga_volumes_and_chapters(manga_id = "the manga id")
 ```
 
-## Get Chapter
+### Get Chapter
 
 Returns a Chpater Object  by its id
 
@@ -89,7 +91,7 @@ Chapter(chapter_id = 015979c8-ffa4-4afa-b48e-3da6d10279b0, title = Navel-Gazing,
 data = List[filenames], publishAt = 2018-03-19 01:32:00+00:00, createdAt = 2018-03-19 01:32:00+00:00, uploadedAt = 2018-03-19 01:32:00+00:00, group_id = 59957a04-fa91-4099-921d-7e7988a19acb, manga_id = 0001183c-2089-48e9-96b7-d48db5f1a611, uploader = e19519ce-8c5f-4d7c-8280-704a87d34429)
 ```
 
-## Chapter List
+### Chapter List
 
 It will return a list of chapters
 
@@ -99,7 +101,7 @@ It will return a list of chapters
 
 If you want the chpaters of a given Manga, you'll need to specify the [feed endpoints](https://api.mangadex.org/docs.html#operation/get-search-group)
 
-## Chapter Images
+### Chapter Images
 
 Return the links for the chapter images for a given Chapter Object. This is a Chapter method
 
@@ -107,7 +109,7 @@ Return the links for the chapter images for a given Chapter Object. This is a Ch
 >>> Chapter.fetch_chapter_images()
 ```
 
-## Get User
+### Get User
 
 Get a User by id
 
@@ -115,7 +117,7 @@ Get a User by id
 >>> user = api.get_user(user_id = "id of user")
 ```
 
-## Tag List
+### Tag List
 
 The list of the manga tags
 
@@ -123,7 +125,7 @@ The list of the manga tags
 >>> tag_list = api.tag_list()
 ```
 
-## Get scanlation group list
+### Get scanlation group list
 
 Get a Scanlation Group list
 
@@ -131,7 +133,7 @@ Get a Scanlation Group list
 >>> api.scanlation_group_list()
 ```
 
-## Cover Images List
+### Cover Images List
 
 Get the cover image list
 
@@ -139,19 +141,19 @@ Get the cover image list
 >>> api.get_coverart_list()
 ```
 
-## Get Cover by Id
+### Get Cover by Id
 
 ```py
 >>> api.get_cover(cover_id = "the cover id")
 ```
 
-## Edit Cover
+### Edit Cover
 
 ```py
 >>> api.edit_cover(cover_id = "the cover id", description = "the cover description, can be null", volume = "the volume number", version = "int, the cover version")
 ```
 
-## Get cover image link
+### Get cover image link
 
 ```py
 >>> CoverArt.fetch_cover_image()
@@ -159,7 +161,7 @@ Get the cover image list
 
 This is a CoverArt method that returns the cover image url of that object
 
-## Create account
+### Create account
 
 To create an account
 
@@ -179,7 +181,7 @@ If you need another activation code:
 >>> api.resend_activation_code(email = "anotheremail@example.com")
 ```
 
-## Account recovery
+### Account recovery
 
 To recover and account
 
@@ -193,9 +195,9 @@ This will send you and activation code that you need
 >>> api.complete_account_recover(code = "the code sent to you", newPassword = "the new password for the account")
 ```
 
-# Private Calls
+## Private Calls
 
-## Login
+### Login
 
 Method to login to the website
 
@@ -205,7 +207,7 @@ Method to login to the website
 
 It is recomended that you add this values to you path for security reasons.
 
-## Your User Info
+### Your User Info
 
 Get your user info
 
@@ -213,7 +215,7 @@ Get your user info
 >>> my_user = api.me()
 ```
 
-## Get Logged User Followed Manga List
+### Get Logged User Followed Manga List
 
 Get your manga follow list!
 
@@ -227,7 +229,7 @@ This are:
 * `limit` : limits the amout of results. It accepts a value between 1 and 100, the default if 10
 * `offset` : Makes an offset of the velue provided to the list. Accepts values >= 0
 
-## Get Logged User Followed Groups
+### Get Logged User Followed Groups
 
 Get the list of the Scanlination group you follow!
 
@@ -235,7 +237,7 @@ Get the list of the Scanlination group you follow!
 >>> scangroups_followlist = api.get_my_followed_groups()
 ```
 
-## Get Logged User Followed Users
+### Get Logged User Followed Users
 
 The list of the users you follow
 
@@ -243,7 +245,7 @@ The list of the users you follow
 >>> followed_users = api.get_my_followed_users()
 ```
 
-## Get chapters marked as read from a manga
+### Get chapters marked as read from a manga
 
 Get a list of the capters marked as read for a given manga
 
@@ -251,7 +253,7 @@ Get a list of the capters marked as read for a given manga
 >>> read_chapters = api.get_manga_read_markes(id = "the manga id")
 ```
 
-## Get all followed manga reading status
+### Get all followed manga reading status
 
 Get a list of the all the manga reading stauts
 
@@ -259,7 +261,7 @@ Get a list of the all the manga reading stauts
 >>> my_manga_reading_stauts = api.get_all_manga_reading_status()
 ```
 
-## Get a specific manga reading status
+### Get a specific manga reading status
 
 Get the reading status of a specific manga
 
@@ -267,7 +269,7 @@ Get the reading status of a specific manga
 >>> manga_reading_status = api.get_manga_reading_status(manga_id = "the manga id")
 ```
 
-## Update Manga reading status
+### Update Manga reading status
 
 ```py
 >>> api.update_manga_reading_status(manga_id = "the manga id", status = "the new reading status")
@@ -276,7 +278,7 @@ Get the reading status of a specific manga
 The `status` parameter can take the following values:
 `"reading"` `"on_hold"` `"plan_to_read"` `"dropped"` `"re_reading"` `"completed"`
 
-## Follow a manga
+### Follow a manga
 
 Follow a manga
 
@@ -284,7 +286,7 @@ Follow a manga
 >>> api.follow_manga(manga_id = "the manga id")
 ```
 
-## Unfollow a manga
+### Unfollow a manga
 
 Unfollows a manga
 
@@ -292,7 +294,7 @@ Unfollows a manga
 >>>api.unfollow_manga(manga_id = "the manga id")
 ```
 
-## Create manga
+### Create manga
 
 Creates a manga
 
@@ -300,7 +302,7 @@ Creates a manga
 >>> api.create_manga(title = "manga title", )
 ```
 
-## Update Manga
+### Update Manga
 
 Updates a manga
 
@@ -308,7 +310,7 @@ Updates a manga
 >>> api.update_manga(manga_id = "the manga id")
 ```
 
-## Delete Manga
+### Delete Manga
 
 Deletes manga
 
@@ -316,7 +318,7 @@ Deletes manga
 >>> api.delete_manga(manga_id = "the manga id")
 ```
 
-## Add manga to custom list
+### Add manga to custom list
 
 Add a manga to a custom list
 
@@ -324,7 +326,7 @@ Add a manga to a custom list
 >>> api.add_manga_to_customlist(manga_id = "the manga id", list_id = "the list id")
 ```
 
-## Remove a manga from custom list
+### Remove a manga from custom list
 
 Removes a manga from a custom list
 
@@ -332,70 +334,70 @@ Removes a manga from a custom list
 >>> api.remove_manga_from_customlist(id = "the manga id", listId = "the list id")
 ```
 
-## Create  a custom list
+### Create  a custom list
 
 ```py
 >>> api.create_customlist() #this will create a custom list with no special parameters
 ```
 
-### Query parameters
+#### Query parameters
 
 * `name`. The custom list name
 * `visibility`. The visibility of the custom list. Default public
 * `manga`. The list of manga ids
 
-## Get custom list
+### Get custom list
 
 ```py
 >>> api.get_customlist(id = "th custom list id")
 ```
 
-## Update custom list
+### Update custom list
 
 ```py
 >>> api.update_customlist(id = "the custom list id")
 ```
 
-### Query parameters
+#### Query parameters
 
 * `name`. The custom list name
 * `visibility`. Values : `"public"` `"private"`
 
-## Delete custom list
+### Delete custom list
 
 ```py
 >>> api.delete_customlist(id = "the custom list id")
 ```
 
-## Get User Custom list
+### Get User Custom list
 
 ```py
 >>> api.get_user_customlists(id = "the user id")
 ```
 
-### QueryParams
+#### QueryParams
 
 * `limit`. The limit of custom lists to return
 * `offset`. The amout of offset
 
-## Create Author
+### Create Author
 
 ```py
 >>> api.create_author(name = "author name", version = 1, ObjReturn = False)
 ```
 
-## Update Author
+### Update Author
 
 ```py
 >>> api.update_author(id = "the author id", version = "int with the version", name = "author's name", ObjReturn = False)
 ```
 
-## Delete Author
+### Delete Author
 
 ```py
 >>> api.delete_author(id = "the author id")
 ```
 
-## Discalimer
+### Discalimer
 
 All the credit for the API goes to the Mangadex Team.
