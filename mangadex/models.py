@@ -2,46 +2,55 @@ import datetime
 from dateutil.parser import parse
 from typing import Dict, List
 from typing_extensions import Self
-from mangadex import (MangaError, TagError, ChapterError, AuthorError, 
-                    ScanlationGroupError, UserError, CustomListError, CoverArtError, URLRequest)
+from mangadex import (
+    MangaError,
+    TagError,
+    ChapterError,
+    AuthorError,
+    ScanlationGroupError,
+    UserError,
+    CustomListError,
+    CoverArtError,
+    URLRequest,
+)
 
 
 MANGADEX_BASEURL = "https://mangadex.org/"
 
 
-class Manga():
+class Manga:
     def __init__(self) -> None:
 
-        self.manga_id : str = ""
-        self.title : Dict[str, str] = {}
-        self.altTitles : Dict[str, str] = {}
-        self.description : Dict[str, str] = {}
-        self.isLocked : bool = False
-        self.links : Dict[str, str] = {}
-        self.originalLanguage : str = ""
-        self.lastVolume : str = ""
-        self.lastChapter : str = ""
-        self.publicationDemographic : str = ""
-        self.status : str = ""
-        self.year : int = 0
-        self.contentRating : str = ""
-        self.tags : List[str]  = []
+        self.manga_id: str = ""
+        self.title: Dict[str, str] = {}
+        self.altTitles: Dict[str, str] = {}
+        self.description: Dict[str, str] = {}
+        self.isLocked: bool = False
+        self.links: Dict[str, str] = {}
+        self.originalLanguage: str = ""
+        self.lastVolume: str = ""
+        self.lastChapter: str = ""
+        self.publicationDemographic: str = ""
+        self.status: str = ""
+        self.year: int = 0
+        self.contentRating: str = ""
+        self.tags: List[str] = []
         self.version = 1
-        self.createdAt : datetime = ""
-        self.updatedAt : datetime = ""
-        self.author_id : List[str] = []
-        self.artist_id : List[str] = []
-        self.cover_id : str = ""
+        self.createdAt: datetime = ""
+        self.updatedAt: datetime = ""
+        self.author_id: List[str] = []
+        self.artist_id: List[str] = []
+        self.cover_id: str = ""
 
     @classmethod
-    def MangaFromDict(cls, data : dict):
+    def MangaFromDict(cls, data: dict):
 
         try:
             data = data["data"]
         except (TypeError, KeyError):
             pass
 
-        if data["type"] != 'manga' or not data:
+        if data["type"] != "manga" or not data:
             raise MangaError(data=data, message="The data probvided is not a Manga")
 
         attributes = data["attributes"]
@@ -56,7 +65,7 @@ class Manga():
             manga.isLocked = attributes["isLocked"]
         except KeyError:
             pass
-        
+
         manga.links = attributes["links"]
         manga.originalLanguage = attributes["originalLanguage"]
         manga.lastVolume = attributes["lastVolume"]
@@ -70,29 +79,28 @@ class Manga():
         manga.updatedAt = parse(attributes["updatedAt"])
 
         for elem in data["relationships"]:
-            if elem['type'] == 'author':
-                manga.author_id.append(elem['id'])
-            elif elem['type'] == 'artist':
-                manga.author_id.append(elem['id'])
-            elif elem['type'] == 'cover_art':
-                manga.cover_id = elem['id']
+            if elem["type"] == "author":
+                manga.author_id.append(elem["id"])
+            elif elem["type"] == "artist":
+                manga.author_id.append(elem["id"])
+            elif elem["type"] == "cover_art":
+                manga.cover_id = elem["id"]
 
         return manga
 
     @staticmethod
-    def create_manga_list(resp) -> List['Manga']:
+    def create_manga_list(resp) -> List["Manga"]:
         resp = resp["data"]
         manga_list = []
         for elem in resp:
             manga_list.append(Manga.MangaFromDict(elem))
         return manga_list
 
-
     @property
     def url(self):
         return f"{MANGADEX_BASEURL}/title/{self.manga_id}"
 
-    def __eq__(self, other : 'Manga') -> bool:
+    def __eq__(self, other: "Manga") -> bool:
         my_vals = [self.manga_id, self.title, self.createdAt, self.author_id]
         other_vals = [other.manga_id, other.title, other.createdAt, other.author_id]
         return all((me == other for me, other in zip(my_vals, other_vals)))
@@ -106,22 +114,23 @@ class Manga():
         temp3 = f"createdAt = {self.createdAt}, uploadedAt = {self.updatedAt}), author_id = {self.author_id}, artist_id = {self.artist_id}, cover_id = {self.cover_id}"
         return temp1 + temp2 + temp3
 
-class Tag():
+
+class Tag:
     def __init__(self) -> None:
-        self.tag_id : str= ""
-        self.name : Dict[str, str] = {}
-        self.description : str = ""
-        self.group : str = ""
+        self.tag_id: str = ""
+        self.name: Dict[str, str] = {}
+        self.description: str = ""
+        self.group: str = ""
 
     @classmethod
-    def TagFromDict(cls, data : dict) -> 'Tag':
+    def TagFromDict(cls, data: dict) -> "Tag":
         tag = cls()
         try:
             data = data["data"]
         except KeyError:
             pass
 
-        if data["type"] != 'tag' or not data:
+        if data["type"] != "tag" or not data:
             raise TagError(data=data, message="The data provided is not a Tag")
 
         attributes = data["attributes"]
@@ -134,7 +143,7 @@ class Tag():
         return tag
 
     @staticmethod
-    def create_tag_list(resp) -> List['Tag']:
+    def create_tag_list(resp) -> List["Tag"]:
         tag_list = []
         try:
             resp = resp["data"]
@@ -145,51 +154,53 @@ class Tag():
             tag_list.append(Tag.TagFromDict(tag))
         return tag_list
 
-    def __eq__(self, other : 'Tag') -> bool:
+    def __eq__(self, other: "Tag") -> bool:
         my_vals = [self.tag_id, self.name]
         other_vals = [other.tag_id, other.name]
-        return all((me == other for me,other in zip(my_vals, other_vals)))
+        return all((me == other for me, other in zip(my_vals, other_vals)))
 
-    def __ne__(self, other: 'Tag') -> bool:
+    def __ne__(self, other: "Tag") -> bool:
         return not self.__eq__(other)
 
     def __repr__(self) -> str:
         return f"Tag(tag_id = {self.tag_id}, name = {self.name})"
 
-class Chapter():
+
+class Chapter:
     def __init__(self) -> None:
-        self.chapter_id : str = ""
-        self.title : str = ""
-        self.volume : str = ""
-        self.chapter : float = None
-        self.manga_id : str = ""
-        self.group_id : str = ""
-        self.translatedLanguage : str= ""
-        self.hash : str = ""
-        self.data : List[str] = []
-        self.uploader : str = ""
-        self.createdAt : datetime = ""
-        self.updatedAt : datetime = ""
-        self.publishAt : datetime = ""
-        
+        self.chapter_id: str = ""
+        self.title: str = ""
+        self.volume: str = ""
+        self.chapter: float = None
+        self.manga_id: str = ""
+        self.group_id: str = ""
+        self.translatedLanguage: str = ""
+        self.hash: str = ""
+        self.data: List[str] = []
+        self.uploader: str = ""
+        self.createdAt: datetime = ""
+        self.updatedAt: datetime = ""
+        self.publishAt: datetime = ""
 
     @classmethod
-    def ChapterFromDict(cls, data) -> 'Chapter':
+    def ChapterFromDict(cls, data) -> "Chapter":
         chapter = cls()
         try:
             data = data["data"]
         except KeyError:
             pass
 
-        if data["type"] != 'chapter' or not data:
-            raise ChapterError(data = data, message="The data provided is not a Chapter")
+        if data["type"] != "chapter" or not data:
+            raise ChapterError(data=data, message="The data provided is not a Chapter")
 
         attributes = data["attributes"]
 
         chapter.chapter_id = data["id"]
         chapter.title = attributes["title"]
         chapter.volume = attributes["volume"]
-        chapter.chapter = float(attributes["chapter"]) if attributes['chapter'] is not None else None
+        chapter.chapter = (
+            float(attributes["chapter"]) if attributes["chapter"] is not None else None
+        )
         chapter.translatedLanguage = attributes["translatedLanguage"]
         # chapter.hash = attributes["hash"]
         # chapter.data = attributes["data"]
@@ -205,7 +216,7 @@ class Chapter():
 
         return chapter
 
-    def fetch_chapter_images(self) -> List[str]: #maybe make this an async function?
+    def fetch_chapter_images(self) -> List[str]:  # maybe make this an async function?
         """
         Get the image links for the chapter
 
@@ -232,43 +243,44 @@ class Chapter():
         return image_urls
 
     @staticmethod
-    def create_chapter_list(resp) -> List['Chapter']:
+    def create_chapter_list(resp) -> List["Chapter"]:
         resp = resp["data"]
         chap_list = []
         for elem in resp:
             chap_list.append(Chapter.ChapterFromDict(elem))
         return chap_list
 
-
     @property
     def url(self):
         return f"{MANGADEX_BASEURL}/chapter/{self.chapter_id}"
 
-    def __eq__(self, other: 'Chapter') -> bool:
+    def __eq__(self, other: "Chapter") -> bool:
         my_vals = [self.chapter_id, self.manga_id, self.chapter]
         other_vals = [other.chapter_id, other.manga_id, other.chapter]
-        return all((me == other for me,other in zip(my_vals, other_vals)))
+        return all((me == other for me, other in zip(my_vals, other_vals)))
 
-    def __ne__(self, other: 'Chapter') -> bool:
+    def __ne__(self, other: "Chapter") -> bool:
         return not self.__eq__(other)
-    
+
     def __repr__(self) -> str:
-        temp1 =  f"Chapter(chapter_id = {self.chapter_id}, title = {self.title}, volume = {self.volume}, chapter = {self.chapter}, translatedLanguage = {self.translatedLanguage}, hash = {self.hash} \n"
+        temp1 = f"Chapter(chapter_id = {self.chapter_id}, title = {self.title}, volume = {self.volume}, chapter = {self.chapter}, translatedLanguage = {self.translatedLanguage}, hash = {self.hash} \n"
         temp2 = f"data = List[filenames], publishAt = {self.publishAt}, createdAt = {self.createdAt}, uploadedAt = {self.updatedAt}, group_id = {self.group_id}, manga_id = {self.manga_id}, uploader = {self.uploader})"
         return temp1 + temp2
 
-class User():
+
+class User:
     def __init__(self) -> None:
-        self.user_id : str = ""
-        self.username :str = ""
+        self.user_id: str = ""
+        self.username: str = ""
+
     @classmethod
-    def UserFromDict(cls, data) -> 'User':
+    def UserFromDict(cls, data) -> "User":
         if "data" in data:
             data = data["data"]
 
         if data["type"] != "user" or not data:
-            raise UserError(data = data, message="The data provided is not a User")
-        
+            raise UserError(data=data, message="The data provided is not a User")
+
         attributes = data["attributes"]
 
         user = cls()
@@ -278,7 +290,7 @@ class User():
         return user
 
     @staticmethod
-    def create_user_list(resp) -> List['User']:
+    def create_user_list(resp) -> List["User"]:
         resp = resp["data"]
         user_list = []
         for elem in resp:
@@ -289,26 +301,28 @@ class User():
     def url(self):
         return f"{MANGADEX_BASEURL}/user/{self.user_id}"
 
-    def __eq__(self, other: 'User') -> bool:
+    def __eq__(self, other: "User") -> bool:
         my_vals = [self.user_id, self.username]
         other_vals = [other.user_id, other.username]
-        return all((me == other for me,other in zip(my_vals, other_vals)))
+        return all((me == other for me, other in zip(my_vals, other_vals)))
 
-    def __ne__(self, other: 'User') -> bool:
+    def __ne__(self, other: "User") -> bool:
         return not self.__eq__(other)
 
     def __repr__(self) -> str:
         return f"User(id = {self.user_id}, username = {self.username})"
 
-class Author():
+
+class Author:
     def __init__(self) -> None:
-        self.author_id : str = ""
-        self.name : str = ""
-        self.imageUrl : str = ""
-        self.bio : Dict[str,  str] = {}
-        self.createdAt : datetime = ""
-        self.updatedAt : datetime = ""
-        self.mangas : List[str] = []
+        self.author_id: str = ""
+        self.name: str = ""
+        self.imageUrl: str = ""
+        self.bio: Dict[str, str] = {}
+        self.createdAt: datetime = ""
+        self.updatedAt: datetime = ""
+        self.mangas: List[str] = []
+
     @classmethod
     def AuthorFromDict(cls, data):
 
@@ -318,7 +332,10 @@ class Author():
             pass
 
         if data["type"] != "author" or not data:
-            raise AuthorError(data = data, message= f"The data provided is not Author is : {data['type']}")
+            raise AuthorError(
+                data=data,
+                message=f"The data provided is not Author is : {data['type']}",
+            )
 
         author = cls()
 
@@ -330,12 +347,14 @@ class Author():
         author.bio = attributes["biography"]
         author.createdAt = parse(attributes["createdAt"])
         author.updatedAt = parse(attributes["updatedAt"])
-        author.mangas =  [manga["id"] for manga in data["relationships"] if manga["type"] == "manga"] # better keep it like this to not consume computing time
+        author.mangas = [
+            manga["id"] for manga in data["relationships"] if manga["type"] == "manga"
+        ]  # better keep it like this to not consume computing time
 
         return author
 
     @staticmethod
-    def create_authors_list(resp) -> List['Author']:
+    def create_authors_list(resp) -> List["Author"]:
         resp = resp["data"]
         authors_list = []
         for elem in resp:
@@ -346,31 +365,33 @@ class Author():
     def url(self):
         return f"{MANGADEX_BASEURL}/author/{self.author_id}"
 
-
-    def __eq__(self, other: 'Author') -> bool:
-        my_vals = [self.author_id ,self.name]
+    def __eq__(self, other: "Author") -> bool:
+        my_vals = [self.author_id, self.name]
         other_vals = [other.author_id, other.name]
-        return all((me == other for me,other in zip(my_vals, other_vals)))
+        return all((me == other for me, other in zip(my_vals, other_vals)))
 
-    def __ne__(self, other: 'Author') -> bool:
+    def __ne__(self, other: "Author") -> bool:
         return not self.__eq__(other)
 
     def __repr__(self) -> str:
         return f"Author(id = {self.author_id}, name = {self.name}, imageUrl = {self.imageUrl}, createdAt = {self.createdAt}, updatedAt = {self.updatedAt})"
 
-class ScanlationGroup():
+
+class ScanlationGroup:
     def __init__(self) -> None:
-        self.group_id : str = ""
-        self.name : str = ""
-        self.leader : User = None
-        self.createdAt : datetime = None
-        self.updatedAt : datetime = None
+        self.group_id: str = ""
+        self.name: str = ""
+        self.leader: User = None
+        self.createdAt: datetime = None
+        self.updatedAt: datetime = None
 
     @classmethod
-    def ScanlationFromDict(cls, data) -> 'ScanlationGroup':
+    def ScanlationFromDict(cls, data) -> "ScanlationGroup":
 
         if data["type"] != "scanlation_group" or not data:
-            raise ScanlationGroupError(data,"The data provided is not an scanlation group")
+            raise ScanlationGroupError(
+                data, "The data provided is not an scanlation group"
+            )
 
         scan_group = cls()
 
@@ -388,7 +409,7 @@ class ScanlationGroup():
             except KeyError:
                 continue
 
-        scan_group.leader =  leader
+        scan_group.leader = leader
 
         scan_group.createdAt = parse(attributes["createdAt"])
         scan_group.updatedAt = parse(attributes["updatedAt"])
@@ -396,7 +417,7 @@ class ScanlationGroup():
         return scan_group
 
     @staticmethod
-    def create_group_list(resp) -> List['ScanlationGroup']:
+    def create_group_list(resp) -> List["ScanlationGroup"]:
         resp = resp["data"]
         group_list = []
         for elem in resp:
@@ -407,29 +428,30 @@ class ScanlationGroup():
     def url(self):
         return f"{MANGADEX_BASEURL}/group/{self.group_id}"
 
-    def __eq__(self, other: 'ScanlationGroup') -> bool:
+    def __eq__(self, other: "ScanlationGroup") -> bool:
         my_vals = []
         other_vals = []
-        return all((me == other for me,other in zip(my_vals, other_vals)))
+        return all((me == other for me, other in zip(my_vals, other_vals)))
 
-    def __ne__(self, other: 'ScanlationGroup') -> bool:
+    def __ne__(self, other: "ScanlationGroup") -> bool:
         return not self.__eq__(other)
-        
+
     def __repr__(self) -> str:
         return f"ScanlationGroup(id = {self.group_id}, name = {self.name}, leader = {self.leader}, createdAt = {self.createdAt}, updatedAt = {self.updatedAt})"
 
-class CustomList():
+
+class CustomList:
     def __init__(self) -> None:
-        self.list_id : str = ""
-        self.name : str = ""
-        self.visibility : str = ""
-        self.owner : str = ""
-        self.mangas : List[str] = []
+        self.list_id: str = ""
+        self.name: str = ""
+        self.visibility: str = ""
+        self.owner: str = ""
+        self.mangas: List[str] = []
 
     @classmethod
     def ListFromDict(cls, data):
         if data["type"] != "custom_list" or not data:
-            raise CustomListError(data,"The data provided is not a Custom List")
+            raise CustomListError(data, "The data provided is not a Custom List")
 
         custom_list = cls()
 
@@ -448,7 +470,7 @@ class CustomList():
         return custom_list
 
     @staticmethod
-    def create_customlist_list(resp) -> List['CustomList']:
+    def create_customlist_list(resp) -> List["CustomList"]:
         resp = resp["data"]
         custom_lists = []
         for elem in resp:
@@ -458,18 +480,19 @@ class CustomList():
     def __repr__(self) -> str:
         return f"CustomList(id = {self.list_id}, name = {self.name}, visibility = {self.visibility}, owner = {self.owner}, Manga = List[Manga])"
 
-class CoverArt():
+
+class CoverArt:
     def __init__(self) -> None:
-        self.cover_id : str = ""
-        self.volume : str = None
-        self.fileName : str = ""
-        self.description : str = None
-        self.createdAt : datetime = None
-        self.updatedAt : datetime = None
-        self.manga_id : str = None
+        self.cover_id: str = ""
+        self.volume: str = None
+        self.fileName: str = ""
+        self.description: str = None
+        self.createdAt: datetime = None
+        self.updatedAt: datetime = None
+        self.manga_id: str = None
 
     @classmethod
-    def CoverFromDict(cls, data) -> 'CoverArt':
+    def CoverFromDict(cls, data) -> "CoverArt":
 
         try:
             data = data["data"]
@@ -492,8 +515,8 @@ class CoverArt():
         cover.manga_id = data["relationships"][0]["id"]
 
         return cover
-    
-    def fetch_cover_image(self, quality : str = "source") -> str:
+
+    def fetch_cover_image(self, quality: str = "source") -> str:
         """
         Returns the url of a cover art
 
@@ -515,7 +538,7 @@ class CoverArt():
         return url
 
     @staticmethod
-    def createCoverImageList(resp) -> List['CoverArt']:
+    def createCoverImageList(resp) -> List["CoverArt"]:
         resp = resp["data"]
         coverimage_list = []
         for elem in resp:
