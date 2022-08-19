@@ -1,3 +1,5 @@
+from dataclasses import MISSING
+from pathlib import Path
 import mangadex
 import json
 import pytest
@@ -7,6 +9,10 @@ def read_json_files(filename: str, mode: str = "r") -> dict:
     with open(filename, mode) as f:
         resp = json.load(f)
     return resp
+
+
+USER_DATA_DIR = Path("test/user_data.txt'")
+MISSING_DATA = True if not USER_DATA_DIR.exists() else False
 
 
 class TestApi:
@@ -124,6 +130,9 @@ class TestApi:
 
         assert resp == saved_response
 
+    @pytest.mark.skipif(
+        MISSING_DATA, reason=f"The directory {USER_DATA_DIR} is not present"
+    )
     def test_GetUser(self):
         with open("test/user_data.txt", "r") as f:
             user_id = f.readline().strip("\n")
@@ -139,6 +148,9 @@ class TestApi:
         random_manga = self.api.random_manga()
         self.api.get_cover(random_manga.cover_id)
 
+    @pytest.mark.skipif(
+        MISSING_DATA, reason=f"The directory {USER_DATA_DIR} is not present"
+    )
     def test_GetUserCustomLists(self):
         with open("test/user_data.txt", "r") as f:
             user_id = f.readline().strip("\n")
@@ -146,12 +158,18 @@ class TestApi:
         self.api.get_user_customlists(user_id)
 
 
+CREDENTIALS = Path("test/credentials.txt")
+
+
+@pytest.mark.skipif(
+    not CREDENTIALS.exists(), reason=f"The directory {CREDENTIALS} is not present"
+)
 class Test_private_api:
     api = mangadex.Api()
     timeout = 5
 
     def login(self):
-        credentials = read_json_files("test/credentials.txt")
+        credentials = read_json_files(CREDENTIALS)
         self.api.login(credentials["username"], credentials["password"])
 
     def test_GetMangaReadingStatus(self):
