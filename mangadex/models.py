@@ -1,7 +1,6 @@
 import datetime
 from dateutil.parser import parse
 from typing import Dict, List
-from typing_extensions import Self
 from mangadex import (
     MangaError,
     TagError,

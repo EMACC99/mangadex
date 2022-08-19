@@ -8,14 +8,11 @@ from mangadex import (
     Tag,
     Chapter,
     User,
-    UserError,
-    ChapterError,
     Author,
     ScanlationGroup,
     CoverArt,
     CustomList,
     URLRequest,
-    TagError,
 )
 
 
@@ -1077,7 +1074,7 @@ class Api:
         url = f"{self.URL}/account/recover"
         URLRequest.request_url(url, "POST", self.timeout, params)
 
-    def complete_account_recover(self, code: str, newPassword: str):
+    def complete_account_recover(self, code: str, new_password: str):
         """
         Completes the account recover process
 
@@ -1086,8 +1083,8 @@ class Api:
         code : `str`. The code sended to the email given in `recover_account`
         newPassword : `str`. The new password for the account
         """
-        if len(newPassword) < 8:
+        if len(new_password) < 8:
             raise ValueError("Password must have at least 8 characters")
         url = f"{self.URL}/account/recover/{code}"
-        params = {"newPassword": newPassword}
+        params = {"newPassword": new_password}
         URLRequest.request_url(url, "POST", timeout=self.timeout, params=params)
