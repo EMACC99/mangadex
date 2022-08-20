@@ -1,4 +1,3 @@
-from dataclasses import MISSING
 from pathlib import Path
 import mangadex
 import json
@@ -12,7 +11,7 @@ def read_json_files(filename: str, mode: str = "r") -> dict:
 
 
 USER_DATA_DIR = Path("test/user_data.txt'")
-MISSING_DATA = True if not USER_DATA_DIR.exists() else False
+MISSING_DATA = USER_DATA_DIR.exists()
 
 
 class TestApi:
