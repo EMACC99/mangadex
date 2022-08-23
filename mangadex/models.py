@@ -2,8 +2,9 @@
 Module for the Manga, Cover, Chapter, etc. Models
 """
 import datetime
-from dateutil.parser import parse
 from typing import Dict, List
+from typing_extensions import Self
+from dateutil.parser import parse
 from mangadex import (
     MangaError,
     TagError,
@@ -21,6 +22,10 @@ MANGADEX_BASEURL = "https://mangadex.org/"
 
 
 class Manga:
+    """
+    Manga Object
+    """
+
     def __init__(self) -> None:
 
         self.manga_id: str = ""
@@ -45,8 +50,10 @@ class Manga:
         self.cover_id: str = ""
 
     @classmethod
-    def MangaFromDict(cls, data: dict):
-
+    def manga_from_dict(cls, data: dict):
+        """
+        Creates a Manga Object from a JSON
+        """
         try:
             data = data["data"]
         except (TypeError, KeyError):
@@ -91,18 +98,24 @@ class Manga:
         return manga
 
     @staticmethod
-    def create_manga_list(resp) -> List["Manga"]:
+    def create_manga_list(resp) -> List[Self]:
+        """
+        Creates a manga list from a JSON
+        """
         resp = resp["data"]
         manga_list = []
         for elem in resp:
-            manga_list.append(Manga.MangaFromDict(elem))
+            manga_list.append(Manga.manga_from_dict(elem))
         return manga_list
 
     @property
     def url(self):
+        """
+        Return the mangadex url
+        """
         return f"{MANGADEX_BASEURL}/title/{self.manga_id}"
 
-    def __eq__(self, other: "Manga") -> bool:
+    def __eq__(self, other: Self) -> bool:
         my_vals = [self.manga_id, self.title, self.createdAt, self.author_id]
         other_vals = [other.manga_id, other.title, other.createdAt, other.author_id]
         return all((me == other for me, other in zip(my_vals, other_vals)))
@@ -118,6 +131,10 @@ class Manga:
 
 
 class Tag:
+    """
+    Class for Manga Tags
+    """
+
     def __init__(self) -> None:
         self.tag_id: str = ""
         self.name: Dict[str, str] = {}
@@ -125,7 +142,10 @@ class Tag:
         self.group: str = ""
 
     @classmethod
-    def TagFromDict(cls, data: dict) -> "Tag":
+    def tag_from_dict(cls, data: dict) -> Self:
+        """
+        Creates a Tag Object from a JSON
+        """
         tag = cls()
         try:
             data = data["data"]
@@ -145,7 +165,10 @@ class Tag:
         return tag
 
     @staticmethod
-    def create_tag_list(resp) -> List["Tag"]:
+    def create_tag_list(resp) -> List[Self]:
+        """
+        Creates a Tag list from a JSON
+        """
         tag_list = []
         try:
             resp = resp["data"]
@@ -153,15 +176,15 @@ class Tag:
             pass
 
         for tag in resp:
-            tag_list.append(Tag.TagFromDict(tag))
+            tag_list.append(Tag.tag_from_dict(tag))
         return tag_list
 
-    def __eq__(self, other: "Tag") -> bool:
+    def __eq__(self, other: Self) -> bool:
         my_vals = [self.tag_id, self.name]
         other_vals = [other.tag_id, other.name]
         return all((me == other for me, other in zip(my_vals, other_vals)))
 
-    def __ne__(self, other: "Tag") -> bool:
+    def __ne__(self, other: Self) -> bool:
         return not self.__eq__(other)
 
     def __repr__(self) -> str:
@@ -169,6 +192,10 @@ class Tag:
 
 
 class Chapter:
+    """
+    Chapter Object
+    """
+
     def __init__(self) -> None:
         self.chapter_id: str = ""
         self.title: str = ""
@@ -185,7 +212,10 @@ class Chapter:
         self.publishAt: datetime = ""
 
     @classmethod
-    def ChapterFromDict(cls, data) -> "Chapter":
+    def chapter_from_dict(cls, data) -> Self:
+        """
+        Creates a Chapter from JSON
+        """
         chapter = cls()
         try:
             data = data["data"]
@@ -245,23 +275,29 @@ class Chapter:
         return image_urls
 
     @staticmethod
-    def create_chapter_list(resp) -> List["Chapter"]:
+    def create_chapter_list(resp) -> List[Self]:
+        """
+        Creates a Chapter list from JSON
+        """
         resp = resp["data"]
         chap_list = []
         for elem in resp:
-            chap_list.append(Chapter.ChapterFromDict(elem))
+            chap_list.append(Chapter.chapter_from_dict(elem))
         return chap_list
 
     @property
     def url(self):
+        """
+        Returns the mangadex url
+        """
         return f"{MANGADEX_BASEURL}/chapter/{self.chapter_id}"
 
-    def __eq__(self, other: "Chapter") -> bool:
+    def __eq__(self, other: Self) -> bool:
         my_vals = [self.chapter_id, self.manga_id, self.chapter]
         other_vals = [other.chapter_id, other.manga_id, other.chapter]
         return all((me == other for me, other in zip(my_vals, other_vals)))
 
-    def __ne__(self, other: "Chapter") -> bool:
+    def __ne__(self, other: Self) -> bool:
         return not self.__eq__(other)
 
     def __repr__(self) -> str:
@@ -276,7 +312,10 @@ class User:
         self.username: str = ""
 
     @classmethod
-    def UserFromDict(cls, data) -> "User":
+    def user_from_dict(cls, data: dict) -> Self:
+        """
+        Creates a User from a JSON
+        """
         if "data" in data:
             data = data["data"]
 
@@ -292,18 +331,24 @@ class User:
         return user
 
     @staticmethod
-    def create_user_list(resp) -> List["User"]:
+    def create_user_list(resp: dict) -> List[Self]:
+        """
+        Creates a List of users from a JSON
+        """
         resp = resp["data"]
         user_list = []
         for elem in resp:
-            user_list.append(User.UserFromDict(elem))
+            user_list.append(User.user_from_dict(elem))
         return user_list
 
     @property
     def url(self):
+        """
+        Returns mangadex url
+        """
         return f"{MANGADEX_BASEURL}/user/{self.user_id}"
 
-    def __eq__(self, other: "User") -> bool:
+    def __eq__(self, other: Self) -> bool:
         my_vals = [self.user_id, self.username]
         other_vals = [other.user_id, other.username]
         return all((me == other for me, other in zip(my_vals, other_vals)))
@@ -326,8 +371,10 @@ class Author:
         self.mangas: List[str] = []
 
     @classmethod
-    def AuthorFromDict(cls, data):
-
+    def author_from_dict(cls, data: dict):
+        """
+        Creates Autho from JSON
+        """
         try:
             data = data["data"]
         except KeyError:
@@ -356,23 +403,29 @@ class Author:
         return author
 
     @staticmethod
-    def create_authors_list(resp) -> List["Author"]:
+    def create_authors_list(resp: dict) -> List[Self]:
+        """
+        Create a list of Authors from JSON
+        """
         resp = resp["data"]
         authors_list = []
         for elem in resp:
-            authors_list.append(Author.AuthorFromDict(elem))
+            authors_list.append(Author.author_from_dict(elem))
         return authors_list
 
     @property
     def url(self):
+        """
+        Returns the mangadex url
+        """
         return f"{MANGADEX_BASEURL}/author/{self.author_id}"
 
-    def __eq__(self, other: "Author") -> bool:
+    def __eq__(self, other: Self) -> bool:
         my_vals = [self.author_id, self.name]
         other_vals = [other.author_id, other.name]
         return all((me == other for me, other in zip(my_vals, other_vals)))
 
-    def __ne__(self, other: "Author") -> bool:
+    def __ne__(self, other: Self) -> bool:
         return not self.__eq__(other)
 
     def __repr__(self) -> str:
@@ -388,8 +441,10 @@ class ScanlationGroup:
         self.updatedAt: datetime = None
 
     @classmethod
-    def ScanlationFromDict(cls, data) -> "ScanlationGroup":
-
+    def scanlation_from_dict(cls, data) -> Self:
+        """
+        Creates a ScanlationGroup from JSON
+        """
         if data["type"] != "scanlation_group" or not data:
             raise ScanlationGroupError(
                 data, "The data provided is not an scanlation group"
@@ -419,23 +474,29 @@ class ScanlationGroup:
         return scan_group
 
     @staticmethod
-    def create_group_list(resp) -> List["ScanlationGroup"]:
+    def create_group_list(resp) -> List[Self]:
+        """
+        Creates a ScanlationGroup List from JSON
+        """
         resp = resp["data"]
         group_list = []
         for elem in resp:
-            group_list.append(ScanlationGroup.ScanlationFromDict(elem))
+            group_list.append(ScanlationGroup.scanlation_from_dict(elem))
         return group_list
 
     @property
     def url(self):
+        """
+        Returns the mangadex url
+        """
         return f"{MANGADEX_BASEURL}/group/{self.group_id}"
 
-    def __eq__(self, other: "ScanlationGroup") -> bool:
-        my_vals = []
-        other_vals = []
+    def __eq__(self, other: Self) -> bool:
+        my_vals = [self.group_id, self.name]
+        other_vals = [other.group_id, other.name]
         return all((me == other for me, other in zip(my_vals, other_vals)))
 
-    def __ne__(self, other: "ScanlationGroup") -> bool:
+    def __ne__(self, other: Self) -> bool:
         return not self.__eq__(other)
 
     def __repr__(self) -> str:
@@ -451,7 +512,10 @@ class CustomList:
         self.mangas: List[str] = []
 
     @classmethod
-    def ListFromDict(cls, data):
+    def list_from_dict(cls, data: dict) -> Self:
+        """
+        Creates a CustomList from a JSON
+        """
         if data["type"] != "custom_list" or not data:
             raise CustomListError(data, "The data provided is not a Custom List")
 
@@ -472,11 +536,14 @@ class CustomList:
         return custom_list
 
     @staticmethod
-    def create_customlist_list(resp) -> List["CustomList"]:
+    def create_customlist_list(resp) -> List[Self]:
+        """
+        Creates a list of CustomList from a JSON
+        """
         resp = resp["data"]
         custom_lists = []
         for elem in resp:
-            custom_lists.append(CustomList.ListFromDict(elem))
+            custom_lists.append(CustomList.list_from_dict(elem))
         return custom_lists
 
     def __repr__(self) -> str:
@@ -494,8 +561,10 @@ class CoverArt:
         self.manga_id: str = ""
 
     @classmethod
-    def CoverFromDict(cls, data) -> "CoverArt":
-
+    def cover_from_list(cls, data: dict) -> Self:
+        """
+        Creates a CoverArt form a JSON
+        """
         try:
             data = data["data"]
         except (KeyError, TypeError):
@@ -540,11 +609,14 @@ class CoverArt:
         return url
 
     @staticmethod
-    def createCoverImageList(resp) -> List["CoverArt"]:
+    def create_coverart_list(resp) -> List[Self]:
+        """
+        Creates a list of CoverArts form a JSON
+        """
         resp = resp["data"]
         coverimage_list = []
         for elem in resp:
-            coverimage_list.append(CoverArt.CoverFromDict(elem))
+            coverimage_list.append(CoverArt.cover_from_list(elem))
         return coverimage_list
 
     def __repr__(self) -> str:
