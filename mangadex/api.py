@@ -1,3 +1,6 @@
+"""
+Wrapper for the mangadex API
+"""
 from __future__ import absolute_import
 import re  # for validating email and prevent spam
 from typing import Dict, List, Union

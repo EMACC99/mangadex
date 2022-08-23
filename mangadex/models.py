@@ -1,3 +1,6 @@
+"""
+Module for the Manga, Cover, Chapter, etc. Models
+"""
 import datetime
 from dateutil.parser import parse
 from typing import Dict, List
@@ -488,7 +491,7 @@ class CoverArt:
         self.description: str = None
         self.createdAt: datetime = None
         self.updatedAt: datetime = None
-        self.manga_id: str = None
+        self.manga_id: str = ""
 
     @classmethod
     def CoverFromDict(cls, data) -> "CoverArt":
