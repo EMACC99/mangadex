@@ -137,7 +137,7 @@ class Api:
         """
         url = f"{self.URL}/manga/{manga_id}"
         resp = URLRequest.request_url(url, "GET", timeout=self.timeout)
-        return Manga.MangaFromDict(resp)
+        return Manga.manga_from_dict(resp)
 
     def random_manga(self) -> Manga:
         """
@@ -153,7 +153,7 @@ class Api:
         """
         url = f"{self.URL}/manga/random"
         resp = URLRequest.request_url(url, "GET", timeout=self.timeout)
-        return Manga.MangaFromDict(resp)
+        return Manga.manga_from_dict(resp)
 
     def create_manga(self, title: str, **kwargs) -> Manga:
         """
@@ -189,7 +189,7 @@ class Api:
         resp = URLRequest.request_url(
             url, "POST", params=params, headers=self.bearer, timeout=self.timeout
         )
-        return Manga.MangaFromDict(resp)
+        return Manga.manga_from_dict(resp)
 
     def get_manga_volumes_and_chapters(self, manga_id: str, **kwargs) -> Dict[str, str]:
         """
@@ -248,7 +248,7 @@ class Api:
             url, "PUT", params=kwargs, headers=self.bearer, timeout=self.timeout
         )
         if ObjReturn:
-            return Manga.MangaFromDict(resp)
+            return Manga.manga_from_dict(resp)
         return None
 
     def delete_manga(self, manga_id: str) -> None:
@@ -391,7 +391,7 @@ class Api:
         """
         url = f"{self.URL}/chapter/{chapter_id}"
         resp = URLRequest.request_url(url, "GET", timeout=self.timeout)
-        return Chapter.ChapterFromDict(resp)
+        return Chapter.chapter_from_dict(resp)
 
     def get_author(self, **kwargs) -> List[Author]:
         """
@@ -417,7 +417,7 @@ class Api:
 
         url = f"{self.URL}/author"
         resp = URLRequest.request_url(url, "GET", timeout=self.timeout, params=kwargs)
-        return Author.AuthorFromDict(resp)
+        return Author.author_from_dict(resp)
 
     def get_author_by_id(self, author_id: str) -> Author:
         """
@@ -437,7 +437,7 @@ class Api:
         """
         url = f"{self.URL}/author/{author_id}"
         resp = URLRequest.request_url(url, "GET", timeout=self.timeout)
-        return Author.AuthorFromDict(resp)
+        return Author.author_from_dict(resp)
 
     def create_author(self, name: str, version: int, ObjReturn: bool = False) -> Author:
         """
@@ -459,7 +459,7 @@ class Api:
             url, "POST", timeout=self.timeout, params=params, headers=self.bearer
         )
         if ObjReturn:
-            return Author.AuthorFromDict(resp)
+            return Author.author_from_dict(resp)
 
     def update_author(
         self, *, author_id: str, version: int, name: str = None, ObjReturn: bool = False
@@ -487,7 +487,7 @@ class Api:
         )
 
         if ObjReturn:
-            return Author.AuthorFromDict(resp)
+            return Author.author_from_dict(resp)
 
     def delete_author(self, author_id: str) -> None:
         """
@@ -519,7 +519,7 @@ class Api:
         """
         url = f"{self.URL}/user/{user_id}"
         resp = URLRequest.request_url(url, "GET", timeout=self.timeout)
-        return User.UserFromDict(resp)
+        return User.user_from_dict(resp)
 
     def scanlation_group_list(
         self,
@@ -586,7 +586,7 @@ class Api:
         resp = URLRequest.request_url(
             url, "GET", timeout=self.timeout, headers=self.bearer
         )
-        return User.UserFromDict(resp)
+        return User.user_from_dict(resp)
 
     def get_my_mangalist(self, **kwargs) -> List[Manga]:
         """
@@ -809,7 +809,7 @@ class Api:
         resp = URLRequest.request_url(
             url, "GET", headers=self.bearer, timeout=self.timeout, params=kwargs
         )
-        return CustomList.ListFromDict(resp["result"])
+        return CustomList.list_from_dict(resp["result"])
 
     def update_customlist(self, customlist_id: str, **kwargs) -> CustomList:
         """
@@ -831,7 +831,7 @@ class Api:
         resp = URLRequest.request_url(
             url, "PUT", params=kwargs, headers=self.bearer, timeout=self.timeout
         )
-        return CustomList.ListFromDict(resp["result"])
+        return CustomList.list_from_dict(resp["result"])
 
     def delete_customlist(self, customlist_id: str) -> None:
         """
@@ -910,7 +910,7 @@ class Api:
         params = Api.__parse_coverart_params(kwargs)
         url = f"{self.URL}/cover"
         resp = URLRequest.request_url(url, "GET", params=params, timeout=self.timeout)
-        return CoverArt.createCoverImageList(resp)
+        return CoverArt.create_coverart_list(resp)
 
     def get_cover(self, cover_id: str) -> CoverArt:
         """
@@ -926,7 +926,7 @@ class Api:
         """
         url = f"{self.URL}/cover/{cover_id}"
         resp = URLRequest.request_url(url, "GET", timeout=self.timeout)
-        return CoverArt.CoverFromDict(resp)
+        return CoverArt.cover_from_dict(resp)
 
     def upload_cover(
         self, manga_id: str, filename: str, ObjReturn: bool = False
@@ -955,7 +955,7 @@ class Api:
             headers=self.bearer,
             timeout=self.timeout,
         )
-        return CoverArt.CoverFromDict(resp) if ObjReturn else None
+        return CoverArt.cover_from_dict(resp) if ObjReturn else None
 
     def edit_cover(
         self,
@@ -991,7 +991,7 @@ class Api:
         resp = URLRequest.request_url(
             url, "PUT", params=params, headers=self.bearer, timeout=self.timeout
         )
-        return CoverArt.CoverFromDict(resp) if ObjReturn else None
+        return CoverArt.cover_from_dict(resp) if ObjReturn else None
 
     def delete_cover(self, cover_id: Union[str, CoverArt]):
         """
@@ -1004,7 +1004,7 @@ class Api:
         if not cover_id:
             raise ValueError("cover_id cannot be empty")
         if isinstance(cover_id, CoverArt):
-            cover_id = cover_id.id
+            cover_id = cover_id.cover_id
         url = f"{self.URL}/cover/{cover_id}"
         URLRequest.request_url(url, "DELETE", headers=self.bearer, timeout=self.timeout)
 
@@ -1034,7 +1034,7 @@ class Api:
             raise ValueError("Password must have at least 8 characters")
         params = {"username": username, "password": password, "email": email}
         resp = URLRequest.request_url(url, "POST", timeout=self.timeout, params=params)
-        return User.UserFromDict(resp["data"]) if ObjReturn else None
+        return User.user_from_dict(resp["data"]) if ObjReturn else None
 
     def activate_account(self, code: str):
         """

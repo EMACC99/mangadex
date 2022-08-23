@@ -1,5 +1,5 @@
 from pathlib import Path
-import mangadex
+import mangadex as md
 import json
 import pytest
 
@@ -10,12 +10,11 @@ def read_json_files(filename: str, mode: str = "r") -> dict:
     return resp
 
 
-USER_DATA_DIR = Path("test/user_data.txt'")
-MISSING_DATA = USER_DATA_DIR.exists()
+USER_DATA_DIR = Path("test/user_data.txt")
 
 
 class TestApi:
-    api = mangadex.Api()
+    api = md.Api()
     timeout = 5
 
     def test_mangaList(self):
@@ -26,11 +25,11 @@ class TestApi:
         resp = self.api.get_manga_list(title="iris zero", limit=1)[0]
 
         url = f"{self.api.URL}/manga"
-        raw_response = mangadex.URLRequest.request_url(
+        raw_response = md.URLRequest.request_url(
             url, "GET", timeout=self.timeout, params={"limit": 1, "title": "iris zero"}
         )
 
-        saved_resp = mangadex.Manga.MangaFromDict(raw_response["data"][0])
+        saved_resp = md.Manga.manga_from_dict(raw_response["data"][0])
 
         assert resp == saved_resp, "The Manga objects are not equal"
 
@@ -63,11 +62,11 @@ class TestApi:
         resp = self.api.get_chapter(chapter_id=ch_id)
 
         url = f"{self.api.URL}/chapter/{ch_id}"
-        raw_response = mangadex.URLRequest.request_url(
+        raw_response = md.URLRequest.request_url(
             url, "GET", timeout=self.timeout, params={"id": ch_id}
         )
 
-        saved_resp = mangadex.Chapter.ChapterFromDict(raw_response)
+        saved_resp = md.Chapter.chapter_from_dict(raw_response)
 
         assert resp == saved_resp, "The Chapter Objects are not equal"
 
@@ -86,11 +85,11 @@ class TestApi:
 
         url = f"{self.api.URL}/author/{author_id}"
 
-        raw_respone = mangadex.URLRequest.request_url(
+        raw_respone = md.URLRequest.request_url(
             url, "GET", timeout=self.timeout, params={"id": author_id}
         )
 
-        saved_resp = mangadex.Author.AuthorFromDict(raw_respone)
+        saved_resp = md.Author.author_from_dict(raw_respone)
 
         assert resp == saved_resp, "The Author Objects are not equal"
 
@@ -98,8 +97,8 @@ class TestApi:
         resp = self.api.tag_list()
 
         url = f"{self.api.URL}/manga/tag"
-        raw_response = mangadex.URLRequest.request_url(url, "GET", timeout=self.timeout)
-        saved_reps = mangadex.Tag.create_tag_list(raw_response)
+        raw_response = md.URLRequest.request_url(url, "GET", timeout=self.timeout)
+        saved_reps = md.Tag.create_tag_list(raw_response)
 
         assert resp == saved_reps, "The test objects are not equal"
 
@@ -110,7 +109,7 @@ class TestApi:
 
         url = f"{self.api.URL}/manga/{manga_id}/aggregate"
 
-        raw_response = mangadex.URLRequest.request_url(url, "GET", timeout=self.timeout)
+        raw_response = md.URLRequest.request_url(url, "GET", timeout=self.timeout)
 
         saved_resp = raw_response["volumes"]
 
@@ -121,16 +120,17 @@ class TestApi:
         resp = self.api.scanlation_group_list(group_ids=ids)  # black cat scanlations
 
         url = f"{self.api.URL}/group"
-        raw_response = mangadex.URLRequest.request_url(
+        raw_response = md.URLRequest.request_url(
             url, "GET", timeout=self.timeout, params={"ids[]": ids}
         )
 
-        saved_response = mangadex.ScanlationGroup.create_group_list(raw_response)
+        saved_response = md.ScanlationGroup.create_group_list(raw_response)
 
         assert resp == saved_response
 
     @pytest.mark.skipif(
-        MISSING_DATA, reason=f"The directory {USER_DATA_DIR} is not present"
+        not USER_DATA_DIR.exists(),
+        reason=f"The directory {USER_DATA_DIR} is not present",
     )
     def test_GetUser(self):
         with open("test/user_data.txt", "r") as f:
@@ -148,7 +148,8 @@ class TestApi:
         self.api.get_cover(random_manga.cover_id)
 
     @pytest.mark.skipif(
-        MISSING_DATA, reason=f"The directory {USER_DATA_DIR} is not present"
+        not USER_DATA_DIR.exists(),
+        reason=f"The directory {USER_DATA_DIR} is not present",
     )
     def test_GetUserCustomLists(self):
         with open("test/user_data.txt", "r") as f:
@@ -164,7 +165,7 @@ CREDENTIALS = Path("test/credentials.txt")
     not CREDENTIALS.exists(), reason=f"The directory {CREDENTIALS} is not present"
 )
 class Test_private_api:
-    api = mangadex.Api()
+    api = md.Api()
     timeout = 5
 
     def login(self):
