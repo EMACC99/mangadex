@@ -561,7 +561,7 @@ class CoverArt:
         self.manga_id: str = ""
 
     @classmethod
-    def cover_from_list(cls, data: dict) -> Self:
+    def cover_from_dict(cls, data: dict) -> Self:
         """
         Creates a CoverArt form a JSON
         """
@@ -616,7 +616,7 @@ class CoverArt:
         resp = resp["data"]
         coverimage_list = []
         for elem in resp:
-            coverimage_list.append(CoverArt.cover_from_list(elem))
+            coverimage_list.append(CoverArt.cover_from_dict(elem))
         return coverimage_list
 
     def __repr__(self) -> str:
