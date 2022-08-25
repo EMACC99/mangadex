@@ -1,7 +1,10 @@
+"""
+Module for unittesting
+"""
 from pathlib import Path
-import mangadex as md
 import json
 import pytest
+import mangadex as md
 
 
 def read_json_files(filename: str, mode: str = "r") -> dict:
