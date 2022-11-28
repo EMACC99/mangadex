@@ -41,7 +41,7 @@ class Manga:
         self.status: str = ""
         self.year: int = 0
         self.contentRating: str = ""
-        self.tags: List[str] = []
+        self.tags: List[Tag] = []
         self.version = 1
         self.createdAt: datetime = ""
         self.updatedAt: datetime = ""
