@@ -96,6 +96,31 @@ class TestApi:
 
         assert resp == saved_resp, "The Author Objects are not equal"
 
+    def test_GetAuthorPlural(self):
+        author_ids = [
+            "df765fdc-ea9f-45d0-9191-d95615662d49",
+            "742bea86-c1ae-4893-bd06-805287991849",
+        ]
+
+        resp = self.api.get_author(ids=author_ids)
+
+        url = f"{self.api.URL}/author/?ids[]={author_ids[0]}&ids[]={author_ids[1]}"
+        raw_response = md.URLRequest.request_url(
+            url, "GET", timeout=self.timeout
+        )
+
+        manual_authors = [
+            md.Author.author_from_dict(author) for author in raw_response['data']
+        ]
+        manual_authors = dict((
+            (author.author_id, author) for author in manual_authors
+        ))
+
+        for author in author_ids:
+            api_author = next((a for a in resp if a.author_id == author), None)
+            assert api_author is not None, "Required author not returned in response"
+            assert api_author == manual_authors[author], "The Author Objects are not equal"
+
     def test_GetTags(self):
         resp = self.api.tag_list()
 

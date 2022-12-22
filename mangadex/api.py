@@ -417,7 +417,7 @@ class Api:
 
         url = f"{self.URL}/author"
         resp = URLRequest.request_url(url, "GET", timeout=self.timeout, params=kwargs)
-        return Author.author_from_dict(resp)
+        return list(Author.author_from_dict(author) for author in resp['data'])
 
     def get_author_by_id(self, author_id: str) -> Author:
         """
