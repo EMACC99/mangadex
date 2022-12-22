@@ -88,11 +88,11 @@ class TestApi:
 
         url = f"{self.api.URL}/author/{author_id}"
 
-        raw_respone = md.URLRequest.request_url(
+        raw_response = md.URLRequest.request_url(
             url, "GET", timeout=self.timeout, params={"id": author_id}
         )
 
-        saved_resp = md.Author.author_from_dict(raw_respone)
+        saved_resp = md.Author.author_from_dict(raw_response)
 
         assert resp == saved_resp, "The Author Objects are not equal"
 
