@@ -27,6 +27,6 @@ from .models import (
 from .api import Api
 
 __author__ = "Eduardo Ceja"
-__version__ = "2.6"
+__version__ = "2.7"
 __license__ = "MIT"
 __copytight__ = "Copyright (c) 2021 Eduardo Ceja"
