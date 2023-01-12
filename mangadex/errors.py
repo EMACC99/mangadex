@@ -3,7 +3,6 @@ Module for error class declaration
 """
 from typing import Union
 from requests import Response
-from typing_extensions import Self
 
 
 class ApiError(Exception):
@@ -27,16 +26,18 @@ class ApiError(Exception):
         return f"{self.message}: {self.code} \n {self.details}"
 
 
-class ApiClientError(Exception):
-    def __init__(self, *args: object) -> None:
-        super().__init__(*args)
-
-
 class BaseError(Exception):
     def __init__(self, data: dict, message: str) -> None:
         self.data = data
         self.message = message
         super(BaseError, self).__init__(self.message)
+
+
+class ApiClientError(BaseError):
+    def __init__(self, data: dict, message: str) -> None:
+        super(ApiClientError, self).__init__(data, message=message)
+        self.data = data
+        self.message = message
 
 
 class MangaError(BaseError):

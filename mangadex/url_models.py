@@ -2,6 +2,8 @@
 Url handler module
 """
 import json
+from typing import Dict, Union, Any
+
 import requests
 
 from mangadex import ApiError
@@ -25,7 +27,11 @@ class URLRequest:
 
     @staticmethod
     def request_url(
-        url: str, method: str, timeout, params: dict = None, headers=None
+        url: str,
+        method: str,
+        timeout,
+        params: Union[Dict[str, Any], None] = None,
+        headers=None,
     ) -> dict:
         """
         The handler fot GET, POST, PUT and DEL
@@ -64,6 +70,9 @@ class URLRequest:
             except requests.RequestException as e:
                 print(f"An error has occured: {e}")
                 raise
+        else:
+            raise ValueError(f"Method {method} is invalid")
+
         if not resp.ok:
             raise ApiError(resp)
 
@@ -82,7 +91,7 @@ class URLRequest:
     @staticmethod
     def __encode_parameters(params: dict) -> str:
         if params is None:
-            return None
+            return ""
         else:
             params_tuple = []
             for k, v in params.items():
@@ -97,11 +106,8 @@ class URLRequest:
 
     @staticmethod
     def __parse_data(content):
-        try:
-            data = json.loads(content)
-            URLRequest._check_api_error(data)
-        except:
-            raise
+        data = json.loads(content)
+        URLRequest._check_api_error(data)
         return data
 
     @staticmethod
