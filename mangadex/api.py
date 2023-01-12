@@ -417,7 +417,7 @@ class Api:
 
         url = f"{self.URL}/author"
         resp = URLRequest.request_url(url, "GET", timeout=self.timeout, params=kwargs)
-        return list(Author.author_from_dict(author) for author in resp['data'])
+        return list(Author.author_from_dict(author) for author in resp["data"])
 
     def get_author_by_id(self, author_id: str) -> Author:
         """
@@ -1007,87 +1007,3 @@ class Api:
             cover_id = cover_id.cover_id
         url = f"{self.URL}/cover/{cover_id}"
         URLRequest.request_url(url, "DELETE", headers=self.bearer, timeout=self.timeout)
-
-    def create_account(
-        self, username: str, password: str, email: str, ObjReturn: bool = False
-    ) -> Union[User, None]:
-        """
-        Creates an account
-
-        Parameters
-        ---------------
-        username : `str`.
-        password : `str`.
-        email : `str`.
-        ObjReturn : `bool`.
-
-        Returns
-        -------------
-        `User` if `ObjReturn` set to `True`
-        """
-        url = f"{self.URL}/account/create"
-        email_regex = "^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$"  # regular expression for email
-        if re.search(email_regex, email) is None:
-            raise ValueError("The email provided is not valid")
-
-        if len(password) < 8:
-            raise ValueError("Password must have at least 8 characters")
-        params = {"username": username, "password": password, "email": email}
-        resp = URLRequest.request_url(url, "POST", timeout=self.timeout, params=params)
-        return User.user_from_dict(resp["data"]) if ObjReturn else None
-
-    def activate_account(self, code: str):
-        """
-        Handles the activation code for the account creation
-
-        Parameters
-        ------------
-        code : `str`. The activation code sent to the email provided
-        """
-        url = f"{self.URL}/account/activate/{code}"
-        URLRequest.request_url(url, "GET", timeout=self.timeout)
-
-    def resend_activation_code(self, email: str):
-        """
-        Resends the activation code to another email
-
-        Parameters
-        -----------------
-        email : `str`.
-        """
-        email_regex = "^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$"  # regular expression for email
-        if re.search(email_regex, email) is not None:
-            raise ValueError("The email provided is not valid")
-        params = {"email": email}
-        url = f"{self.URL}/account/activate/resend"
-        URLRequest.request_url(url, "POST", timeout=self.timeout, params=params)
-
-    def recover_account(self, email: str):
-        """
-        Recover an existing account
-
-        Parameters
-        --------------
-        email : `str`.
-        """
-        email_regex = "^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$"
-        if re.search(email_regex, email) is None:
-            raise ValueError("The email provided is not valid")
-        params = {"email": email}
-        url = f"{self.URL}/account/recover"
-        URLRequest.request_url(url, "POST", self.timeout, params)
-
-    def complete_account_recover(self, code: str, new_password: str):
-        """
-        Completes the account recover process
-
-        Parameters
-        --------------
-        code : `str`. The code sended to the email given in `recover_account`
-        newPassword : `str`. The new password for the account
-        """
-        if len(new_password) < 8:
-            raise ValueError("Password must have at least 8 characters")
-        url = f"{self.URL}/account/recover/{code}"
-        params = {"newPassword": new_password}
-        URLRequest.request_url(url, "POST", timeout=self.timeout, params=params)
