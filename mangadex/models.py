@@ -2,7 +2,7 @@
 Module for the Manga, Cover, Chapter, etc. Models
 """
 import datetime
-from typing import Dict, List
+from typing import Dict, List, Union
 from typing_extensions import Self
 from dateutil.parser import parse
 from mangadex import (
@@ -43,8 +43,8 @@ class Manga:
         self.contentRating: str = ""
         self.tags: List[Tag] = []
         self.version = 1
-        self.createdAt: datetime = ""
-        self.updatedAt: datetime = ""
+        self.createdAt: datetime.datetime
+        self.updatedAt: datetime.datetime
         self.author_id: List[str] = []
         self.artist_id: List[str] = []
         self.cover_id: str = ""
@@ -98,7 +98,7 @@ class Manga:
         return manga
 
     @staticmethod
-    def create_manga_list(resp) -> List[Self]:
+    def create_manga_list(resp) -> List["Manga"]:
         """
         Creates a manga list from a JSON
         """
@@ -120,7 +120,7 @@ class Manga:
         other_vals = [other.manga_id, other.title, other.createdAt, other.author_id]
         return all((me == other for me, other in zip(my_vals, other_vals)))
 
-    def __ne__(self, other: object) -> bool:
+    def __ne__(self, other: Self) -> bool:
         return not self.__eq__(other)
 
     def __repr__(self) -> str:
@@ -165,7 +165,7 @@ class Tag:
         return tag
 
     @staticmethod
-    def create_tag_list(resp) -> List[Self]:
+    def create_tag_list(resp) -> List["Tag"]:
         """
         Creates a Tag list from a JSON
         """
@@ -200,16 +200,16 @@ class Chapter:
         self.chapter_id: str = ""
         self.title: str = ""
         self.volume: str = ""
-        self.chapter: float = None
+        self.chapter: Union[float, None] = None
         self.manga_id: str = ""
         self.group_id: str = ""
         self.translatedLanguage: str = ""
         self.hash: str = ""
         self.data: List[str] = []
         self.uploader: str = ""
-        self.createdAt: datetime = ""
-        self.updatedAt: datetime = ""
-        self.publishAt: datetime = ""
+        self.createdAt: datetime.datetime
+        self.updatedAt: datetime.datetime
+        self.publishAt: datetime.datetime
 
     @classmethod
     def chapter_from_dict(cls, data) -> Self:
@@ -275,7 +275,7 @@ class Chapter:
         return image_urls
 
     @staticmethod
-    def create_chapter_list(resp) -> List[Self]:
+    def create_chapter_list(resp) -> List["Chapter"]:
         """
         Creates a Chapter list from JSON
         """
@@ -331,7 +331,7 @@ class User:
         return user
 
     @staticmethod
-    def create_user_list(resp: dict) -> List[Self]:
+    def create_user_list(resp: dict) -> List["User"]:
         """
         Creates a List of users from a JSON
         """
@@ -366,8 +366,8 @@ class Author:
         self.name: str = ""
         self.imageUrl: str = ""
         self.bio: Dict[str, str] = {}
-        self.createdAt: datetime = ""
-        self.updatedAt: datetime = ""
+        self.createdAt: datetime.datetime
+        self.updatedAt: datetime.datetime
         self.mangas: List[str] = []
 
     @classmethod
@@ -403,7 +403,7 @@ class Author:
         return author
 
     @staticmethod
-    def create_authors_list(resp: dict) -> List[Self]:
+    def create_authors_list(resp: dict) -> List["Author"]:
         """
         Create a list of Authors from JSON
         """
@@ -436,9 +436,9 @@ class ScanlationGroup:
     def __init__(self) -> None:
         self.group_id: str = ""
         self.name: str = ""
-        self.leader: User = None
-        self.createdAt: datetime = None
-        self.updatedAt: datetime = None
+        self.leader: Union[User, None] = None
+        self.createdAt: datetime.datetime
+        self.updatedAt: datetime.datetime
 
     @classmethod
     def scanlation_from_dict(cls, data) -> Self:
@@ -474,7 +474,7 @@ class ScanlationGroup:
         return scan_group
 
     @staticmethod
-    def create_group_list(resp) -> List[Self]:
+    def create_group_list(resp) -> List["ScanlationGroup"]:
         """
         Creates a ScanlationGroup List from JSON
         """
@@ -536,7 +536,7 @@ class CustomList:
         return custom_list
 
     @staticmethod
-    def create_customlist_list(resp) -> List[Self]:
+    def create_customlist_list(resp) -> List["CustomList"]:
         """
         Creates a list of CustomList from a JSON
         """
@@ -553,11 +553,11 @@ class CustomList:
 class CoverArt:
     def __init__(self) -> None:
         self.cover_id: str = ""
-        self.volume: str = None
+        self.volume: str = ""
         self.fileName: str = ""
-        self.description: str = None
-        self.createdAt: datetime = None
-        self.updatedAt: datetime = None
+        self.description: str = ""
+        self.createdAt: datetime.datetime
+        self.updatedAt: datetime.datetime
         self.manga_id: str = ""
 
     @classmethod
@@ -609,7 +609,7 @@ class CoverArt:
         return url
 
     @staticmethod
-    def create_coverart_list(resp) -> List[Self]:
+    def create_coverart_list(resp) -> List["CoverArt"]:
         """
         Creates a list of CoverArts form a JSON
         """

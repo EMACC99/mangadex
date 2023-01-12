@@ -2,9 +2,7 @@
 Wrapper for the mangadex API
 """
 from __future__ import absolute_import
-import re  # for validating email and prevent spam
-from typing import Dict, List, Union
-from typing_extensions import Self
+from typing import Dict, List, Union, Any
 
 from mangadex import (
     Manga,
@@ -20,7 +18,7 @@ from mangadex import (
 
 
 class Api:
-    def __init__(self, timeout=5) -> Self:
+    def __init__(self, timeout=5) -> None:
         self.URL = "https://api.mangadex.org"
         self.bearer = None
         self.timeout = timeout
@@ -211,7 +209,9 @@ class Api:
         resp = URLRequest.request_url(url, "GET", timeout=self.timeout, params=params)
         return resp["volumes"]
 
-    def update_manga(self, manga_id: str, ObjReturn: bool = False, **kwargs) -> Manga:
+    def update_manga(
+        self, manga_id: str, ObjReturn: bool = False, **kwargs
+    ) -> Union[Manga, None]:
         """
         Updates a manga parameters
 
@@ -249,7 +249,6 @@ class Api:
         )
         if ObjReturn:
             return Manga.manga_from_dict(resp)
-        return None
 
     def delete_manga(self, manga_id: str) -> None:
         """
@@ -439,7 +438,9 @@ class Api:
         resp = URLRequest.request_url(url, "GET", timeout=self.timeout)
         return Author.author_from_dict(resp)
 
-    def create_author(self, name: str, version: int, ObjReturn: bool = False) -> Author:
+    def create_author(
+        self, name: str, version: int, ObjReturn: bool = False
+    ) -> Union[Author, None]:
         """
         Creates an Author
 
@@ -462,8 +463,13 @@ class Api:
             return Author.author_from_dict(resp)
 
     def update_author(
-        self, *, author_id: str, version: int, name: str = None, ObjReturn: bool = False
-    ) -> Author:
+        self,
+        *,
+        author_id: str,
+        version: int,
+        name: Union[str, None] = None,
+        ObjReturn: bool = False,
+    ) -> Union[Author, None]:
         """
         Updates an Author
 
@@ -479,7 +485,7 @@ class Api:
         `Author` if `ObjReturn` is `True`
         """
         url = f"{self.URL}/author/{author_id}"
-        params = {"version": version}
+        params: Dict[str, Any] = {"version": version}
         if name is not None:
             params["name"] = name
         resp = URLRequest.request_url(
@@ -524,10 +530,10 @@ class Api:
     def scanlation_group_list(
         self,
         *,
-        limit: int = None,
-        offset: int = None,
-        group_ids: List[str] = None,
-        name: str = None,
+        limit: Union[None, int] = None,
+        offset: Union[None, int] = None,
+        group_ids: Union[None, List[str]] = None,
+        name: Union[str, None] = None,
     ) -> List[ScanlationGroup]:
         """
         Get the scanlation groups list
@@ -666,7 +672,9 @@ class Api:
         )
         return resp["status"]
 
-    def get_all_manga_reading_status(self, status: str = None) -> Dict[str, str]:
+    def get_all_manga_reading_status(
+        self, status: Union[str, None] = None
+    ) -> Dict[str, str]:
         """
         Get all Manga followed by the user reading status
 
@@ -768,7 +776,7 @@ class Api:
         self,
         name: str,
         visibility: str = "public",
-        manga: List[str] = None,
+        manga: Union[List[str], None] = None,
         version: int = 1,
     ) -> None:
         """
@@ -961,8 +969,8 @@ class Api:
         self,
         cover_id: str,
         description: str,
-        volume: str = None,
-        version: int = None,
+        volume: Union[str, None] = None,
+        version: Union[int, None] = None,
         ObjReturn: bool = False,
     ) -> Union[None, CoverArt]:
         """
