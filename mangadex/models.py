@@ -559,6 +559,7 @@ class CoverArt:
         self.createdAt: datetime.datetime
         self.updatedAt: datetime.datetime
         self.manga_id: str = ""
+        self.locale: str = ""
 
     @classmethod
     def cover_from_dict(cls, data: dict) -> Self:
@@ -580,6 +581,7 @@ class CoverArt:
         cover.cover_id = data["id"]
         cover.volume = attributes["volume"]
         cover.fileName = attributes["fileName"]
+        cover.locale = attributes["locale"]
         cover.description = attributes["description"]
         cover.createdAt = parse(attributes["createdAt"])
         cover.updatedAt = parse(attributes["updatedAt"])
