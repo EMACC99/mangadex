@@ -1,3 +1,6 @@
+"""
+Python setup for the library
+"""
 from setuptools import setup, find_packages
 
 VERSION = "2.6"
@@ -14,7 +17,13 @@ setup(
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     packages=find_packages(),
-    install_requires=["requests", "future", "python-dateutil", "pytest", "typing-extensions"],
+    install_requires=[
+        "requests",
+        "future",
+        "python-dateutil",
+        "pytest",
+        "typing-extensions",
+    ],
     source="https://github.com/EMACC99/mangadex",
     download_url="https://github.com/EMACC99/mangadex/releases",
     documentation="https://github.com/EMACC99/mangadex/wiki",
