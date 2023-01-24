@@ -118,16 +118,23 @@ class Manga:
     def __eq__(self, other: Self) -> bool:
         my_vals = [self.manga_id, self.title, self.createdAt, self.author_id]
         other_vals = [other.manga_id, other.title, other.createdAt, other.author_id]
-        return all((me == other for me, other in zip(my_vals, other_vals)))
+        return my_vals == other_vals
 
     def __ne__(self, other: Self) -> bool:
         return not self.__eq__(other)
 
     def __repr__(self) -> str:
-        temp1 = f"Manga(manga_id = {self.manga_id}, title = {self.title}, altTitles = {self.altTitles}, description = {self.description}, isLocked = {self.isLocked}, links = {self.links}, originalLanguage = {self.originalLanguage} \n"
-        temp2 = f"lastVolume = {self.lastVolume}, lastChapter = {self.lastChapter}, publicationDemographic = {self.publicationDemographic}, status = {self.status}, year = {self.year}, contentRating = {self.contentRating} \n"
-        temp3 = f"createdAt = {self.createdAt}, uploadedAt = {self.updatedAt}), author_id = {self.author_id}, artist_id = {self.artist_id}, cover_id = {self.cover_id}"
-        return temp1 + temp2 + temp3
+        temp1 = f"Manga(manga_id = {self.manga_id}, title = {self.title}, \
+                altTitles = {self.altTitles}, description = {self.description}, \
+                isLocked = {self.isLocked}, links = {self.links}, \
+                originalLanguage = {self.originalLanguage} \n"
+        temp2 = f"lastVolume = {self.lastVolume}, lastChapter = {self.lastChapter}, \
+                publicationDemographic = {self.publicationDemographic}, status = {self.status}, \
+                year = {self.year}, contentRating = {self.contentRating} \n"
+        temp3 = f"createdAt = {self.createdAt}, uploadedAt = {self.updatedAt}), \
+                author_id = {self.author_id}, artist_id = {self.artist_id}, \
+                cover_id = {self.cover_id}"
+        return f"{temp1}{temp2}{temp3}"
 
 
 class Tag:
@@ -295,18 +302,26 @@ class Chapter:
     def __eq__(self, other: Self) -> bool:
         my_vals = [self.chapter_id, self.manga_id, self.chapter]
         other_vals = [other.chapter_id, other.manga_id, other.chapter]
-        return all((me == other for me, other in zip(my_vals, other_vals)))
+        return my_vals == other_vals
 
     def __ne__(self, other: Self) -> bool:
         return not self.__eq__(other)
 
     def __repr__(self) -> str:
-        temp1 = f"Chapter(chapter_id = {self.chapter_id}, title = {self.title}, volume = {self.volume}, chapter = {self.chapter}, translatedLanguage = {self.translatedLanguage}, hash = {self.hash} \n"
-        temp2 = f"data = List[filenames], publishAt = {self.publishAt}, createdAt = {self.createdAt}, uploadedAt = {self.updatedAt}, group_id = {self.group_id}, manga_id = {self.manga_id}, uploader = {self.uploader})"
-        return temp1 + temp2
+        temp1 = f"Chapter(chapter_id = {self.chapter_id}, title = {self.title}, \
+                volume = {self.volume}, chapter = {self.chapter}, \
+                translatedLanguage = {self.translatedLanguage}, hash = {self.hash} \n"
+        temp2 = f"data = List[filenames], publishAt = {self.publishAt}, \
+                createdAt = {self.createdAt}, uploadedAt = {self.updatedAt}, \
+                group_id = {self.group_id}, manga_id = {self.manga_id}, uploader = {self.uploader})"
+        return f"{temp1}{temp2}"
 
 
 class User:
+    """
+    User representation
+    """
+
     def __init__(self) -> None:
         self.user_id: str = ""
         self.username: str = ""
@@ -351,7 +366,7 @@ class User:
     def __eq__(self, other: Self) -> bool:
         my_vals = [self.user_id, self.username]
         other_vals = [other.user_id, other.username]
-        return all((me == other for me, other in zip(my_vals, other_vals)))
+        return my_vals == other_vals
 
     def __ne__(self, other: "User") -> bool:
         return not self.__eq__(other)
@@ -361,6 +376,10 @@ class User:
 
 
 class Author:
+    """
+    Author Object
+    """
+
     def __init__(self) -> None:
         self.author_id: str = ""
         self.name: str = ""
@@ -494,7 +513,7 @@ class ScanlationGroup:
     def __eq__(self, other: Self) -> bool:
         my_vals = [self.group_id, self.name]
         other_vals = [other.group_id, other.name]
-        return all((me == other for me, other in zip(my_vals, other_vals)))
+        return my_vals == other_vals
 
     def __ne__(self, other: Self) -> bool:
         return not self.__eq__(other)
@@ -504,6 +523,10 @@ class ScanlationGroup:
 
 
 class CustomList:
+    """
+    Manga Custom List Object
+    """
+
     def __init__(self) -> None:
         self.list_id: str = ""
         self.name: str = ""
@@ -551,6 +574,10 @@ class CustomList:
 
 
 class CoverArt:
+    """
+    Object Containing Manga Cover Art Attributes
+    """
+
     def __init__(self) -> None:
         self.cover_id: str = ""
         self.volume: str = ""
