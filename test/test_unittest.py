@@ -1,5 +1,5 @@
 """
-Module for unittesting
+Module for unit and intergration tests
 """
 from pathlib import Path
 import json
