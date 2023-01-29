@@ -1,5 +1,5 @@
 """
-Module for unittesting
+Module for unit and intergration tests
 """
 from pathlib import Path
 import json
@@ -7,8 +7,11 @@ import pytest
 import mangadex as md
 
 
-def read_json_files(filename: str, mode: str = "r") -> dict:
-    with open(filename, mode) as f:
+def read_json_files(filename: Path, mode: str = "r") -> dict:
+    """
+    Function to read files
+    """
+    with open(filename, mode, encoding="UTF-8") as f:
         resp = json.load(f)
     return resp
 
@@ -17,6 +20,10 @@ USER_DATA_DIR = Path("test/user_data.txt")
 
 
 class TestApi:
+    """
+    Class for testing the public API calls
+    """
+
     api = md.Api()
     timeout = 5
 
@@ -42,13 +49,13 @@ class TestApi:
         not_wanted_tags = ["Loli", "Incest"]
         wanted_tags_ids = []
         not_wanted_tags_ids = []
-        for i, t in enumerate(tags):
-            if t.name["en"] in wanted_tags:
-                wanted_tags_ids.append(t.tag_id)
-            elif t.name["en"] in not_wanted_tags:
-                not_wanted_tags_ids.append(t.tag_id)
+        for _, tag in enumerate(tags):
+            if tag.name["en"] in wanted_tags:
+                wanted_tags_ids.append(tag.tag_id)
+            elif tag.name["en"] in not_wanted_tags:
+                not_wanted_tags_ids.append(tag.tag_id)
 
-        manga_list = self.api.get_manga_list(
+        self.api.get_manga_list(
             contentRating=["erotica", "pornographic"],
             status=["completed"],
             excludedTags=not_wanted_tags_ids,
@@ -56,6 +63,13 @@ class TestApi:
             includedTags=wanted_tags_ids,
             includedTagsMode="AND",
         )
+
+    def test_GetMangaFeed(self):
+        resp = self.api.get_manga_list(title="iris zero", limit=1)[0]
+        self.api.manga_feed(resp.manga_id)
+
+    def test_ViewMangaById(self):
+        self.api.view_manga_by_id(manga_id="88796863-04bd-49d4-ad85-d9f993e95109")
 
     def test_RandomManga(self):
         self.api.random_manga()
@@ -178,10 +192,14 @@ class TestApi:
         reason=f"The directory {USER_DATA_DIR} is not present",
     )
     def test_GetUserCustomLists(self):
-        with open("test/user_data.txt", "r") as f:
+        with open("test/user_data.txt", "r", encoding="UTF-8") as f:
             user_id = f.readline().strip("\n")
 
         self.api.get_user_customlists(user_id)
+
+    def test_GetCustomList(self):
+        custom_list_id = "aa0356ad-12c8-4f1a-9723-8342ade4dc6e"
+        self.api.get_customlist(customlist_id=custom_list_id)
 
 
 CREDENTIALS = Path("test/credentials.txt")
@@ -191,6 +209,10 @@ CREDENTIALS = Path("test/credentials.txt")
     not CREDENTIALS.exists(), reason=f"The directory {CREDENTIALS} is not present"
 )
 class Test_private_api:
+    """
+    Class for tersting the pirvate API calls
+    """
+
     api = md.Api()
     timeout = 5
 

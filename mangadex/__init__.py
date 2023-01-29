@@ -1,3 +1,6 @@
+"""
+Python module for interacting with the mangadex API
+"""
 from .errors import (
     ApiError,
     ApiClientError,

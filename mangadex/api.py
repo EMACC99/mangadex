@@ -817,7 +817,7 @@ class Api:
         resp = URLRequest.request_url(
             url, "GET", headers=self.bearer, timeout=self.timeout, params=kwargs
         )
-        return CustomList.list_from_dict(resp["result"])
+        return CustomList.list_from_dict(resp["data"])
 
     def update_customlist(self, customlist_id: str, **kwargs) -> CustomList:
         """
@@ -839,7 +839,7 @@ class Api:
         resp = URLRequest.request_url(
             url, "PUT", params=kwargs, headers=self.bearer, timeout=self.timeout
         )
-        return CustomList.list_from_dict(resp["result"])
+        return CustomList.list_from_dict(resp["data"])
 
     def delete_customlist(self, customlist_id: str) -> None:
         """
