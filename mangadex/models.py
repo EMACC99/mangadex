@@ -91,7 +91,7 @@ class Manga:
             if elem["type"] == "author":
                 manga.author_id.append(elem["id"])
             elif elem["type"] == "artist":
-                manga.author_id.append(elem["id"])
+                manga.artist_id.append(elem["id"])
             elif elem["type"] == "cover_art":
                 manga.cover_id = elem["id"]
 
