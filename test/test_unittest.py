@@ -11,7 +11,7 @@ def read_json_files(filename: Path, mode: str = "r") -> dict:
     """
     Function to read files
     """
-    with open(filename, mode) as f:
+    with open(filename, mode, encoding="UTF-8") as f:
         resp = json.load(f)
     return resp
 
@@ -20,6 +20,10 @@ USER_DATA_DIR = Path("test/user_data.txt")
 
 
 class TestApi:
+    """
+    Class for testing the public API calls
+    """
+
     api = md.Api()
     timeout = 5
 
@@ -188,7 +192,7 @@ class TestApi:
         reason=f"The directory {USER_DATA_DIR} is not present",
     )
     def test_GetUserCustomLists(self):
-        with open("test/user_data.txt", "r") as f:
+        with open("test/user_data.txt", "r", encoding="UTF-8") as f:
             user_id = f.readline().strip("\n")
 
         self.api.get_user_customlists(user_id)
@@ -205,6 +209,10 @@ CREDENTIALS = Path("test/credentials.txt")
     not CREDENTIALS.exists(), reason=f"The directory {CREDENTIALS} is not present"
 )
 class Test_private_api:
+    """
+    Class for tersting the pirvate API calls
+    """
+
     api = md.Api()
     timeout = 5
 
