@@ -64,6 +64,9 @@ class TestApi:
             includedTagsMode="AND",
         )
 
+    def test_GetTranslatedManga(self):
+        self.api.get_manga_list(translatedLanguage=["en"], limit=1)[0]
+
     def test_GetMangaFeed(self):
         resp = self.api.get_manga_list(title="iris zero", limit=1)[0]
         self.api.manga_feed(resp.manga_id)
@@ -95,7 +98,6 @@ class TestApi:
         resp.fetch_chapter_images()
 
     def test_GetAuthor(self):
-
         author_id = "df765fdc-ea9f-45d0-9191-d95615662d49"
 
         resp = self.api.get_author_by_id(author_id=author_id)

@@ -69,7 +69,7 @@ class Api:
             params["artists[]"] = temp
         if "translatedLanguage" in params:
             temp = params.pop("translatedLanguage")
-            params["translatedLanguage[]"] = temp
+            params["availableTranslatedLanguage[]"] = temp
         if "status" in params:
             params["status[]"] = params.pop("status")
         if "contentRating" in params:
