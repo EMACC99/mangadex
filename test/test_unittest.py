@@ -255,3 +255,28 @@ class Test_private_api:
         self.login()
 
         self.api.get_my_customlists()
+
+
+class Test_Errors:
+    """
+    Class for testing the errors
+    """
+
+    api = md.Api()
+    timeout = 5
+
+    def test_BadRequest(self):
+        ...
+
+    def test_NotFound(self):
+        try:
+            ch_id = (
+                "015979c8-ffa4-4afa-b48e-3da6d102fdfsdfsdfsdfs"  # some random string
+            )
+            resp = self.api.get_chapter(chapter_id=ch_id)
+            resp.fetch_chapter_images()
+        except md.ApiError as e:
+            assert 404 == e.code
+
+    def test_Uanuthorized(self):
+        ...
