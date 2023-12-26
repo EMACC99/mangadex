@@ -220,7 +220,7 @@ class Test_private_api:
 
     def login(self):
         credentials = read_json_files(CREDENTIALS)
-        self.api.login(credentials["username"], credentials["password"])
+        self.api.login(credentials["username"], credentials["password"], credentials["clientId"], credentials["clientSecret"])
 
     def test_GetMangaReadingStatus(self):
         self.login()
