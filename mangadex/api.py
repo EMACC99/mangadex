@@ -569,7 +569,7 @@ class Api:
         resp = URLRequest.request_url(url, "GET", timeout=self.timeout, params=params)
         return ScanlationGroup.create_group_list(resp)
 
-    def login(self, username: str, password: str):
+    def login(self, username: str, password: str, client_id: str, client_secret: str):
         """
         Method to login into the website
 
@@ -582,7 +582,7 @@ class Api:
         ---------------
         `ApiError`
         """
-        self.__auth_handler(json_payload={"username": username, "password": password})
+        self.__auth_handler(json_payload={"username": username, "password": password, "client_id": client_id, "client_secret": client_secret})
 
     def me(self) -> User:
         """
