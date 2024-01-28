@@ -180,15 +180,15 @@ This will send you and activation code that you need
 ## Private Calls
 
 ### Login
-**Username and password combo logins are deprecated as MangaDex shift to OAuth. User client registration is closed as of now. [#26](https://github.com/EMACC99/mangadex/issues/26)**
+**Username and password combo logins are deprecated as MangaDex shift to OAuth. [Personal clients](https://api.mangadex.org/docs/02-authentication/personal-clients/) are only allowed  [#26](https://github.com/EMACC99/mangadex/issues/26)**
 
 Method to login to the website
 
 ```py
->>> api.login(username = USERNAME, password = PASSWORD)
+>>> api.login(username = USERNAME, password = PASSWORD, client_id = clientId, client_secret = clientSecret)
 ```
 
-It is recomended that you add this values to your environment variables for security reasons.
+It is recomended that you add this values to your environment variables and use text input for client-facing solutions for security reasons.
 
 ### Your User Info
 
