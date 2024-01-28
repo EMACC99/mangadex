@@ -28,8 +28,9 @@ class Api:
             Needs clientID and secret along with that user's username and password.
         """
         url = "https://auth.mangadex.org/realms/mangadex/protocol/openid-connect/token"
+        headers = {'Content-type': 'application/x-www-form-urlencoded'}
         auth = URLRequest.request_url(
-            url, "POST", params=json_payload, timeout=self.timeout
+            url, "POST", params=json_payload, timeout=self.timeout, headers=headers
         )
         accessToken = auth["access_token"]
         self.refreshToken = auth["refresh_token"]
