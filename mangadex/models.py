@@ -60,7 +60,7 @@ class Manga:
             pass
 
         if data["type"] != "manga" or not data:
-            raise MangaError(data=data, message="The data probvided is not a Manga")
+            raise MangaError(data=data, message="The data provided is not a Manga")
 
         attributes = data["attributes"]
 
@@ -392,7 +392,7 @@ class Author:
     @classmethod
     def author_from_dict(cls, data: dict):
         """
-        Creates Autho from JSON
+        Creates Author from JSON
         """
         try:
             data = data["data"]
@@ -620,7 +620,7 @@ class CoverArt:
         """
         Returns the url of a cover art
 
-        Parametes
+        Parameters
         -------------
         quality : `str`. Values : `medium`,  `small`
 

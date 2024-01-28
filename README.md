@@ -2,9 +2,9 @@
 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-A python wrapper for the MangaDex API V5. It uses the requests library and all the aditional arguments can be viewed in the [Official Mangadex Documentation](https://api.mangadex.org/docs/)
+A python wrapper for the MangaDex API V5. It uses the requests library and all the additional arguments can be viewed in the [Official Mangadex Documentation](https://api.mangadex.org/docs/)
 
-## Instaling the API wrapper module
+## Installing the API wrapper module
 
 ### PyPI
 
@@ -123,7 +123,7 @@ Return the links for the chapter images.
 >>> api.get_coverart_list()
 ```
 
-### Get Cover by Id
+### Get Cover by id
 
 ```py
 >>> api.get_cover(cover_id = "the cover id")
@@ -182,13 +182,17 @@ This will send you and activation code that you need
 ### Login
 **Username and password combo logins are deprecated as MangaDex shift to OAuth. User client registration is closed as of now. [#26](https://github.com/EMACC99/mangadex/issues/26)**
 
-Method to login to the website
+Log onto the website
 
 ```py
 >>> api.login(username = USERNAME, password = PASSWORD)
 ```
 
+<<<<<<< HEAD
 It is recomended that you add this values to your environment variables for security reasons.
+=======
+It is recommended that you add this values to your environment variables and use text input for client-facing solutions for security reasons.
+>>>>>>> 21c2bd0 (Fixed grammatical and spelling errors in the codebase.)
 
 ### Your User Info
 
@@ -208,7 +212,7 @@ Get your manga follow list!
 
 ### Get Logged User Followed Groups
 
-Get the list of the Scanlination group you follow!
+Get the list of the Scanliation group you follow!
 
 ```py
 >>> scangroups_followlist = api.get_my_followed_groups()
@@ -227,12 +231,12 @@ Get the list of the users you follow!
 Get a list of the chapters marked as read for a given manga
 
 ```py
->>> read_chapters = api.get_manga_read_markes(id = "the manga id")
+>> > read_chapters = api.get_manga_read_markers(id="the manga id")
 ```
 
 ### Get all followed manga reading status
 
-Get a list of the all the manga reading stauts
+Get a list of the all the manga reading status
 
 ```py
 >>> my_manga_reading_stauts = api.get_all_manga_reading_status()
@@ -359,6 +363,6 @@ Removes a manga from a custom list
 >>> api.delete_author(id = "the author id")
 ```
 
-### Discalimer
+### Disclaimer
 
 All the credit for the API goes to the MangaDex Team.
