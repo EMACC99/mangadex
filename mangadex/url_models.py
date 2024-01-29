@@ -48,19 +48,19 @@ class URLRequest:
             try:
                 resp = requests.get(url, headers=headers, timeout=timeout)
             except requests.RequestException as e:
-                print(f"An error has occured: {e}")
+                print(f"An error has occurred: {e}")
                 raise
         elif method == "POST":
             try:
                 resp = requests.post(url, json=params, headers=headers, timeout=timeout)
             except requests.RequestException as e:
-                print(f"An error has occured: {e}")
+                print(f"An error has occurred: {e}")
                 raise
         elif method == "DELETE":
             try:
                 resp = requests.delete(url, headers=headers, timeout=timeout)
             except requests.RequestException as e:
-                print(f"An error has occured: {e}")
+                print(f"An error has occurred: {e}")
                 raise
         elif method == "PUT":
             try:
@@ -68,7 +68,7 @@ class URLRequest:
                     url, headers=headers, params=params, timeout=timeout
                 )
             except requests.RequestException as e:
-                print(f"An error has occured: {e}")
+                print(f"An error has occurred: {e}")
                 raise
         else:
             raise ValueError(f"Method {method} is invalid")

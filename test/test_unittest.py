@@ -1,5 +1,5 @@
 """
-Module for unit and intergration tests
+Module for unit and integration tests
 """
 from pathlib import Path
 import json
@@ -43,7 +43,7 @@ class TestApi:
 
         assert resp == saved_resp, "The Manga objects are not equal"
 
-    def test_SerachMangaWithLotOfArgs(self):
+    def test_SearchMangaWithLotOfArgs(self):
         tags = self.api.tag_list()
         wanted_tags = ["Oneshot", "Romance"]
         not_wanted_tags = ["Loli", "Incest"]
@@ -212,7 +212,7 @@ CREDENTIALS = Path("test/credentials.txt")
 )
 class Test_private_api:
     """
-    Class for tersting the pirvate API calls
+    Class for testing private API calls
     """
 
     api = md.Api()
@@ -226,7 +226,7 @@ class Test_private_api:
         self.login()
 
         manga_id = "35c33279-395d-4d9f-abec-93893c28ab29"
-        self.api.get_manga_read_markes(manga_id=manga_id)
+        self.api.get_manga_read_markers(manga_id=manga_id)
 
     def test_GetAllMangaReadingStatus(self):
         self.login()
@@ -278,5 +278,5 @@ class Test_Errors:
         except md.ApiError as e:
             assert 404 == e.code
 
-    def test_Uanuthorized(self):
+    def test_Unauthorized(self):
         ...
