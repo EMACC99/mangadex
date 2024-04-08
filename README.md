@@ -208,7 +208,7 @@ Get your manga follow list!
 
 ### Get Logged User Followed Groups
 
-Get the list of the Scanlination group you follow!
+Get the list of the Scanlation group you follow!
 
 ```py
 >>> scangroups_followlist = api.get_my_followed_groups()
