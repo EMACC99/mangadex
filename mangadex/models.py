@@ -210,6 +210,7 @@ class Chapter:
         self.chapter: Union[float, None] = None
         self.manga_id: str = ""
         self.group_id: str = ""
+        self.group_ids: list[str] = []
         self.translatedLanguage: str = ""
         self.hash: str = ""
         self.data: List[str] = []
@@ -246,12 +247,19 @@ class Chapter:
         chapter.publishAt = parse(attributes["publishAt"])
         chapter.createdAt = parse(attributes["createdAt"])
         chapter.updatedAt = parse(attributes["updatedAt"])
-        chapter.group_id = data["relationships"][0]["id"]
-        chapter.manga_id = data["relationships"][1]["id"]
-        try:
-            chapter.uploader = data["relationships"][2]["id"]
-        except IndexError:
-            pass
+        for relations in data["relationships"]:
+            if relations["type"] == "group":
+                if not chapter.group_id:
+                    chapter.group_id = relations["id"]
+                else:
+                    if not chapter.group_ids:
+                        chapter.group_ids = [chapter.group_id, relations["id"]]
+                    else:
+                        chapter.group_ids.append(relations["id"])
+            elif relations["type"] == "manga":
+                chapter.manga_id = relations["id"]
+            elif relations["type"] == "user":
+                chapter.uploader = relations["id"]
 
         return chapter
 
