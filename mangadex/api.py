@@ -583,7 +583,7 @@ class Api:
         ---------------
         `ApiError`
         """
-        self.__auth_handler(json_payload={"username": username, "password": password, "client_id": client_id, "client_secret": client_secret})
+        self.__auth_handler(json_payload={"grant_type": "password", "username": username, "password": password, "client_id": client_id, "client_secret": client_secret})
 
     def me(self) -> User:
         """
