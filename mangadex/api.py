@@ -16,7 +16,6 @@ from mangadex import (
     URLRequest,
 )
 
-
 class Api:
     def __init__(self, timeout=5) -> None:
         self.URL = "https://api.mangadex.org"
@@ -24,12 +23,18 @@ class Api:
         self.timeout = timeout
 
     def __auth_handler(self, json_payload) -> None:
-        url = f"{self.URL}/auth/login"
+        """
+            Authenticates to MD using their personal clients feature.
+            Needs clientID and secret along with that user's username and password.
+        """
+        url = "https://auth.mangadex.org/realms/mangadex/protocol/openid-connect/token"
+        headers = {'Content-type': 'application/x-www-form-urlencoded'}
         auth = URLRequest.request_url(
-            url, "POST", params=json_payload, timeout=self.timeout
+            url, "POST", params=json_payload, timeout=self.timeout, headers=headers
         )
-        token = auth["token"]["session"]
-        bearer = {"Authorization": f"Bearer {token}"}
+        accessToken = auth["access_token"]
+        self.refreshToken = auth["refresh_token"]
+        bearer = {"Authorization": f"Bearer {accessToken}"}
         self.bearer = bearer
 
     @staticmethod
@@ -565,7 +570,7 @@ class Api:
         resp = URLRequest.request_url(url, "GET", timeout=self.timeout, params=params)
         return ScanlationGroup.create_group_list(resp)
 
-    def login(self, username: str, password: str):
+    def login(self, username: str, password: str, client_id: str, client_secret: str):
         """
         Method to login into the website
 
@@ -578,7 +583,7 @@ class Api:
         ---------------
         `ApiError`
         """
-        self.__auth_handler(json_payload={"username": username, "password": password})
+        self.__auth_handler(json_payload={"grant_type": "password", "username": username, "password": password, "client_id": client_id, "client_secret": client_secret})
 
 
     def me(self) -> User:
