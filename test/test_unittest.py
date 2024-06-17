@@ -225,7 +225,8 @@ class TestAuth:
     customlist = md.series.CustomList(auth=auth)
 
     timeout = 5
-    def login():
+    
+    def login(self):
         self.auth.login(os.environ.get('md_username'), os.environ.get('md_password'),
             os.environ.get('client_id'), os.environ.get('client_secret'))
 
