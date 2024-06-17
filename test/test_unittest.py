@@ -179,7 +179,6 @@ class TestScanlationGroup:
         resp = self.scangroup.multi_group_list(ids=ids)  # black cat scanlations
 
         url = f"{self.scangroup.api.url}/group"
-        print(url)
         raw_response = URLRequest.request_url(
             url, "GET", timeout=self.api.timeout, params={"ids[]": ids}
         )
@@ -207,11 +206,11 @@ class TestCoverArt:
 
 
 @pytest.mark.skipif(
-    'md_username' not in  os.environ,
-    'md_password' not in  os.environ,
-    'client_id' not in  os.environ,
-    'client_secret' not in  os.environ,
-    reason="The credentials is not in env"
+    'md_username' not in os.environ or
+    'md_password' not in os.environ or
+    'client_id' not in os.environ or
+    'client_secret' not in os.environ,
+    reason="The credentials are not in env"
 )
 class TestAuth:
     """
@@ -226,39 +225,46 @@ class TestAuth:
     customlist = md.series.CustomList(auth=auth)
 
     timeout = 5
-
-    auth.login(os.environ.get('md_username'), os.environ.get('md_password'),
-        os.environ.get('client_id'), os.environ.get('client_secret'))
+    def login():
+        self.auth.login(os.environ.get('md_username'), os.environ.get('md_password'),
+            os.environ.get('client_id'), os.environ.get('client_secret'))
 
     def test_GetUser(self):
+        self.login()
         user = self.user.me()
 
         assert user.username == os.environ.get('md_username'), "This user is invalid"
 
     def test_GetUserCustomLists(self):
+        self.login()
         user_id = self.user.me()
-        print(user_id.id)
         self.customlist.get_user_customlists(user_id.id)
 
     def test_GetMangaReadingStatus(self):
+        self.login()
         manga_id = "35c33279-395d-4d9f-abec-93893c28ab29"
         self.manga.get_manga_read_markers(manga_id=manga_id)
 
     def test_GetAllMangaReadingStatus(self):
+        self.login()
         self.manga.get_all_manga_reading_status()
 
     def test_GetMyMangaList(self):
+        self.login()
         self.mangalist.get_my_mangalist()
 
     def test_FollowManga(self):
+        self.login()
         manga_id = "32d76d19-8a05-4db0-9fc2-e0b0648fe9d0"  # solo leveling
         self.follows.follow_manga(manga_id=manga_id)
 
     def test_UnfollowManga(self):
+        self.login()
         manga_id = "32d76d19-8a05-4db0-9fc2-e0b0648fe9d0"  # solo leveling
         self.follows.unfollow_manga(manga_id=manga_id)
 
     def test_GetMyCustomLists(self):
+        self.login()
         self.customlist.get_my_customlists()
 
 

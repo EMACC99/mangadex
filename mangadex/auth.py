@@ -49,7 +49,6 @@ class Auth:
         self.client_secret = http_form['client_secret']
         access_token = auth_response["access_token"]
         refresh_token = auth_response["refresh_token"]
-        print(access_token)
         self.set_bearer_token({"Authorization": f"Bearer {access_token}"})
         self.refresh_token = refresh_token
 
