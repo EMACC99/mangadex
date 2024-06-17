@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-from typing import Dict, List, Self, Union
+from typing_extensions import Self, Union
 
 from mangadex.errors import ApiError
 from mangadex.url_models import URLRequest

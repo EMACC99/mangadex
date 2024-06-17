@@ -1,7 +1,7 @@
 """
 Module for error class declaration
 """
-from typing import Union
+from typing_extensions import Union
 
 from requests import Response
 

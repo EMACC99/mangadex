@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 import datetime
-from typing import Dict, List, Union
+from typing_extensionsimport Dict, List, Union
 
 from dateutil.parser import parse
 from typing_extensions import Self

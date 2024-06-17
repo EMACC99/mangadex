@@ -2,7 +2,7 @@
 Url handler module
 """
 import json
-from typing import Dict, Union, Any
+from typing_extensionsimport Dict, Union, Any
 
 import requests
 
