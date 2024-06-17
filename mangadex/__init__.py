@@ -26,6 +26,6 @@ from .series import (
     CustomList,
 )
 __author__ = "Eduardo Ceja"
-__version__ = "2.6.1"
+__version__ = "2.7"
 __license__ = "MIT"
 __copyright__ = "Copyright (c) 2021 Eduardo Ceja"
