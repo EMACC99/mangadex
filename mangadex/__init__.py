@@ -2,33 +2,29 @@
 Python module for interacting with the mangadex API
 """
 from .errors import (
-    ApiError,
-    ApiClientError,
-    MangaError,
-    TagError,
-    ChapterError,
-    AuthorError,
-    ScanlationGroupError,
-    UserError,
-    CustomListError,
-    CoverArtError,
+    ApiError
 )
-
 from .url_models import URLRequest
 
-from .models import (
-    Manga,
-    Tag,
-    Chapter,
-    User,
-    ScanlationGroup,
-    Author,
-    CustomList,
-    CoverArt,
+from .auth import (
+    Api,
+    ApiClient,
+    Auth
 )
-
-from .api import Api
-
+from .people import (
+    Author,
+    ScanlationGroup,
+    User,
+    Follows
+)
+from .series import (
+    Chapter,
+    Cover,
+    Tag,
+    Manga,
+    MangaList,
+    CustomList,
+)
 __author__ = "Eduardo Ceja"
 __version__ = "2.6.1"
 __license__ = "MIT"

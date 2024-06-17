@@ -6,7 +6,7 @@ from typing import Dict, Union, Any
 
 import requests
 
-from mangadex import ApiError
+from .errors import ApiError
 
 try:
     basestring
@@ -27,11 +27,11 @@ class URLRequest:
 
     @staticmethod
     def request_url(
-        url: str,
-        method: str,
-        timeout,
-        params: Union[Dict[str, Any], None] = None,
-        headers=None,
+            url: str,
+            method: str,
+            timeout,
+            params: Union[Dict[str, Any], None] = None,
+            headers=None,
     ) -> dict:
         """
         The handler fot GET, POST, PUT and DEL
