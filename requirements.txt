@@ -1,0 +1,10 @@
+certifi==2024.6.2
+charset-normalizer==3.3.2
+future==1.0.0
+idna==3.7
+python-dateutil==2.9.0.post0
+python-dotenv==1.0.1
+requests==2.32.3
+six==1.16.0
+typing_extensions==4.12.2
+urllib3==2.2.2
