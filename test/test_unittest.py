@@ -227,13 +227,13 @@ class TestAuth:
 
     timeout = 5
 
-    auth.login(os.environ['md_username'], os.environ['md_password'],
-        os.environ['client_id'], os.environ['client_secret'])
+    auth.login(os.environ.get('md_username'), os.environ.get('md_password'),
+        os.environ.get('client_id'), os.environ.get('client_secret'))
 
     def test_GetUser(self):
         user = self.user.me()
 
-        assert user.username == os.environ['md_username'], "This user is invalid"
+        assert user.username == os.environ.get('md_username'), "This user is invalid"
 
     def test_GetUserCustomLists(self):
         user_id = self.user.me()
