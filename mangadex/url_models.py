@@ -1,6 +1,7 @@
 """
 Url handler module
 """
+
 import json
 from typing_extensions import Dict, Union, Any
 
@@ -27,11 +28,11 @@ class URLRequest:
 
     @staticmethod
     def request_url(
-            url: str,
-            method: str,
-            timeout,
-            params: Union[Dict[str, Any], None] = None,
-            headers=None,
+        url: str,
+        method: str,
+        timeout,
+        params: Union[Dict[str, Any], None] = None,
+        headers=None,
     ) -> dict:
         """
         The handler fot GET, POST, PUT and DEL
@@ -106,8 +107,12 @@ class URLRequest:
 
     @staticmethod
     def __parse_data(content):
-        data = json.loads(content)
-        URLRequest._check_api_error(data)
+        try:
+            data = json.loads(content)
+            URLRequest._check_api_error(data)
+        except json.JSONDecodeError as e:
+            # the ping response doen't come in JSON and its just a string return it that way and throw error in class if needed
+            data = content.decode("UTF-8")
         return data
 
     @staticmethod

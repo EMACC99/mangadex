@@ -1,6 +1,7 @@
 """
 Module for unit and integration tests
 """
+
 import os
 
 import pytest
@@ -11,13 +12,18 @@ import mangadex as md
 
 load_dotenv()
 
+
 class TestApi:
     """Class for testing API infrastructure calls"""
-    api = md.api
+
+    api = md.Api()
+    timeout = 5
+
     def test_ping(self):
         ping = self.api.ping()
-        saved_resp = URLRequest(f"{self.api.url}/ping")
-        assert ping == saved_resp "The ping function doesn't work 🫠"
+        saved_resp = URLRequest.request_url(f"{self.api.url}/ping", "GET", self.timeout)
+        assert ping == saved_resp
+
 
 class TestManga:
     """
@@ -146,7 +152,9 @@ class TestAuthor:
 
         resp = self.author.list_author(ids=author_ids)
 
-        url = f"{self.author.api.url}/author/?ids[]={author_ids[0]}&ids[]={author_ids[1]}"
+        url = (
+            f"{self.author.api.url}/author/?ids[]={author_ids[0]}&ids[]={author_ids[1]}"
+        )
         raw_response = URLRequest.request_url(url, "GET", timeout=self.timeout)
 
         manual_authors = [
@@ -158,7 +166,7 @@ class TestAuthor:
             api_author = next((a for a in resp if a.author_id == author), None)
             assert api_author is not None, "Required author not returned in response"
             assert (
-                    api_author == manual_authors[author]
+                api_author == manual_authors[author]
             ), "The Author Objects are not equal"
 
 
@@ -213,11 +221,11 @@ class TestCoverArt:
 
 
 @pytest.mark.skipif(
-    'md_username' not in os.environ or
-    'md_password' not in os.environ or
-    'client_id' not in os.environ or
-    'client_secret' not in os.environ,
-    reason="The credentials are not in env"
+    "md_username" not in os.environ
+    or "md_password" not in os.environ
+    or "client_id" not in os.environ
+    or "client_secret" not in os.environ,
+    reason="The credentials are not in env",
 )
 class TestAuth:
     """
@@ -232,16 +240,20 @@ class TestAuth:
     customlist = md.series.CustomList(auth=auth)
 
     timeout = 5
-    
+
     def login(self):
-        self.auth.login(os.environ.get('md_username'), os.environ.get('md_password'),
-            os.environ.get('client_id'), os.environ.get('client_secret'))
+        self.auth.login(
+            os.environ.get("md_username"),
+            os.environ.get("md_password"),
+            os.environ.get("client_id"),
+            os.environ.get("client_secret"),
+        )
 
     def test_GetUser(self):
         self.login()
         user = self.user.me()
 
-        assert user.username == os.environ.get('md_username'), "This user is invalid"
+        assert user.username == os.environ.get("md_username"), "This user is invalid"
 
     def test_GetUserCustomLists(self):
         self.login()
@@ -285,8 +297,7 @@ class Test_Errors:
     follows = md.people.Follows(auth=None)
     timeout = 5
 
-    def test_BadRequest(self):
-        ...
+    def test_BadRequest(self): ...
 
     def test_NotFound(self):
         try:
@@ -298,10 +309,9 @@ class Test_Errors:
         except ApiError as e:
             assert 404 == e.code
 
-    def test_Unauthorized(self): # Errors out
+    def test_Unauthorized(self):  # Errors out
         manga_id = "32d76d19-8a05-4db0-9fc2-e0b0648fe9d0"  # solo leveling
         try:
             self.follows.follow_manga(manga_id=manga_id)
         except AttributeError:
             pass
-
