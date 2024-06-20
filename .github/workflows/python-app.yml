@@ -5,8 +5,9 @@ name: Test Python Package when Installed
 
 on:
   push:
+    branches: [ "main", "dev" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "dev" ]
 
 permissions:
   contents: read
@@ -15,7 +16,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    environment: auth testing
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.10
