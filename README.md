@@ -12,10 +12,12 @@ A python wrapper for the MangaDex API V5. It uses the requests library and all t
 pip install --Upgrade mangadex
 ```
 
-### Installing via setuptools
+### Installing local
+
+In the mangadex directory type
 
 ```sh
-python setup.py install --user
+pip install .
 ```
 
 ## Wrapper Usage
