@@ -61,9 +61,13 @@ class Chapter:
             float(attributes["chapter"]) if attributes["chapter"] is not None else None
         )
         chapter.translatedLanguage = attributes["translatedLanguage"]
-        chapter.publishAt = parse(attributes["publishAt"])
-        chapter.createdAt = parse(attributes["createdAt"])
-        chapter.updatedAt = parse(attributes["updatedAt"])
+        for relations in resp["relationships"]:
+            if relations["type"] == "scanlation_group":
+                chapter.group_id = relations["id"]
+            elif relations["type"] == "manga":
+                chapter.manga_id = relations["id"]
+            elif relations["type"] == "user":
+                chapter.uploader = relations["id"]
         for relations in resp["relationships"]:
             if relations["type"] == "scanlation_group":
                 chapter.group_id = resp["relationships"][0]["id"]
