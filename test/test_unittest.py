@@ -11,6 +11,13 @@ import mangadex as md
 
 load_dotenv()
 
+class TestApi:
+    """Class for testing API infrastructure calls"""
+    api = md.api
+    def test_ping(self):
+        ping = self.api.ping()
+        saved_resp = URLRequest(f"{self.api.url}/ping")
+        assert ping == saved_resp "The ping function doesn't work 🫠"
 
 class TestManga:
     """
