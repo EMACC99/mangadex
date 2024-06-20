@@ -1,12 +1,13 @@
 """
 Url handler module
 """
+
 import json
-from typing import Dict, Union, Any
+from typing_extensions import Dict, Union, Any
 
 import requests
 
-from mangadex import ApiError
+from .errors import ApiError
 
 try:
     basestring
@@ -106,8 +107,12 @@ class URLRequest:
 
     @staticmethod
     def __parse_data(content):
-        data = json.loads(content)
-        URLRequest._check_api_error(data)
+        try:
+            data = json.loads(content)
+            URLRequest._check_api_error(data)
+        except json.JSONDecodeError as e:
+            # the ping response doen't come in JSON and its just a string return it that way and throw error in class if needed
+            data = content.decode("UTF-8")
         return data
 
     @staticmethod
