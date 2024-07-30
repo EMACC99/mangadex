@@ -11,7 +11,13 @@ from .auth import Api, Auth
 
 
 class Author:
+    """Class providing Author Information"""
     def __init__(self, auth=Union[Auth, None]) -> None:
+        """Author Information class
+
+        Args:
+            auth (Auth, optional): Authentication information. Defaults to Union[Auth, None].
+        """
         self.auth = auth
         self.api = Api()
 
@@ -66,11 +72,13 @@ class Author:
     def create_authors_list(resp: dict) -> List["Author"]:
         """Create a list of Authors from JSON
 
-        :param resp: dict: Response from author list
-        :param resp: dict:
-        :returns: List[Author]: List of author
+        Args:
+            resp (dict): Raw data from JSON
 
+        Returns:
+            List[Author]: List of Authors
         """
+        
         resp = resp["data"]
         authors_list = []
         for elem in resp:
@@ -97,11 +105,11 @@ class Author:
         )
 
     def list_author(self, **kwargs) -> List["Author"]:
-        """ Get the list of authors
+        """ Get information about multiple authors
 
         Args:
             limit: Number of authors to load
-            offset:
+            offset: 
             ids[]: Array of ids
             name: Name of author(for search)
 
@@ -118,12 +126,13 @@ class Author:
         return list(Author.author_from_dict(author) for author in resp["data"])
 
     def get_author_by_id(self, author_id: str) -> "Author":
-        """Gets an author by its id
+        """Get the Author's information by its id
 
-        :param author_id: str`: The id of the author
-        :param author_id: str:
-        :returns: Author`
+        Args:
+            author_id (str): The id of the author
 
+        Returns:
+            Author: The author information
         """
         url = f"{self.api.url}/author/{author_id}"
         resp = URLRequest.request_url(url, "GET", timeout=self.api.timeout)
@@ -133,15 +142,14 @@ class Author:
             self, name: str, version: int, ObjReturn: bool = False
     ) -> Union["Author", None]:
         """Creates an Author
+        
+        Args:
+            name: The name of the author
+            version: The version of author info
+            ObjReturn: Default `False`. If set to `True`, it will return the info
 
-        :param name: type name: `str`. The author name
-        :param version: type version: `int`. The version of the author
-        :param ObjReturn: bool` Default `False`. If set to `True`, it will return the info
-        :param name: str:
-        :param version: int:
-        :param ObjReturn: bool:  (Default value = False)
-        :returns: Union[Author, None]`
-
+        Returns:
+            Author (Optional): The given author information
         """
         url = f"{self.api.url}/author"
         params = {"name": name, "version": version}
@@ -163,7 +171,7 @@ class Author:
             name: Union[str, None] = None,
             ObjReturn: bool = False,
     ) -> Union["Author", None]:
-        """ Updates and Author
+        """ Updates Author Information
 
         Args:
             author_id: The author id
@@ -186,12 +194,12 @@ class Author:
             return Author.author_from_dict(resp) if ObjReturn else None
 
     def delete_author(self, author_id: str) -> None:
-        """Deletes an author
+        """Deletes an Author
 
-        :param author_id: str: Author ID
-        :param author_id: str:
-
+        Args:
+            author_id (str): Author ID
         """
+        
         url = f"{self.api.url}/author/{author_id}"
         URLRequest.request_url(
             url, "DELETE", headers=self.auth.get_bearer_token(), timeout=self.api.timeout
@@ -199,7 +207,13 @@ class Author:
 
 
 class ScanlationGroup:
+    """Class providing Scanlation Group Information"""
     def __init__(self, auth=Union[Auth, None]) -> None:
+        """Scanlation Group Information class
+
+        Args:
+            auth (Auth, optional): Authentication information. Defaults to Union[Auth, None].
+        """
         self.auth = auth
         self.api = Api()
 
@@ -221,13 +235,17 @@ class ScanlationGroup:
         self.relationships: List[Dict[str, Any]] = []
 
     @classmethod
-    def group_from_dict(cls, resp: dict) -> Self:
-        """Creates Author from JSON
+    def group_from_dict(cls, resp: dict) -> "ScanlationGroup":
+        """Creates author from JSON
 
-        :param resp: dict: Raw data from JSON
-        :param resp: dict:
-        :returns: Author` Author information
+        Args:
+            resp (dict): Raw data from JSON
 
+        Raises:
+            ValueError: Returned when the JSON doesn't contain Author Information
+
+        Returns:
+            ScanlationGroup: Scanlation Group Information
         """
         try:
             resp = resp["data"]
@@ -269,8 +287,13 @@ class ScanlationGroup:
 
     @staticmethod
     def create_group_list(resp) -> List["ScanlationGroup"]:
-        """
-        Creates a ScanlationGroup List from JSON
+        """Create a list of Scanlation Group from JSON
+
+        Args:
+            resp (dict): Raw data from JSON
+
+        Returns:
+            List[ScanlationGroup]: List of Scanlation Group
         """
         resp = resp["data"]
         group_list = []
@@ -297,7 +320,7 @@ class ScanlationGroup:
         return (f"ScanlationGroup(id = {self.group_id}, name = {self.name}, leader = {self.leader}, \
                 createdAt = {self.createdAt}, updatedAt = {self.updatedAt})")
 
-    def multi_group_list(self, **kwargs) -> List["ScanlationGroup"]:
+    def list_groups(self, **kwargs) -> List["ScanlationGroup"]:
         """ Get information about multiple groups
 
         Args:
@@ -319,31 +342,32 @@ class ScanlationGroup:
         return list(ScanlationGroup.group_from_dict(author) for author in resp["data"])
 
     def get_group_by_id(self, group_id: str) -> "ScanlationGroup":
-        """Gets a group by its id
+        """Get the Scanlation Group's information by its id
 
-        :param group_id: str`: The id of the author
-        
-        :returns: Author`
+        Args:
+            group_id (str): The id of the author
 
+        Returns:
+            ScanlationGroup: The author information
         """
-        url = f"{self.api.url}/author/{group_id}"
+        url = f"{self.api.url}/group/{group_id}"
         resp = URLRequest.request_url(url, "GET", timeout=self.api.timeout)
         return ScanlationGroup.group_from_dict(resp)
 
     def create_group(
             self, name: str, version: int, ObjReturn: bool = False
-    ) -> Union["Author", None]:
-        """Creates an Author
+    ) -> Union["ScanlationGroup", None]:
+        """Creates a Scanlation Group
 
-        :param name: type name: `str`. The author name
-        :param version: type version: `int`. The version of the author
-        :param ObjReturn: bool` Default `False`. If set to `True`, it will return the info
-        :param name: str:
-        :param version: int:
-        :param ObjReturn: bool:  (Default value = False)
-        :returns: Union[Author, None]`
+        Args:
+            name: The name of the author
+            version: The version of author info
+            ObjReturn: Default `False`. If set to `True`, it will return the info
 
+        Returns:
+            ScanlationGroup (Optional): The given scanlation group information
         """
+
         url = f"{self.api.url}/author"
         params = {"name": name, "version": version}
         resp = URLRequest.request_url(
@@ -354,28 +378,28 @@ class ScanlationGroup:
             headers=self.auth.get_bearer_token(),
         )
         if ObjReturn:
-            return Author.author_from_dict(resp)
+            return ScanlationGroup.author_from_dict(resp)
 
     def update_group(
             self,
             *,
-            author_id: str,
+            group_id: str,
             version: int,
             name: Union[str, None] = None,
             ObjReturn: bool = False,
-    ) -> Union["Author", None]:
-        """ Updates and Author
+    ) -> Union["ScanlationGroup", None]:
+        """ Updates a Scanlation Group
 
         Args:
-            author_id: The author id
+            group_id: The author id
             version: The version of author info
             name: The name of the author
             ObjReturn: Default `False`. If set to `True`, it will return the info
 
         Returns:
-            Union[Author, None]:  Updated Chapter
+            Union[ScanlationGroup, None]:  Updated ScanlationGroup
         """
-        url = f"{self.api.url}/author/{author_id}"
+        url = f"{self.api.url}/group/{group_id}"
         params: Dict[str, Any] = {"version": version}
         if name is not None:
             params["name"] = name
@@ -384,22 +408,23 @@ class ScanlationGroup:
         )
 
         if ObjReturn:
-            return Author.author_from_dict(resp) if ObjReturn else None
+            return ScanlationGroup.author_from_dict(resp) if ObjReturn else None
 
-    def delete_group(self, author_id: str) -> None:
-        """Deletes an author
+    def delete_group(self, group_id: str) -> None:
+        """Deletes an Group
 
-        :param author_id: str: Author ID
-        :param author_id: str:
-
+        Args:
+            group_id (str): Author ID
         """
-        url = f"{self.api.url}/author/{author_id}"
+        
+        url = f"{self.api.url}/group/{group_id}"
         URLRequest.request_url(
             url, "DELETE", headers=self.auth.get_bearer_token(), timeout=self.api.timeout
         )
 
 
 class User:
+    """Class providing user information"""
     def __init__(self, auth: Union[Auth, None]):
         self.auth = auth
         self.api = Api()
@@ -430,7 +455,17 @@ class User:
 
     @classmethod
     def user_from_dict(cls, data: dict) -> "User":
-        """Create a user object from raw data"""
+        """Creates userfrom JSON
+
+        Args:
+            resp (dict): Raw data from JSON
+
+        Raises:
+            ValueError: Returned when the JSON doesn't contain Author Information
+
+        Returns:
+            User: User Information
+        """
         if "data" in data:
             data = data["data"]
 
@@ -454,8 +489,13 @@ class User:
 
     @staticmethod
     def create_user_list(resp: dict) -> List["User"]:
-        """
-        Creates a List of users from a JSON
+        """Create a list of User from JSON
+
+        Args:
+            resp (dict): Raw data from JSON
+
+        Returns:
+            List[User]: List of Authors
         """
         resp = resp["data"]
         user_list = []
@@ -467,6 +507,11 @@ class User:
         pass
 
     def me(self) -> "User":
+        """Get your information
+
+        Returns:
+            User: Your information
+        """
         url = f"{self.api.url}/user/me"
         resp = URLRequest.request_url(
             url, "GET",
@@ -476,6 +521,14 @@ class User:
         return User.user_from_dict(resp)
 
     def get_user(self, user_id: str) -> "User":
+        """Get the User's information by its id
+
+        Args:
+            user_id (str): The id of the author
+
+        Returns:
+            User: The user information
+        """
         url = f"{self.api.url}/user/{user_id}"
         resp = URLRequest.request_url(url, "GET", timeout=self.api.timeout)
         return User.user_from_dict(resp)
@@ -487,18 +540,15 @@ class Follows:
         self.api = Api()
 
     def followed_groups(self, **kwargs) -> List["ScanlationGroup"]:
-        """
-        Get the Scanlation Groups you follow
+        """ Get information about Scanlation Groups you follow
 
-        Parameters
-        -------------
-        limit `int`
-        offset `int`
-        translatedLanguage : `List[str]`
+        Args:
+            limit: Number of groups to load
+            offset:
+            translatedLanguage
 
-        Returns
-        -------------
-        `List[ScanlationGroup]`
+        Returns:
+            List[ScanlationGroup]: List of Scanlation Groups
         """
         if "translatedLanguage" in kwargs:
             kwargs["translatedLanguage[]"] = kwargs.pop("translatedLanguage")
@@ -509,17 +559,14 @@ class Follows:
         return ScanlationGroup.create_group_list(resp)
 
     def followed_users(self, **kwargs) -> List["User"]:
-        """
-        Get the users you follow
+        """ Get information about users you follow
 
-        Parameters
-        -------------
-        limit : `int`
-        offset : `int`
+        Args:
+            limit: Number of authors to load
+            offset:
 
-        Returns
-        -------------
-        `List[User]`
+        Returns:
+            List[Users]: List of USers
         """
         url = f"{self.api.url}/user/follows/user"
         resp = URLRequest.request_url(
@@ -527,32 +574,20 @@ class Follows:
         )
         return User.create_user_list(resp)
 
-    def follow_manga(self, manga_id: Union[str, int]) -> None:
-        """
-        Follow a manga
+    def follow_manga(self, manga_id: str) -> None:
+        """Follow a manga
 
-        Parameters
-        --------------
-        manga_id : `str`. The manga id
-
-        Raises
-        -------------
-        `ApiError`
+        Args:
+            manga_id: The manga you want to follow
         """
         url = f"{self.api.url}/manga/{manga_id}/follow"
         URLRequest.request_url(url, "POST", headers=self.auth.get_bearer_token(), timeout=self.api.timeout)
 
     def unfollow_manga(self, manga_id: str) -> None:
-        """
-        Unfollows a Manga
+        """Follow a manga
 
-        Parameters
-        -------------
-        manga_id : `str`. The manga id
-
-        Raises
-        -----------
-        `ApiError`
+        Args:
+            manga_id: The manga you want to un follow
         """
         url = f"{self.api.url}/manga/{manga_id}/follow"
         URLRequest.request_url(url, "DELETE", headers=self.auth.get_bearer_token(), timeout=self.api.timeout)

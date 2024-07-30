@@ -1,3 +1,4 @@
+"""Module providing Chapter and Manga info"""
 from __future__ import absolute_import
 
 import datetime
@@ -21,15 +22,15 @@ class Chapter:
         self.title: str = ""
         self.volume: str = ""
         self.chapter: Union[float, None] = None
-        self.translatedLanguage: str = ""
+        self.translated_language: str = ""
         self.hash = ""
         self.data = ""
         self.manga_id: str = ""
         self.group_id: str = ""
         self.uploader: str = ""
-        self.createdAt: datetime.datetime
-        self.updatedAt: datetime.datetime
-        self.publishAt: datetime.datetime
+        self.created_at: datetime.datetime
+        self.updated_at: datetime.datetime
+        self.publish_at: datetime.datetime
 
     # Data Processors
 
@@ -60,7 +61,7 @@ class Chapter:
         chapter.chapter = (
             float(attributes["chapter"]) if attributes["chapter"] is not None else None
         )
-        chapter.translatedLanguage = attributes["translatedLanguage"]
+        chapter.translated_language = attributes["translatedLanguage"]
         for relations in resp["relationships"]:
             if relations["type"] == "scanlation_group":
                 chapter.group_id = relations["id"]
@@ -114,10 +115,11 @@ class Chapter:
     def __repr__(self) -> str:
         part1 = f"Chapter(chapter_id = {self.chapter_id}, title = {self.title}, \
                         volume = {self.volume}, chapter = {self.chapter}, \
-                        translatedLanguage = {self.translatedLanguage} \n"
-        part2 = f"data = List[filenames], publishAt = {self.publishAt}, \
-                        createdAt = {self.createdAt}, uploadedAt = {self.updatedAt}, \
-                        group_id = {self.group_id}, manga_id = {self.manga_id}, uploader = {self.uploader})"
+                        translatedLanguage = {self.translated_language} \n"
+        part2 = f"data = List[filenames], publishAt = {self.publish_at}, \
+                        createdAt = {self.created_at}, uploadedAt = {self.updated_at}, \
+                        group_id = {self.group_id}, manga_id = {self.manga_id}, \
+                        uploader = {self.uploader})"
         return f"{part1}{part2}"
 
     def get_chapter_list(self, **kwargs) -> List["Chapter"]:
@@ -198,13 +200,13 @@ class Chapter:
         image_server_url = image_server_url["baseUrl"].replace("\\", "")
         image_server_url = f"{image_server_url}/data"
         image_urls = []
-        for filename in self.data:
-            image_urls.append(f"{image_server_url}/{self.hash}/{filename}")
+        for file_name in self.data:
+            image_urls.append(f"{image_server_url}/{self.hash}/{file_name}")
 
         return image_urls
 
     def update_chapter(
-        self, chapter_id: str, body: dict, ObjReturn: bool = True
+        self, chapter_id: str, body: dict, obj_return: bool = True
     ) -> Union["Chapter", None]:
         """Update a chapter
 
@@ -222,7 +224,7 @@ class Chapter:
         resp = URLRequest.request_url(
             url, "PUT", params=body, headers=headers, timeout=self.api.timeout
         )
-        return self.chapter_from_dict(resp["data"]) if not ObjReturn else None
+        return self.chapter_from_dict(resp["data"]) if not obj_return else None
 
     def delete_chapter(self, chapter_id: str) -> None:
         """Delete a chapter
@@ -255,10 +257,10 @@ class Cover:
 
         self.cover_id: str = ""
         self.volume: str = ""
-        self.fileName: str = ""
+        self.file_name: str = ""
         self.description: str = ""
-        self.createdAt: datetime.datetime
-        self.updatedAt: datetime.datetime
+        self.created_at: datetime.datetime
+        self.updated_at: datetime.datetime
         self.manga_id: str = ""
         self.locale: str = ""
 
@@ -289,11 +291,11 @@ class Cover:
 
         cover.cover_id = data["id"]
         cover.volume = attributes["volume"]
-        cover.fileName = attributes["fileName"]
+        cover.file_name = attributes["fileName"]
         cover.locale = attributes["locale"]
         cover.description = attributes["description"]
-        cover.createdAt = parse(attributes["createdAt"])
-        cover.updatedAt = parse(attributes["updatedAt"])
+        cover.created_at = parse(attributes["createdAt"])
+        cover.updated_at = parse(attributes["updatedAt"])
         cover.manga_id = data["relationships"][0]["id"]
 
         return cover
@@ -314,8 +316,8 @@ class Cover:
 
     def __repr__(self) -> str:
         return f"CoverArt(id = {self.cover_id}, mangaId = {self.manga_id}, volume = {self.volume}, \
-                            fileName = {self.fileName}, description = {self.description}, \
-                            createdAt = {self.createdAt}, updatedAt = {self.updatedAt})"
+                            file_name = {self.file_name}, description = {self.description}, \
+                            createdAt = {self.created_at}, updatedAt = {self.updated_at})"
 
     @staticmethod
     def __parse_coverart_params(params: Dict[str, str]) -> Dict[str, str]:
@@ -338,7 +340,7 @@ class Cover:
             str: The image URL
         """
 
-        url = f"https://uploads.mangadex.org/covers/{self.manga_id}/{self.fileName}"
+        url = f"https://uploads.mangadex.org/covers/{self.manga_id}/{self.file_name}"
 
         if quality == "medium":
             url = f"{url}.512.jpg"
@@ -374,20 +376,20 @@ class Cover:
         return self.cover_from_dict(resp)
 
     def upload_cover(
-        self, manga_id: str, filename: str, ObjReturn: bool = False
+        self, manga_id: str, file_name: str, obj_return: bool = False
     ) -> Union["Cover", None]:
         """Upload a Cover
 
         Args:
             manga_id: ID of the series you want to upload a cover
-            filename: filename of the cover
+            file_name: file_name of the cover
             ObjReturn: Default `False`. If set to `True`, it will return the info.
 
         Returns:
             Union[Cover, None]: Cover info or None if ObjReturn is False
         """
         url = f"{self.api.url}/cover/{manga_id}"
-        with open(filename, "rb") as f:
+        with open(file_name, "rb") as f:
             file = f.read()
 
         resp = URLRequest.request_url(
@@ -397,7 +399,7 @@ class Cover:
             headers=self.auth.get_bearer_token(),
             timeout=self.api.timeout,
         )
-        return self.cover_from_dict(resp) if ObjReturn else None
+        return self.cover_from_dict(resp) if obj_return else None
 
     def edit_cover(
         self,
@@ -406,7 +408,7 @@ class Cover:
         locale: str = "en-us",
         volume: Union[str, None] = None,
         version: Union[int, None] = None,
-        ObjReturn: bool = False,
+        obj_return: bool = False,
     ) -> Union[None, Self]:
         """Update a Cover Info
 
@@ -436,7 +438,7 @@ class Cover:
             headers=self.auth.get_bearer_token(),
             timeout=self.api.timeout,
         )
-        return self.cover_from_dict(resp) if ObjReturn else None
+        return self.cover_from_dict(resp) if obj_return else None
 
     def delete_cover(self, cover_id: Union[str, "Cover"]):
         """Deletes a Cover
@@ -462,6 +464,7 @@ class Cover:
 
 
 class Tag:
+    """Class for getting Tags"""
     def __init__(self) -> None:
         """Class used to get and parse tags"""
 
@@ -543,27 +546,28 @@ class Tag:
 
 
 class Manga:
+    """Class for getting Manga Info"""
     def __init__(self, auth: Union[Auth, None] = None):
         self.auth = auth
         self.api = Api()
 
         self.manga_id: str = ""
         self.title: Dict[str, str] = {}
-        self.altTitles: Dict[str, str] = {}
+        self.alt_titles: Dict[str, str] = {}
         self.description: Dict[str, str] = {}
-        self.isLocked: bool = False
+        self.is_locked: bool = False
         self.links: Dict[str, str] = {}
-        self.originalLanguage: str = ""
-        self.lastVolume: str = ""
-        self.lastChapter: str = ""
-        self.publicationDemographic: str = ""
+        self.original_language: str = ""
+        self.last_volume: str = ""
+        self.last_chapter: str = ""
+        self.publication_demographic: str = ""
         self.status: str = ""
         self.year: int = 0
-        self.contentRating: str = ""
+        self.content_rating: str = ""
         self.tags: List[Tag] = []
         self.version = 1
-        self.createdAt: datetime.datetime
-        self.updatedAt: datetime.datetime
+        self.created_at: datetime.datetime
+        self.updated_at: datetime.datetime
         self.author_id: List[str] = []
         self.artist_id: List[str] = []
         self.cover_id: str = ""
@@ -587,24 +591,24 @@ class Manga:
 
         manga.manga_id = data["id"]
         manga.title = attributes["title"]
-        manga.altTitles = attributes["altTitles"]
+        manga.alt_titles = attributes["altTitles"]
         manga.description = attributes["description"]
         try:
-            manga.isLocked = attributes["isLocked"]
+            manga.is_locked = attributes["isLocked"]
         except KeyError:
             pass
 
         manga.links = attributes["links"]
-        manga.originalLanguage = attributes["originalLanguage"]
-        manga.lastVolume = attributes["lastVolume"]
-        manga.lastChapter = attributes["lastChapter"]
-        manga.publicationDemographic = attributes["publicationDemographic"]
+        manga.original_language = attributes["originalLanguage"]
+        manga.last_volume = attributes["lastVolume"]
+        manga.last_chapter = attributes["lastChapter"]
+        manga.publication_demographic = attributes["publicationDemographic"]
         manga.status = attributes["status"]
         manga.year = attributes["year"]
-        manga.contentRating = attributes["contentRating"]
+        manga.content_rating = attributes["contentRating"]
         manga.tags = Tag.create_tag_list(attributes["tags"])
-        manga.createdAt = parse(attributes["createdAt"])
-        manga.updatedAt = parse(attributes["updatedAt"])
+        manga.created_at = parse(attributes["createdAt"])
+        manga.updated_at = parse(attributes["updatedAt"])
 
         for elem in data["relationships"]:
             if elem["type"] == "author":
@@ -679,8 +683,8 @@ class Manga:
         return f"{self.api.url}/title/{self.manga_id}"
 
     def __eq__(self, other: Self) -> bool:
-        my_vals = [self.manga_id, self.title, self.createdAt, self.author_id]
-        other_vals = [other.manga_id, other.title, other.createdAt, other.author_id]
+        my_vals = [self.manga_id, self.title, self.created_at, self.author_id]
+        other_vals = [other.manga_id, other.title, other.created_at, other.author_id]
         return my_vals == other_vals
 
     def __ne__(self, other: Self) -> bool:
@@ -688,51 +692,51 @@ class Manga:
 
     def __repr__(self) -> str:
         temp1 = f"Manga(manga_id = {self.manga_id}, title = {self.title}, \
-                altTitles = {self.altTitles}, description = {self.description}, \
-                isLocked = {self.isLocked}, links = {self.links}, \
-                originalLanguage = {self.originalLanguage} \n"
-        temp2 = f"lastVolume = {self.lastVolume}, lastChapter = {self.lastChapter}, \
-                publicationDemographic = {self.publicationDemographic}, status = {self.status}, \
-                year = {self.year}, contentRating = {self.contentRating} \n"
-        temp3 = f"createdAt = {self.createdAt}, uploadedAt = {self.updatedAt}), \
+                altTitles = {self.alt_titles}, description = {self.description}, \
+                isLocked = {self.is_locked}, links = {self.links}, \
+                originalLanguage = {self.original_language} \n"
+        temp2 = f"lastVolume = {self.last_volume}, lastChapter = {self.last_chapter}, \
+                publicationDemographic = {self.publication_demographic}, status = {self.status}, \
+                year = {self.year}, contentRating = {self.content_rating} \n"
+        temp3 = f"createdAt = {self.created_at}, uploadedAt = {self.updated_at}), \
                 author_id = {self.author_id}, artist_id = {self.artist_id}, \
                 cover_id = {self.cover_id}"
         return f"{temp1}{temp2}{temp3}"
 
     def get_manga_list(self, **kwargs) -> List["Manga"]:
         """
-        Search a List of Manga
+        Search a list of Manga.
 
-        Parameters
-        -------------
-        This parameters may be used by other methods
-        ### QueryParams:
+        Args:
+            limit (int): Limit the number of results.
+            offset (int): Offset the results by this number.
+            title (str): Search for manga with this title.
+            authors (List[str]): List of authors.
+            artist (List[str]): List of artists.
+            year (int): Year of publication.
+            includedTags (List[Tag.id]): Tags to include.
+            includedTagsMode (str): Mode for included tags. Default is "AND".
+                Possible Values: "AND", "OR".
+            excludedTags (List[Tag.id]): Tags to exclude.
+            excludedTagsMode (str): Mode for excluded tags. Default is "AND".
+                Enum: "AND", "OR".
+            status (List[str]): Status of manga.
+                Enum: "ongoing", "completed", "hiatus", "cancelled".
+            originalLanguage (List[str]): Original language of the manga.
+            publicationDemographic (List[str]): Demographic of publication. 
+                Enum: "shounen", "shoujo", "josei", "seinen", "none".
+            manga_ids (List[str]): List of manga IDs. Limited to 100 per call.
+            contentRating (List[str]): Content rating.
+                Enum: "safe", "suggestive", "erotica", "pornographic".
+            createdAtSince (str): Datetime string in the format YYYY-MM-DDTHH:MM:SS.
+            updatedAtSince (str): Datetime string in the format YYYY-MM-DDTHH:MM:SS.
 
-        limit : `int`
-        offset : `int`
-        title : `str`
-        authors : `List[str]`
-        artist : `List[str]`
-        year : `int`
-        includedTags : `List[Tag.id]`
-        includedTagsMode: `str`. Default `"AND"`. Enum: `"AND"` `"OR"`
-        excludedTags : `List[Tag.id]`
-        excludedTagsMode : `str`. Default `"AND"`, Enum : `"AND"`, `"OR"`
-        status : `List[str]`. Items Enum : `"ongoing"`, `"completed"`, `"hiatus"`, `"cancelled"`
-        originalLanguage : `List[str]`
-        publicationDemographic : `List[str]`. Items Enum: `"shounen"` `"shoujo"` `"josei"` `"seinen"` `"none"`
-        manga_ids :  `List[str]`. Limited to 100 per call
-        contentRating : `List[str]`. Items Enum : `"safe"` `"suggestive"` `"erotica"` `"pornographic"`
-        createdAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
-        updatedAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
+        Returns:
+            List[Manga]: A list of Manga objects.
 
-        Returns
-        -------------
-        `List[Manga]`. A list of Manga objects
-
-        Raises
-        -------------
-        `ApiError` `MangaError`
+        Raises:
+            ApiError: An error occurred with the API.
+            MangaError: An error occurred specific to Manga.
         """
         params = kwargs
         params = self.__parse_manga_params(params)
@@ -1026,6 +1030,7 @@ class Manga:
 
 
 class MangaList(Manga):
+    """Class for getting user's Manga List"""
     def __init__(self, auth=Auth):
         super().__init__(auth=auth)
 
@@ -1042,6 +1047,7 @@ class MangaList(Manga):
 
 
 class CustomList:
+    """Class for getting users' custom lists"""
     def __init__(self, auth: Union[Auth, None] = None):
         self.auth = auth
         self.api = Api()
