@@ -20,6 +20,7 @@ class TestApi:
     timeout = 5
 
     def test_ping(self):
+        """Tests the infrastructure"""
         ping = self.api.ping()
         saved_resp = URLRequest.request_url(f"{self.api.url}/ping", "GET", self.timeout)
         assert ping == saved_resp
@@ -191,7 +192,7 @@ class TestScanlationGroup:
 
     def test_GetScanlationGroup(self):
         ids = ["f5f83084-ec42-4354-96fd-1b637a89b8b3"]
-        resp = self.scangroup.multi_group_list(ids=ids)  # black cat scanlations
+        resp = self.scangroup.list_groups(ids=ids)  # black cat scanlations
 
         url = f"{self.scangroup.api.url}/group"
         raw_response = URLRequest.request_url(
