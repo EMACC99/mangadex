@@ -77,13 +77,13 @@ class TestManga:
 
     def test_GetMangaFeed(self):
         resp = self.manga.get_manga_list(title="iris zero", limit=1)[0]
-        self.manga.manga_feed(resp.manga_id)
+        self.manga.get_manga_feed(resp.manga_id)
 
     def test_ViewMangaById(self):
         self.manga.get_manga_by_id(manga_id="88796863-04bd-49d4-ad85-d9f993e95109")
 
     def test_RandomManga(self):
-        self.manga.random_manga()
+        self.manga.get_random_manga()
 
     def test_GetMangaChaptersAndVolumes(self):
         # lets use iris zero as is in hiatus
@@ -213,7 +213,7 @@ class TestCoverArt:
         self.coverart.get_coverart_list()
 
     def test_GetMangaCoverArt(self):
-        random_manga = self.manga.random_manga()
+        random_manga = self.manga.get_random_manga()
         self.coverart.get_cover(random_manga.cover_id)
 
     def test_GetCustomList(self):
