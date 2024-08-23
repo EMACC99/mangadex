@@ -351,7 +351,7 @@ if __name__ == "__main__":
 
     load_dotenv("mangadex/api/.env")
     api = Api()
-    
+
     # auth = Auth()
     # auth.login(os.environ['md_username'], os.environ['md_password'],
     #            os.environ['client_id'], os.environ['client_secret'])

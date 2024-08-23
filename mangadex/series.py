@@ -1,4 +1,5 @@
 """Module providing Chapter and Manga info"""
+
 from __future__ import absolute_import
 
 import datetime
@@ -151,7 +152,8 @@ class Chapter:
 
         Args:
             chapter_id: The chapter ID
-            includes[]: list[str]: List of included entries. Values: manga, scanlation_group, user
+            includes[] (list[str]): List of included entries. Values: manga, scanlation_group, user
+            
         Returns:
             Chapter: Chapter info
         """
@@ -185,7 +187,7 @@ class Chapter:
 
         Returns
         -----------
-        `List[str]`. A list with the links with the chapter images
+        (List[str]): A list with the links with the chapter images
 
         NOTE: There links are valid for 15 minutes until you need to renew the token
 
@@ -213,7 +215,7 @@ class Chapter:
         Args:
             chapter_id: ID of the chapter to be updated.
             body: Body of the update.
-            ObjReturn: bool: Default `True`. If set to `False`, it will not return the info
+            ObjReturn: bool: Default `True` If set to `False`, it will not return the info
 
         Returns:
             Union[Chapter, None]: Updated Chapter
@@ -383,7 +385,7 @@ class Cover:
         Args:
             manga_id: ID of the series you want to upload a cover
             file_name: file_name of the cover
-            ObjReturn: Default `False`. If set to `True`, it will return the info.
+            ObjReturn: Default `False` If set to `True`, it will return the info.
 
         Returns:
             Union[Cover, None]: Cover info or None if ObjReturn is False
@@ -418,7 +420,7 @@ class Cover:
             locale: Language of the cover
             volume: The volume number of the cover
             version: The version number of the cover info
-            ObjReturn: bool: Default `False`. If set to `True`, it will return the info
+            ObjReturn: bool: Default `False` If set to `True`, it will return the info
 
         Returns:
             Union[None, Self]: Cover information or None if ObjReturn is False
@@ -465,6 +467,7 @@ class Cover:
 
 class Tag:
     """Class for getting Tags"""
+
     def __init__(self) -> None:
         """Class used to get and parse tags"""
 
@@ -547,6 +550,7 @@ class Tag:
 
 class Manga:
     """Class for getting Manga Info"""
+
     def __init__(self, auth: Union[Auth, None] = None):
         self.auth = auth
         self.api = Api()
@@ -723,7 +727,7 @@ class Manga:
             status (List[str]): Status of manga.
                 Enum: "ongoing", "completed", "hiatus", "cancelled".
             originalLanguage (List[str]): Original language of the manga.
-            publicationDemographic (List[str]): Demographic of publication. 
+            publicationDemographic (List[str]): Demographic of publication.
                 Enum: "shounen", "shoujo", "josei", "seinen", "none".
             manga_ids (List[str]): List of manga IDs. Limited to 100 per call.
             contentRating (List[str]): Content rating.
@@ -746,33 +750,23 @@ class Manga:
         )
         return Manga.create_manga_list(resp)
 
-    def manga_feed(self, manga_id: str, **kwargs) -> List[Chapter]:
+    def get_manga_feed(self, manga_id: str, **kwargs) -> List[Chapter]:
         """
         Get the manga feed
 
-        Parameters
-        ------------
-        manga_id `str`, Required. The manga id
-
-        ### QueryParams:
-
-        limit : `int`
-        offset : `int`
-        translatedLanguage : `List[str]`. The translated languages to query
-        createdAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
-        updatedAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
-
-        Returns
-        -------------
-        `List[Chapter]` A list of Chapter Objects
-
-        Raises
-        -------------
-        `ApiError` `ChapterError`
-
         Args:
-            manga_id:
-            manga_id:
+            manga_id (str): Required. The manga id
+            limit (int): Limit the number of results.
+            offset (int): Offset the results by this number.
+            createdAtSince (str): Datetime String with the following format YYYY-MM-DDTHH:MM:SS
+            updatedAtSince (str): Datetime String with the following format YYYY-MM-DDTHH:MM:SS
+
+        Returns:
+            List[Chapter]: A list of Chapter Objects
+
+        Raises:
+            ApiError: An error occurred with the API.
+            ChapterError: An error occurred specific to Chapter.
         """
         kwargs = self.__parse_manga_params(kwargs)
         url = f"{self.api.url}/manga/{manga_id}/feed"
@@ -785,33 +779,30 @@ class Manga:
         """
         Get a Manga by its id
 
-        Parameters
-        ------------
-        manga_id: `str`. The manga id
+        Args:
+            manga_id (str): Required. The manga id
 
-        Returns
-        -------------
-        `Manga`. A Manga object
+        Returns:
+            Manga: A Manga Object
 
-        Raises
-        ------------
-        `ApiError` `MangaError`
+        Raises:
+            ApiError: An error occurred with the API.
+            MangaError: An error occurred specific to Manga.
         """
         url = f"{self.api.url}/manga/{manga_id}"
         resp = URLRequest.request_url(url, "GET", timeout=self.api.timeout)
         return Manga.manga_from_dict(resp)
 
-    def random_manga(self) -> "Manga":
+    def get_random_manga(self) -> "Manga":
         """
         Get a random Manga
 
-        Returns
-        ----------
-        `Manga`. A Manga object
+        Returns:
+            Manga: A Manga Object
 
-        Raises
-        ----------
-        `ApiError` `MangaError`
+        Raises:
+            ApiError: An error occurred with the API.
+            MangaError: An error occurred specific to Manga.
         """
         url = f"{self.api.url}/manga/random"
         resp = URLRequest.request_url(url, "GET", timeout=self.api.timeout)
@@ -821,29 +812,26 @@ class Manga:
         """
         Creates a manga
 
-        Parameters
-        -----------
-        title : `str`. The manga title
+            Args:
+            title (str): The manga title
 
-        ### Optional Parameters
-        altTitles : `List[Dict[str,str]]`. The alt titles
-        description : `Dict[str,str]`. The alt titles in different languages
-        authors : `List[str]`. The list of author id's
-        artists : `List[str]`. The list of artist id's
-        links : `Dict[str,str]`. The links in different sites (al, ap, bw, mu, etc.).
-        Please refer to the [documentation](https://api.mangadex.org/docs.html#section/Static-data/Manga-links-data)
-        originalLanguage : `str`. The original Language
-        lastVolume : `str`. The last volume
-        lastChapter : `str`. The last chapter
-        publicationDemographic : `str`.
-        status : `str`.
-        year : `int`.
-        contentRating : `str`.
-        modNotes : `str`
+            altTitles (List[Dict[str,str]]): The alt titles
+            description Dict[str,str]). The alt titles in different languages
+            authors (List[str]):. The list of author id's
+            artists (List[str]): The list of artist id's
+            links (Dict[str,str]): The links in different sites (al, ap, bw, mu, etc.).
+                Please refer to the [documentation](https://api.mangadex.org/docs.html#section/Static-data/Manga-links-data)
+            originalLanguage (str): The original Language
+            lastVolume (str): The last volume
+            lastChapter (str): The last chapter
+            publicationDemographic (str):
+            status (str):
+            year (int):
+            contentRating (str):
+            modNotes (str):
 
-        Returns
-        ------------
-        `Manga`. A manga object if `ObjReturn` is set to `True`
+        Returns:
+            Manga: A Manga Object
         """
         params = self.__parse_manga_params(kwargs)
         url = f"{self.api.url}/manga"
@@ -857,27 +845,6 @@ class Manga:
         )
         return Manga.manga_from_dict(resp)
 
-    def get_manga_volumes_and_chapters(self, manga_id: str, **kwargs) -> Dict[str, str]:
-        """
-        Get a manga volumes and chapters
-
-        Parameters
-        ------------
-        manga_id : `str`. The manga id
-        translatedLanguage : `List[str]`
-
-        Returns
-        ------------
-        `Dict[str, str]`. A dictionary with the volumes and the chapter id's
-        """
-        params = None
-        if "translatedLanguage" in kwargs:
-            params = {"translatedLanguage[]": kwargs["translatedLanguage"]}
-        url = f"{self.api.url}/manga/{manga_id}/aggregate"
-        resp = URLRequest.request_url(
-            url, "GET", timeout=self.api.timeout, params=params
-        )
-        return resp["volumes"]
 
     def update_manga(
         self, manga_id: str, ObjReturn: bool = False, **kwargs
@@ -885,33 +852,27 @@ class Manga:
         """
         Updates a manga parameters
 
-        Parameters
-        -------------
-        ### Required parameters
-        manga_id : `str`. The manga id
-        version : `int`
-        ObjReturn : `bool`. `True` if you want a Manga Object return
+        Args:
+            manga_id (str): The manga id
+            version (int)
+            ObjReturn (bool): `True` if you want a Manga Object return
+            altTitles (List[Dict[str,str]]): The alt titles
+            description Dict[str,str]). The alt titles in different languages
+            authors (List[str]):. The list of author id's
+            artists (List[str]): The list of artist id's
+            links (Dict[str,str]): The links in different sites (al, ap, bw, mu, etc.).
+                Please refer to the [documentation](https://api.mangadex.org/docs.html#section/Static-data/Manga-links-data)
+            originalLanguage (str): The original Language
+            lastVolume (str): The last volume
+            lastChapter (str): The last chapter
+            publicationDemographic (str):
+            status (str):
+            year (int):
+            contentRating (str):
+            modNotes (str):
 
-        ### Optional Parameters
-        title : `Dict[str,str]`. The manga title
-        altTitles : `List[Dict[str,str]]`. The alt titles
-        description : `Dict[str,str]`. The alt titles in different languages
-        authors : `List[str]`. The list of author id's
-        artists : `List[str]`. The list of artist id's
-        links : `Dict[str,str]`. The links in different sites (al, ap, bw, mu, etc.).
-            Please refer to the [documentation](https://api.mangadex.org/docs.html#section/Static-data/Manga-links-data)
-        originalLanguage : `str`. The original Language
-        lastVolume : `str`. The last volume
-        lastChapter : `str`. The last chapter
-        publicationDemographic : `str`.
-        status : `str`.
-        year : `int`.
-        contentRating : `str`.
-        modNotes : `str`
-
-        Returns
-        ------------
-        `Manga`. A manga object if `ObjReturn` is set to `True`
+        Returns:
+            Manga: A manga object if `ObjReturn` is set to `True`
         """
         kwargs = self.__parse_manga_params(kwargs)
         url = f"{self.api.url}/manga/{manga_id}"
@@ -929,9 +890,8 @@ class Manga:
         """
         Deletes a manga
 
-        Parameters
-        ------------
-        manga_id : `str`. The manga id
+        Args:
+            manga_id (str): Required. The manga id
         """
         url = f"{self.api.url}/manga{manga_id}"
 
@@ -942,18 +902,36 @@ class Manga:
             timeout=self.api.timeout,
         )
 
+    def get_manga_volumes_and_chapters(self, manga_id: str, **kwargs) -> Dict[str, str]:
+        """
+        Get a manga volumes and chapters
+
+        Args:
+            manga_id (str): Required. The manga id
+            translatedLanguage (str): 
+
+        Returns:
+            (Dict[str, str]): A dictionary with the volumes and the chapter id's
+        """
+        params = None
+        if "translatedLanguage" in kwargs:
+            params = {"translatedLanguage[]": kwargs["translatedLanguage"]}
+        url = f"{self.api.url}/manga/{manga_id}/aggregate"
+        resp = URLRequest.request_url(
+            url, "GET", timeout=self.api.timeout, params=params
+        )
+        return resp["volumes"]
+
     def get_manga_read_markers(self, manga_id: str) -> List[Chapter]:
         # this needs a performance update
         """
-        A list of Chapter ids That are marked from the given manga id
+        A list of Chapter ids That are marked as read from the manga 
 
-        Parameters
-        ------------
-        manga_id : `str`. The Manga id
+        Args:
+            manga_id (str): Required. The manga id
 
         Returns
-        -------------
-        `List[Chapters]`. A list of chapters that are marked as read
+            (List[Chapters]): A list of chapters that are marked as read
         """
         url = f"{self.api.url}/manga/{manga_id}/read"
         resp = URLRequest.request_url(
@@ -963,23 +941,24 @@ class Manga:
         chapter = Chapter()
         return [chapter.get_chapter_by_id(chap_id) for chap_id in chap_ids]
 
-    def get_manga_reading_status(self, manga_id: Union[str, int]) -> str:
+    def set_manga_read_markers(self, manga_id: str, **kwargs) -> List[Chapter]:
         """
-        Get a manga reading status given its id
+        List of Chapter ids to be marked as read
 
-        Parameters
-        ------------
-        manga_id : `str`. The manga id
+        Args:
+            manga_id (str): Required. The manga id
+            chapterIdsUnread (List[str]): Chapter IDs to be set as unread
+            chapterIdsRead (List[str]): Chapter IDs to be set as read
 
         Returns
-        ------------
-        `str` The manga reading status
+            List[Chapters]: A list of chapters that are marked as read
         """
-        url = f"{self.api.url}/manga/{manga_id}/status"
+        url = f"{self.api.url}/manga/{manga_id}/read"
         resp = URLRequest.request_url(
-            url, "GET", headers=self.auth.get_bearer_token(), timeout=self.api.timeout
+            url, "GET", timeout=self.api.timeout, params=kwargs,
+            headers=self.auth.get_bearer_token()
         )
-        return resp["status"]
+        return resp
 
     def get_all_manga_reading_status(
         self, status: Union[str, None] = None
@@ -987,14 +966,12 @@ class Manga:
         """
         Get all Manga followed by the user reading status
 
-        Parameters
-        ------------
-        status : `str`. Optional.
-            Values : `"reading"` `"on_hold"` `"plan_to_read"` `"dropped"` `"re_reading"` `"completed"`
+        Args:
+            status (str): Optional.
+                Values: `"reading"` `"on_hold"` `"plan_to_read"` `"dropped"` `"re_reading"` `"completed"`
 
-        Returns
-        -----------
-        `Dict[str,str]` A dictionary with the Manga id and its status
+        Returns:
+            Dict[str,str]: A dictionary with the Manga id and its status
         """
         url = f"{self.api.url}/manga/status"
         resp = URLRequest.request_url(
@@ -1006,18 +983,33 @@ class Manga:
         )
         return resp["statuses"]
 
+    def get_manga_reading_status(self, manga_id: Union[str, int]) -> str:
+        """
+        Get a manga reading status given its id
+
+        Args:
+            manga_id (str): Required. The manga id
+
+        Returns:
+            str: The manga reading status
+        """
+        url = f"{self.api.url}/manga/{manga_id}/status"
+        resp = URLRequest.request_url(
+            url, "GET", headers=self.auth.get_bearer_token(), timeout=self.api.timeout
+        )
+        return resp["status"]
+
     def update_manga_reading_status(self, manga_id: str, status: str) -> None:
         """
         Update the reading status of a manga
 
-        Parameters
-        -------------
-        manga_id : `str`. The manga id.\n
-        status : `str`. Values : `"reading"` `"on_hold"` `"plan_to_read"` `"dropped"` `"re_reading"` `"completed"`
+        Args:
+            manga_id (str): The manga id.
+            status (str):
+                Values : `reading"` `"on_hold"` `"plan_to_read"` `"dropped"` `"re_reading"` `"completed"`
 
-        Raises
-        -------------
-        `ApiError`
+        Raises:
+            ApiError
         """
         url = f"{self.api.url}/manga/{manga_id}/status"
         URLRequest.request_url(
@@ -1028,13 +1020,79 @@ class Manga:
             timeout=self.api.timeout,
         )
 
+class Follows:
+    """Handles follows for Manga"""
+    def __init__(self, auth: Union[Auth, None]):
+        self.auth = auth
+        self.api = Api()
+
+    
+    def follow_manga(self, manga_id: str) -> None:
+        """Follow a manga
+
+        Args:
+            manga_id: The manga you want to follow
+        """
+        url = f"{self.api.url}/manga/{manga_id}/follow"
+        URLRequest.request_url(url, "POST", headers=self.auth.get_bearer_token(), timeout=self.api.timeout)
+
+    def unfollow_manga(self, manga_id: str) -> None:
+        """Follow a manga
+
+        Args:
+            manga_id: The manga you want to un follow
+        """
+        url = f"{self.api.url}/manga/{manga_id}/follow"
+        URLRequest.request_url(url, "DELETE", headers=self.auth.get_bearer_token(), timeout=self.api.timeout)
+
+    def get_followed_customlists(self, **kwargs) -> List["CustomList"]:
+        """Get user's followed CustomList
+
+        Args:
+            limit (int): The limit of custom lists to return
+            offset (int): The amount of offset
+
+        Returns:
+            List[CustomList]: List of CustomList
+        """
+        url = f"{self.api.url}/user/follows/list"
+        resp = URLRequest.request_url(
+            url, "GET", params=kwargs, headers=self.auth.get_bearer_token(), timeout=self.api.timeout
+        )
+        return CustomList.create_customlist_list(resp)
+
+    def check_followed_customlist(self, list_id) -> dict:
+        """ Check if logged user follows a CustomList
+
+        Args:
+            list_id (str): Required. The list id
+
+        Returns:
+            dict
+        """
+        url = f"{self.api.url}/user/follows/group/{list_id}"
+        resp = URLRequest.request_url(
+            url, "GET", timeout=self.api.timeout, headers=self.auth.get_bearer_token()
+        )
+        return resp # This outputs ok as response
 
 class MangaList(Manga):
     """Class for getting user's Manga List"""
+
     def __init__(self, auth=Auth):
         super().__init__(auth=auth)
 
     def get_my_mangalist(self, **kwargs) -> List["Manga"]:
+        """Get the user's MangaList
+
+        Args:
+            limit (int): The limit of custom lists to return
+            offset (int): The amount of offset
+            includes[] (list[str]): List of included entries. Values: manga, cover_art, author
+
+        Returns:
+            List[Manga]: List of Manga in user's list
+        """
         url = f"{self.api.url}/user/follows/manga"
         resp = URLRequest.request_url(
             url,
@@ -1045,9 +1103,28 @@ class MangaList(Manga):
         )
         return self.create_manga_list(resp)
 
+    def check_followed_mangalist(self, manga_id: str) -> dict:
+        """Checks if logged user follows mangalist
+
+        Args:
+            manga_id (str): Required. The manga id
+
+        Returns:
+            dict: 
+        """
+        url = f"{self.api.url}/user/follows/manga/{manga_id}"
+        resp = URLRequest.request_url(
+            url,
+            "GET",
+            timeout=self.api.timeout,
+            headers=self.auth.get_bearer_token(),
+        )
+        return resp
+
 
 class CustomList:
     """Class for getting users' custom lists"""
+
     def __init__(self, auth: Union[Auth, None] = None):
         self.auth = auth
         self.api = Api()
@@ -1100,15 +1177,12 @@ class CustomList:
         """
         Get my custom lists
 
-        Parameters
-        ------------
-        ### QueryParams:
-        limit : `int`. The limit of custom lists to return
-        offset : `int`. The amount of offset
+        Args:
+            limit (int): The limit of custom lists to return
+            offset (int): The amount of offset
 
-        Returns
-        ----------
-        `List[CustomList]`
+        Returns:
+            List[CustomList]
         """
         url = f"{self.api.url}/user/list"
         resp = URLRequest.request_url(
@@ -1124,17 +1198,13 @@ class CustomList:
         """
         Get a user's custom list. This will list only public custom lists
 
-        Parameters
-        ------------
-        user_id : `str`. the User id
+        Args:
+            user_id (str): the User id
+            limit (int): The limit of custom lists to return
+            offset (int): The amount of offset
 
-        ### QueryParams:
-        limit : `int`. The limit of custom lists to return
-        offset : `int`. The amount of offset
-
-        Returns
-        ----------
-        `List[CustomList]`
+        Returns:
+            List[CustomList]
         """
         url = f"{self.api.url}/user/{user_id}/list"
         resp = URLRequest.request_url(
@@ -1150,10 +1220,9 @@ class CustomList:
         """
         Adds a manga to a custom list
 
-        Parameters
-        --------------
-        manga_id : `str`. The manga id.
-        list_id : `str`. The list id.
+        Args:
+            manga_id (str): The manga id.
+            list_id (str): The list id.
         """
         url = f"{self.api.url}/{manga_id}/list{list_id}"
         URLRequest.request_url(
@@ -1164,10 +1233,9 @@ class CustomList:
         """
         Removes a manga from a custom list
 
-        Parameters
-        ------------
-        manga_id : `str`. The manga id
-        list_id : `str`. The list id
+        Args:
+            manga_id (str): The manga id
+            list_id (str): The list id
         """
         url = f"{self.api.url}/manga/{manga_id}/list/{list_id}"
         URLRequest.request_url(
@@ -1187,13 +1255,10 @@ class CustomList:
         """
         Creates a custom list
 
-        Parameters
-        -------------
-        ### QueryParams:
-
-        name : `str`. The custom list name
-        visibility : `str. The visibility of the custom list
-        manga : `List[str]`. List of manga ids
+        Args:
+            name (str): The custom list name
+            visibility (str): The visibility of the custom list
+            manga (List[str]): List of manga ids
         """
         url = f"{self.api.url}/list"
         params = {
@@ -1210,16 +1275,16 @@ class CustomList:
 
         Parameters
         ------------
-        customlist_id : `str`. The id of the custom list
-        limit : int
-        offset : int
-        translatedLanguage : List[str]
-        createdAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
-        updatedAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
-        publishAtSince : `str`. Datetime String with the following format YYYY-MM-DDTHH:MM:SS
-        Returns
-        ------------
-        `CustomList`
+            customlist_id (str): The id of the custom list
+            limit (int):
+            offset (int):
+            translatedLanguage (List[str]): 
+            createdAtSince (str): Datetime String with the following format YYYY-MM-DDTHH:MM:SS
+            updatedAtSince (str): Datetime String with the following format YYYY-MM-DDTHH:MM:SS
+            publishAtSince (str): Datetime String with the following format YYYY-MM-DDTHH:MM:SS
+        
+        Returns:
+            CustomList
         """
         url = f"{self.api.url}/list/{customlist_id}"
         resp = URLRequest.request_url(
@@ -1231,17 +1296,13 @@ class CustomList:
         """
         Update a custom list
 
-        Parameters
-        ------------
-        customlist_id : `str`. The custom list id
+        Args:
+            customlist_id (str): The custom list id
+            name (str): The custom list name
+            visibility (str): Values : `"public"` `"private"`
 
-        ### QueryParams:
-        name : `str`. The custom list name
-        visibility : `str`. Values : `"public"` `"private"`
-
-        Returns
-        -----------
-        `CustomList`
+        Returns:
+            CustomList
         """
         url = f"{self.api.url}/list/{customlist_id}"
         resp = URLRequest.request_url(
@@ -1257,9 +1318,8 @@ class CustomList:
         """
         Deletes a Custom List
 
-        Parameters
-        ------------
-        customlist_id : `str`. The custom list id
+        Args:
+            customlist_id (str): The custom list id
         """
         url = f"{self.api.url}/list{customlist_id}"
         URLRequest.request_url(

@@ -533,18 +533,18 @@ class User:
         resp = URLRequest.request_url(url, "GET", timeout=self.api.timeout)
         return User.user_from_dict(resp)
 
-
 class Follows:
+    """Handles follows for people"""
     def __init__(self, auth: Union[Auth, None]):
         self.auth = auth
         self.api = Api()
 
-    def followed_groups(self, **kwargs) -> List["ScanlationGroup"]:
+    def get_followed_groups(self, **kwargs) -> List["ScanlationGroup"]:
         """ Get information about Scanlation Groups you follow
 
         Args:
-            limit: Number of groups to load
-            offset:
+            limit (int): Limit the number of results.
+            offset (int): Offset the results by this number.
             translatedLanguage
 
         Returns:
@@ -558,12 +558,27 @@ class Follows:
         )
         return ScanlationGroup.create_group_list(resp)
 
-    def followed_users(self, **kwargs) -> List["User"]:
+    def check_followed_groups(self, group_id) -> dict:
+        """ Check if logged user follows a group
+
+        Args:
+            manga_id (str): Required. The manga id
+
+        Returns:
+            dict
+        """
+        url = f"{self.api.url}/user/follows/group/{group_id}"
+        resp = URLRequest.request_url(
+            url, "GET", timeout=self.api.timeout, headers=self.auth.get_bearer_token()
+        )
+        return resp # This outputs ok as response
+
+    def get_followed_users(self, **kwargs) -> List["User"]:
         """ Get information about users you follow
 
         Args:
-            limit: Number of authors to load
-            offset:
+            limit (int): Limit the number of results.
+            offset (int): Offset the results by this number.
 
         Returns:
             List[Users]: List of USers
@@ -574,23 +589,21 @@ class Follows:
         )
         return User.create_user_list(resp)
 
-    def follow_manga(self, manga_id: str) -> None:
-        """Follow a manga
+    def check_followed_users(self, user_id) -> List["User"]:
+        """ Get information about users you follow
 
         Args:
-            manga_id: The manga you want to follow
-        """
-        url = f"{self.api.url}/manga/{manga_id}/follow"
-        URLRequest.request_url(url, "POST", headers=self.auth.get_bearer_token(), timeout=self.api.timeout)
+            limit (int): Limit the number of results.
+            offset (int): Offset the results by this number.
 
-    def unfollow_manga(self, manga_id: str) -> None:
-        """Follow a manga
-
-        Args:
-            manga_id: The manga you want to un follow
+        Returns:
+            List[Users]: List of USers
         """
-        url = f"{self.api.url}/manga/{manga_id}/follow"
-        URLRequest.request_url(url, "DELETE", headers=self.auth.get_bearer_token(), timeout=self.api.timeout)
+        url = f"{self.api.url}/user/follows/user/{user_id}"
+        resp = URLRequest.request_url(
+            url, "GET", timeout=self.api.timeout, headers=self.auth.get_bearer_token()
+        )
+        return resp # This outputs ok as response
 
 
 if __name__ == '__main__':

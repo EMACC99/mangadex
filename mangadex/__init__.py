@@ -11,6 +11,10 @@ from .auth import (
     ApiClient,
     Auth
 )
+from .extras import (
+    Forums,
+    Stats
+)
 from .people import (
     Author,
     ScanlationGroup,
@@ -22,6 +26,7 @@ from .series import (
     Cover,
     Tag,
     Manga,
+    Follows,
     MangaList,
     CustomList,
 )
