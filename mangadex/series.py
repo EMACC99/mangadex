@@ -816,7 +816,7 @@ class Manga:
             title (str): The manga title
 
             altTitles (List[Dict[str,str]]): The alt titles
-            description Dict[str,str]). The alt titles in different languages
+            description (Dict[str,str]). The alt titles in different languages
             authors (List[str]):. The list of author id's
             artists (List[str]): The list of artist id's
             links (Dict[str,str]): The links in different sites (al, ap, bw, mu, etc.).
@@ -857,7 +857,7 @@ class Manga:
             version (int)
             ObjReturn (bool): `True` if you want a Manga Object return
             altTitles (List[Dict[str,str]]): The alt titles
-            description Dict[str,str]). The alt titles in different languages
+            description (Dict[str,str]). The alt titles in different languages
             authors (List[str]):. The list of author id's
             artists (List[str]): The list of artist id's
             links (Dict[str,str]): The links in different sites (al, ap, bw, mu, etc.).
@@ -908,7 +908,7 @@ class Manga:
 
         Args:
             manga_id (str): Required. The manga id
-            translatedLanguage (str): 
+            translatedLanguage (str):
 
         Returns:
             (Dict[str, str]): A dictionary with the volumes and the chapter id's
@@ -925,7 +925,7 @@ class Manga:
     def get_manga_read_markers(self, manga_id: str) -> List[Chapter]:
         # this needs a performance update
         """
-        A list of Chapter ids That are marked as read from the manga 
+        A list of Chapter ids That are marked as read from the manga
 
         Args:
             manga_id (str): Required. The manga id
@@ -1006,7 +1006,7 @@ class Manga:
         Args:
             manga_id (str): The manga id.
             status (str):
-                Values : `reading"` `"on_hold"` `"plan_to_read"` `"dropped"` `"re_reading"` `"completed"`
+                Values : `"reading"` `"on_hold"` `"plan_to_read"` `"dropped"` `"re_reading"` `"completed"`
 
         Raises:
             ApiError

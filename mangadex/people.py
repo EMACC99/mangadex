@@ -411,7 +411,7 @@ class ScanlationGroup:
             return ScanlationGroup.author_from_dict(resp) if ObjReturn else None
 
     def delete_group(self, group_id: str) -> None:
-        """Deletes an Group
+        """Deletes a Group
 
         Args:
             group_id (str): Author ID
@@ -455,7 +455,7 @@ class User:
 
     @classmethod
     def user_from_dict(cls, data: dict) -> "User":
-        """Creates userfrom JSON
+        """Creates user from JSON
 
         Args:
             resp (dict): Raw data from JSON

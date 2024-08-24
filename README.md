@@ -2,9 +2,9 @@
 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-A python wrapper for the MangaDex API V5. It uses the requests library and all the aditional arguments can be viewed in the [Official Mangadex Documentation](https://api.mangadex.org/docs/)
+A python wrapper for the MangaDex API V5. It uses the requests library and all the additional arguments can be viewed in the [Official Mangadex Documentation](https://api.mangadex.org/docs/)
 
-## Instaling the API wrapper module
+## Installing the API wrapper module
 
 ### PyPI
 
@@ -165,7 +165,7 @@ Method to login to the website
 >>> auth.login(username = USERNAME, password = PASSWORD, client_id = clientId, client_secret = clientSecret)
 ```
 
-It is recomended that you add this values to your environment variables and use text input for client-facing solutions for security reasons.
+It is recommended that you add this values to your environment variables and use text input for client-facing solutions for security reasons.
 
 ```py
 >>> auth.login(os.environ['md_username'], os.environ['md_password'],os.environ['client_id'], os.environ['client_secret'])
@@ -219,7 +219,7 @@ Get a list of the chapters marked as read for a given manga
 
 ### Get all followed manga reading status
 
-Get a list of the all the manga reading stauts
+Get a list of the all the manga reading starts
 
 ```py
 >>> my_manga_reading_stauts = manga.get_all_manga_reading_status()

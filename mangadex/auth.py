@@ -15,7 +15,7 @@ class Api:
         self.timeout = 5
 
     def ping(self) -> Optional[str]:
-        """ Ping healthchech
+        """ Ping healthcheck
 
         Raises:
             ApiError: Raised when api is not functioning
@@ -30,7 +30,6 @@ class Api:
                 {"status": "503", "reason": "Infrastructure Unavailable"},
                 "MangaDex Infrastructure is down",
             )
-        # if we raise we dont return
         return pong
 
 

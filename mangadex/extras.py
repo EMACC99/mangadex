@@ -51,6 +51,7 @@ class Forums:
         return Forums.forum_from_dict(resp)
 
 
+# noinspection SpellCheckingInspection
 class Stats:
     """Class for Settings"""
 
