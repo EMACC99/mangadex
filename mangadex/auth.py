@@ -1,4 +1,6 @@
+"""Module providing authentication and checking for infrastructure"""
 from __future__ import absolute_import
+from typing import Optional
 
 from typing_extensions import Self, Union, Dict, List
 
@@ -6,13 +8,21 @@ from mangadex.errors import ApiError
 from mangadex.url_models import URLRequest
 
 
-# TODO: Fix the in-code documentation
 class Api:
+    """Class that checks for Infrastructure"""
     def __init__(self):
         self.url = "https://api.mangadex.org"
         self.timeout = 5
 
-    def ping(self):
+    def ping(self) -> Optional[str]:
+        """ Ping healthcheck
+
+        Raises:
+            ApiError: Raised when api is not functioning
+
+        Returns:
+            Optional[str]: Returns string when the Infrastructure is ok
+        """
         url = f"{self.url}/ping"
         pong = URLRequest.request_url(url, "GET", timeout=self.timeout)
         if pong != "pong":
@@ -20,11 +30,11 @@ class Api:
                 {"status": "503", "reason": "Infrastructure Unavailable"},
                 "MangaDex Infrastructure is down",
             )
-        # if we raise we dont return
         return pong
 
 
 class Auth:
+    """Class that provides Authentication"""
     def __init__(self):
         """Authentication class"""
         self.auth_url = "https://auth.mangadex.org"
@@ -34,14 +44,24 @@ class Auth:
         self.client_id = None
         self.client_secret = None
 
-    def set_bearer_token(self, bearer_token):
+    def set_bearer_token(self, bearer_token:dict) -> None:
+        """Sets the bearer token. Used by other functions
+
+        Args:
+            bearer_token (dict): Bearer token
+        """
         self.bearer = bearer_token
 
-    def get_bearer_token(self):
+    def get_bearer_token(self) -> dict:
+        """Gets the bearer token. Used by other functions
+
+        Returns:
+            str: The bearer token
+        """
         return self.bearer
 
     def __auth_handler(self, http_form: dict, headers: dict) -> None:
-        """Handle OAuth2 Requests"""
+        """Handles OAuth2 Requests to log in"""
         url = f"{self.auth_url}/realms/mangadex/protocol/openid-connect/token"
         auth_response = URLRequest.request_url(
             url, "POST", params=http_form, timeout=self.timeout, headers=headers
@@ -60,10 +80,10 @@ class Auth:
         """Logs into MangaDex
 
         Args:
-            username (str): The user's username
-            password (str): The user's password
-            client_id (str): The user's personal client ID
-            client_secret (str): The user's personal client secret
+            username (str): User's username
+            password (str): User's password
+            client_id (str): User's personal client ID
+            client_secret (str): User's personal client secret
         """
         headers = {"Content-type": "application/x-www-form-urlencoded"}
         self.__auth_handler(
@@ -92,9 +112,10 @@ class Auth:
 
 
 class ApiClient(Auth):
+    """ Class that checks for user's API Clients"""
     def __init__(self, auth: Union[Auth, None]):
         super().__init__()
-        self.api = api
+        self.api = Api()
         self.auth = auth
 
         self.name = ""
@@ -102,13 +123,13 @@ class ApiClient(Auth):
         self.profile = ""
         self.client_id = ""
         self.state = ""
-        self.isActive = ""
-        self.createdAt = ""
-        self.updatedAt = ""
+        self.is_active = ""
+        self.created_at = ""
+        self.updated_at = ""
         self.relations = []
 
     @classmethod
-    def client_from_dict(cls, data: dict):
+    def client_from_dict(cls, data: dict) -> "ApiClient":
         """Get client from json
 
         Args:
@@ -118,7 +139,7 @@ class ApiClient(Auth):
             ValueError: Raised when the data provided is not a Client JSON
 
         Returns:
-            Cover: The Coverart ids
+            ApiClient: ApiClient info
         """
         try:
             data = data["data"]
@@ -137,17 +158,17 @@ class ApiClient(Auth):
         client.profile = attributes["profile"]
         client.client_id = attributes["externalClientId"]
         client.state = attributes["state"]
-        client.isActive = attributes["isActive"]
-        client.createdAt = attributes["createdAt"]
-        client.updatedAt = attributes["updatedAt"]
+        client.is_active = attributes["isActive"]
+        client.created_at = attributes["createdAt"]
+        client.updated_at = attributes["updatedAt"]
         for relation in attributes["relationships"]:
             client.relations.append({"type": relation["type"], "id": relation["id"]})
 
         return client
 
     def __eq__(self, other: Self) -> bool:
-        my_vals = [self.client_id, self.name, self.createdAt]
-        other_vals = [other.client_id, other.name, other.createdAt]
+        my_vals = [self.client_id, self.name, self.created_at]
+        other_vals = [other.client_id, other.name, other.created_at]
         return my_vals == other_vals
 
     def __ne__(self, other: Self) -> bool:
@@ -156,8 +177,8 @@ class ApiClient(Auth):
     def __repr__(self) -> str:
         part1 = f"ApiClient(clientId = {self.client_id}, name = {self.name}, \
                         description = {self.description}, profile = {self.profile}, \
-                        state = {self.state}, isActive = {self.isActive} \n"
-        part2 = f"createdAt = {self.createdAt}, uploadedAt = {self.updatedAt} \
+                        state = {self.state}, isActive = {self.is_active} \n"
+        part2 = f"createdAt = {self.created_at}, uploadedAt = {self.updated_at} \
                         relations = {self.relations})"
         return f"{part1}{part2}"
 
@@ -168,7 +189,15 @@ class ApiClient(Auth):
         return params
 
     @staticmethod
-    def create_client_list(resp: dict):
+    def create_client_list(resp: dict) -> List["ApiClient"]:
+        """Creates info list from list of API Clients
+
+        Args:
+            resp (dict): Raw response
+
+        Returns:
+            List["ApiClient"]: List of API Client infos
+        """
         resp = resp["data"]
         client = []
         for elem in resp:
@@ -176,10 +205,11 @@ class ApiClient(Auth):
         return client
 
     def get_api_clients(self, **kwargs) -> List["ApiClient"]:
-        """Get users ApiClient
+        """List user's ApiClient
 
         Args:
-            **kwargs: The API client arguments
+            limit: Number of clients to show
+            offset: 
 
         Returns:
             ApiClient:
@@ -195,7 +225,15 @@ class ApiClient(Auth):
         )
         return ApiClient.create_client_list(resp)
 
-    def get_api_client_by_id(self, client_id: str):
+    def get_api_client_by_id(self, client_id: str) -> "ApiClient":
+        """Gets the info of API Client from ID
+
+        Args:
+            client_id (str): Client ID in UUID format
+
+        Returns:
+            ApiClient: API Client info
+        """
         url = f"{self.api.url}/client/{client_id}"
         resp = URLRequest.request_url(
             url, "GET", headers=self.auth.get_bearer_token(), timeout=self.timeout
@@ -203,8 +241,13 @@ class ApiClient(Auth):
         return ApiClient.client_from_dict(resp)
 
     def create_api_client(
-        self, name: str, description: str, ObjReturn: bool = True
-    ) -> Union["ApiClient", None]:
+        self, name: str, description: str, obj_return: bool = True
+    ) -> Optional["ApiClient"]:
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         url = f"{self.api.url}/client"
         params = {
             "name": name,
@@ -219,9 +262,17 @@ class ApiClient(Auth):
             headers=self.auth.get_bearer_token(),
             params=params,
         )
-        return ApiClient.client_from_dict(resp) if ObjReturn else None
+        return ApiClient.client_from_dict(resp) if obj_return else None
 
-    def edit_api_client(self, client_id: str, description: str, ObjReturn: bool = True):
+    def edit_api_client(
+        self, client_id: str,
+        description: str,
+        obj_return: bool = True)-> Optional["ApiClient"]:
+        """Change an API Client description
+
+        Returns:
+            Optional["ApiClient"]: Returns the info if obj_return is specified
+        """
         url = f"{self.api.url}/client/{client_id}"
         params = {"description": description}
         resp = URLRequest.request_url(
@@ -231,9 +282,17 @@ class ApiClient(Auth):
             headers=self.auth.get_bearer_token(),
             timeout=self.api.timeout,
         )
-        return ApiClient.client_from_dict(resp) if ObjReturn else None
+        return ApiClient.client_from_dict(resp) if obj_return else None
 
     def delete_api_client(self, client_id: str):
+        """Deletes the API Client
+
+        Args:
+            client_id (str): Client ID you want to delete
+
+        Raises:
+            ApiError: Raised if the request is wrong
+        """
         url = f"{self.api.url}/client/{client_id}"
         resp = URLRequest.request_url(
             url,
@@ -242,24 +301,46 @@ class ApiClient(Auth):
             timeout=self.api.timeout,
         )
         if resp["result"] != "ok":
-            raise Exception(resp["errors"][0]["detail"])
+            raise ApiError(resp["errors"][0]["detail"])
 
-    def get_api_secret(self, client_id: str):
+    def get_api_secret(self, client_id: str) -> "ApiClient":
+        """Get API Client Secret
+
+        Args:
+            client_id (str): The Client ID in UUID form
+
+        Raises:
+            ApiError: Raised when the authentication fails
+
+        Returns:
+            ApiClient: API Client info
+        """
         url = f"{self.api.url}/client/{client_id}/secret"
         resp = URLRequest.request_url(
             url, "GET", headers=self.auth.get_bearer_token(), timeout=self.timeout
         )
         if resp["result"] != "ok":
-            raise Exception(resp["errors"][0]["detail"])
+            raise ApiError(resp["errors"][0]["detail"])
         return ApiClient.client_from_dict(resp)
 
-    def regen_api_secret(self, client_id: str):
+    def regen_api_secret(self, client_id: str) -> "ApiClient":
+        """Regenerates API Client Secret
+
+        Args:
+            client_id (str): The Client ID
+
+        Raises:
+            ApiError: Raised when the authentication fails
+
+        Returns:
+            ApiClient: API Client info
+        """
         url = f"{self.api.url}/client/{client_id}/secret"
         resp = URLRequest.request_url(
             url, "POST", headers=self.auth.get_bearer_token(), timeout=self.timeout
         )
         if resp["result"] != "ok":
-            raise Exception(resp["errors"][0]["detail"])
+            raise ApiError(resp["errors"][0]["detail"])
         return ApiClient.client_from_dict(resp)
 
 
@@ -269,6 +350,7 @@ if __name__ == "__main__":
 
     load_dotenv("mangadex/api/.env")
     api = Api()
+
     # auth = Auth()
     # auth.login(os.environ['md_username'], os.environ['md_password'],
     #            os.environ['client_id'], os.environ['client_secret'])

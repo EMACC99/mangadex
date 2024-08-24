@@ -20,6 +20,7 @@ class TestApi:
     timeout = 5
 
     def test_ping(self):
+        """Tests the infrastructure"""
         ping = self.api.ping()
         saved_resp = URLRequest.request_url(f"{self.api.url}/ping", "GET", self.timeout)
         assert ping == saved_resp
@@ -76,13 +77,13 @@ class TestManga:
 
     def test_GetMangaFeed(self):
         resp = self.manga.get_manga_list(title="iris zero", limit=1)[0]
-        self.manga.manga_feed(resp.manga_id)
+        self.manga.get_manga_feed(resp.manga_id)
 
     def test_ViewMangaById(self):
         self.manga.get_manga_by_id(manga_id="88796863-04bd-49d4-ad85-d9f993e95109")
 
     def test_RandomManga(self):
-        self.manga.random_manga()
+        self.manga.get_random_manga()
 
     def test_GetMangaChaptersAndVolumes(self):
         # lets use iris zero as is in hiatus
@@ -191,7 +192,7 @@ class TestScanlationGroup:
 
     def test_GetScanlationGroup(self):
         ids = ["f5f83084-ec42-4354-96fd-1b637a89b8b3"]
-        resp = self.scangroup.multi_group_list(ids=ids)  # black cat scanlations
+        resp = self.scangroup.list_groups(ids=ids)  # black cat scanlations
 
         url = f"{self.scangroup.api.url}/group"
         raw_response = URLRequest.request_url(
@@ -212,7 +213,7 @@ class TestCoverArt:
         self.coverart.get_coverart_list()
 
     def test_GetMangaCoverArt(self):
-        random_manga = self.manga.random_manga()
+        random_manga = self.manga.get_random_manga()
         self.coverart.get_cover(random_manga.cover_id)
 
     def test_GetCustomList(self):
@@ -235,7 +236,8 @@ class TestAuth:
     auth = md.auth.Auth()
     user = md.people.User(auth=auth)
     manga = md.series.Manga(auth=auth)
-    follows = md.people.Follows(auth=auth)
+    people_follows = md.people.Follows(auth=auth)
+    manga_follows = md.series.Follows(auth=auth)
     mangalist = md.series.MangaList(auth=auth)
     customlist = md.series.CustomList(auth=auth)
 
@@ -276,12 +278,12 @@ class TestAuth:
     def test_FollowManga(self):
         self.login()
         manga_id = "32d76d19-8a05-4db0-9fc2-e0b0648fe9d0"  # solo leveling
-        self.follows.follow_manga(manga_id=manga_id)
+        self.manga_follows.follow_manga(manga_id=manga_id)
 
     def test_UnfollowManga(self):
         self.login()
         manga_id = "32d76d19-8a05-4db0-9fc2-e0b0648fe9d0"  # solo leveling
-        self.follows.unfollow_manga(manga_id=manga_id)
+        self.manga_follows.unfollow_manga(manga_id=manga_id)
 
     def test_GetMyCustomLists(self):
         self.login()
@@ -315,3 +317,42 @@ class Test_Errors:
             self.follows.follow_manga(manga_id=manga_id)
         except AttributeError:
             pass
+
+class TestStatistics:
+    stats = md.extras.Stats()
+    
+    def test_GetChapterStats(self):
+        chapter_id = 'b6d57ade-cab7-4be7-b2b8-be68484b3ad3'
+        info = self.stats.get_group_stats(chapter_id)
+        assert chapter_id == info.object_id
+
+    def test_GetChaptersStats(self):
+        chapter_ids = ['32d76d19-8a05-4db0-9fc2-e0b0648fe9d0', '32fdfe9b-6e11-4a13-9e36-dcd8ea77b4e4']
+        # solo leveling, kanojo, okarishimasu
+        info = self.stats.get_multimanga_stats(manga = chapter_ids)
+        for chapter_id, info_temp in zip(chapter_ids, info):
+            assert chapter_id == info_temp.object_id
+
+    def test_GetMangaStats(self):
+        manga_id = '32d76d19-8a05-4db0-9fc2-e0b0648fe9d0' # solo leveling
+        info = self.stats.get_manga_stats(manga_id)
+        assert manga_id == info.object_id
+
+    def test_GetMultiMangaStats(self):
+        manga_ids = ['32d76d19-8a05-4db0-9fc2-e0b0648fe9d0', '32fdfe9b-6e11-4a13-9e36-dcd8ea77b4e4']
+        # solo leveling, kanojo, okarishimasu
+        info = self.stats.get_multimanga_stats(manga = manga_ids)
+        for manga_id, info_temp in zip(manga_ids, info):
+            assert manga_id == info_temp.object_id
+
+    def test_GetGroupStats(self):
+        group_id = 'b6d57ade-cab7-4be7-b2b8-be68484b3ad3'
+        info = self.stats.get_group_stats(group_id)
+        assert group_id == info.object_id
+
+    def test_GetGroupsStats(self):
+        group_ids = ['ab24085f-b16c-4029-8c05-38fe16592a85', 'b6d57ade-cab7-4be7-b2b8-be68484b3ad3']
+        # Galaxy Degen Scans, XuN
+        info = self.stats.get_groups_stats(groups = group_ids)
+        for group_id, info_temp in zip(group_ids, info):
+            assert group_id == info_temp.object_id
