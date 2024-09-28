@@ -33,6 +33,7 @@ class URLRequest:
         timeout,
         params: Union[Dict[str, Any], None] = None,
         headers=None,
+        json_body=False,
     ) -> dict:
         """
         The handler fot GET, POST, PUT and DEL
@@ -43,6 +44,8 @@ class URLRequest:
             k: v.decode("utf-8") if isinstance(v, bytes) else v
             for k, v in params.items()
         }
+        if json_body:
+            params = json.dumps(params)
 
         if method == "GET":
             url = URLRequest.__build_url(url, params)
