@@ -173,7 +173,7 @@ class Chapter:
         params = None
         if "translatedLanguage" in kwargs:
             params = {"translatedLanguage[]": kwargs["translatedLanguage"]}
-        url = f"{self.api.url}/manga/{manga_id}/ aggregate"
+        url = f"{self.api.url}/manga/{manga_id}/aggregate"
         resp = URLRequest.request_url(
             url, "GET", timeout=self.api.timeout, params=params
         )
