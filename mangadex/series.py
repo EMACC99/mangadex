@@ -119,7 +119,7 @@ class Chapter:
         part2 = f"data = List[filenames], publishAt = {self.publish_at}, createdAt = {self.created_at}, uploadedAt = {self.updated_at}, group_id = {self.group_id}, manga_id = {self.manga_id}, uploader = {self.uploader})"
         return f"{part1} {part2}"
 
-    def get_chapter_list(self, manga: str, **kwargs) -> List["Chapter"]:
+    def get_chapter_list(self, **kwargs) -> List["Chapter"]:
         """Get information about multiple chapters
 
         Args:
@@ -137,7 +137,7 @@ class Chapter:
             List[Chapter]: List of Chapters
         """
         params = self.__parse_chapter_list_args(kwargs)
-        url = f"{self.api.url}/chapter/{manga}"
+        url = f"{self.api.url}/chapter/"
         resp = URLRequest.request_url(
             url, "GET", timeout=self.api.timeout, params=params
         )
