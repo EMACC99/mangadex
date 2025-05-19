@@ -57,11 +57,14 @@ class Chapter:
 
         chapter.chapter_id = resp["id"]
         chapter.title = attributes["title"]
-        chapter.volume = attributes["volume"] if not "null" else None
+        chapter.volume = attributes["volume"] if attributes["volume"] != "null" else None
         chapter.chapter = (
             float(attributes["chapter"]) if attributes["chapter"] is not None else None
         )
         chapter.translated_language = attributes["translatedLanguage"]
+        chapter.publish_at = parse(attributes["publishAt"]) if attributes.get("publishAt") else None
+        chapter.created_at = parse(attributes["createdAt"]) if attributes.get("createdAt") else None
+        chapter.updated_at = parse(attributes["updatedAt"]) if attributes.get("updatedAt") else None
         for relations in resp["relationships"]:
             if relations["type"] == "scanlation_group":
                 chapter.group_id = relations["id"]
@@ -69,7 +72,6 @@ class Chapter:
                 chapter.manga_id = relations["id"]
             elif relations["type"] == "user":
                 chapter.uploader = relations["id"]
-
         return chapter
 
     @staticmethod
@@ -113,14 +115,9 @@ class Chapter:
         return not self.__eq__(other)
 
     def __repr__(self) -> str:
-        part1 = f"Chapter(chapter_id = {self.chapter_id}, title = {self.title}, \
-                        volume = {self.volume}, chapter = {self.chapter}, \
-                        translatedLanguage = {self.translated_language} \n"
-        part2 = f"data = List[filenames], publishAt = {self.publish_at}, \
-                        createdAt = {self.created_at}, uploadedAt = {self.updated_at}, \
-                        group_id = {self.group_id}, manga_id = {self.manga_id}, \
-                        uploader = {self.uploader})"
-        return f"{part1}{part2}"
+        part1 = f"Chapter(chapter_id = {self.chapter_id}, title = {self.title}, volume = {self.volume}, chapter = {self.chapter}, translatedLanguage = {self.translated_language}"
+        part2 = f"data = List[filenames], publishAt = {self.publish_at}, createdAt = {self.created_at}, uploadedAt = {self.updated_at}, group_id = {self.group_id}, manga_id = {self.manga_id}, uploader = {self.uploader})"
+        return f"{part1} {part2}"
 
     def get_chapter_list(self, **kwargs) -> List["Chapter"]:
         """Get information about multiple chapters
@@ -140,7 +137,7 @@ class Chapter:
             List[Chapter]: List of Chapters
         """
         params = self.__parse_chapter_list_args(kwargs)
-        url = f"{self.api.url}/chapter"
+        url = f"{self.api.url}/chapter/"
         resp = URLRequest.request_url(
             url, "GET", timeout=self.api.timeout, params=params
         )
@@ -723,7 +720,7 @@ class Manga:
             status (List[str]): Status of manga.
                 Enum: "ongoing", "completed", "hiatus", "cancelled".
             originalLanguage (List[str]): Original language of the manga.
-            publicationDemographic (List[str]): Demographic of publication. 
+            publicationDemographic (List[str]): Demographic of publication.
                 Enum: "shounen", "shoujo", "josei", "seinen", "none".
             manga_ids (List[str]): List of manga IDs. Limited to 100 per call.
             contentRating (List[str]): Content rating.
