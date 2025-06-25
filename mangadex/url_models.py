@@ -3,9 +3,9 @@ Url handler module
 """
 
 import json
-from typing_extensions import Dict, Union, Any
 
 import requests
+from typing_extensions import Any, Dict, Union
 
 from .errors import ApiError
 
@@ -15,10 +15,11 @@ except NameError:
     from past.builtins import basestring
 
 try:
-    from urllib.parse import urlparse, urlencode
+    from urllib.parse import urlencode, urlparse
 except ImportError:
-    from urlparse import urlparse
     from urllib import urlencode
+
+    from urlparse import urlparse
 
 
 class URLRequest:

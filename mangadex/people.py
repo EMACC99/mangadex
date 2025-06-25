@@ -1,12 +1,12 @@
 from __future__ import absolute_import
 
 import datetime
-from typing_extensions import Dict, List, Union, Any
 
 from dateutil.parser import parse
-from typing_extensions import Self
+from typing_extensions import Any, Dict, List, Self, Union
 
 from mangadex.url_models import URLRequest
+
 from .auth import Api, Auth
 
 
@@ -23,10 +23,10 @@ class Author:
 
         self.author_id: str = ""
         self.name: str = ""
-        self.imageUrl: str = ""
+        self.image_url: str = ""
         self.bio: Dict[str, str] = {}
-        self.createdAt: datetime.datetime
-        self.updatedAt: datetime.datetime
+        self.created_at: datetime.datetime
+        self.updated_at: datetime.datetime
         self.mangas: List[str] = []
 
     @classmethod
@@ -56,10 +56,10 @@ class Author:
 
         author.author_id = resp["id"]
         author.name = attributes["name"]
-        author.imageUrl = attributes["imageUrl"]
+        author.image_url = attributes["imageUrl"]
         author.bio = attributes["biography"]
-        author.createdAt = parse(attributes["createdAt"])
-        author.updatedAt = parse(attributes["updatedAt"])
+        author.created_at = parse(attributes["createdAt"])
+        author.updated_at = parse(attributes["updatedAt"])
         author.mangas = [
             series["id"]
             for series in resp["relationships"]
@@ -100,8 +100,8 @@ class Author:
 
     def __repr__(self) -> str:
         return (
-            f"Author(id = {self.author_id}, name = {self.name}, imageUrl = {self.imageUrl},"
-            f"createdAt = {self.createdAt}, updatedAt = {self.updatedAt})"
+            f"Author(id = {self.author_id}, name = {self.name}, imageUrl = {self.image_url},"
+            f"createdAt = {self.created_at}, updatedAt = {self.updated_at})"
         )
 
     def list_author(self, **kwargs) -> List["Author"]:
@@ -139,14 +139,14 @@ class Author:
         return Author.author_from_dict(resp)
 
     def create_author(
-            self, name: str, version: int, ObjReturn: bool = False
+            self, name: str, version: int, return_obj: bool = False
     ) -> Union["Author", None]:
         """Creates an Author
         
         Args:
             name: The name of the author
             version: The version of author info
-            ObjReturn: Default `False`. If set to `True`, it will return the info
+            return_obj: Default `False`. If set to `True`, it will return the info
 
         Returns:
             Author (Optional): The given author information
@@ -160,7 +160,7 @@ class Author:
             params=params,
             headers=self.auth.get_bearer_token(),
         )
-        if ObjReturn:
+        if return_obj:
             return Author.author_from_dict(resp)
 
     def update_author(
@@ -169,7 +169,7 @@ class Author:
             author_id: str,
             version: int,
             name: Union[str, None] = None,
-            ObjReturn: bool = False,
+            return_obj: bool = False,
     ) -> Union["Author", None]:
         """ Updates Author Information
 
@@ -177,7 +177,7 @@ class Author:
             author_id: The author id
             version: The version of author info
             name: The name of the author
-            ObjReturn: Default `False`. If set to `True`, it will return the info
+            return_obj: Default `False`. If set to `True`, it will return the info
 
         Returns:
             Union[Author, None]:  Updated Chapter
@@ -190,8 +190,8 @@ class Author:
             url, "PUT", timeout=self.api.timeout, params=params, headers=self.auth.get_bearer_token()
         )
 
-        if ObjReturn:
-            return Author.author_from_dict(resp) if ObjReturn else None
+        if return_obj:
+            return Author.author_from_dict(resp) if return_obj else None
 
     def delete_author(self, author_id: str) -> None:
         """Deletes an Author
@@ -223,10 +223,10 @@ class ScanlationGroup:
         self.website: str = ""
         self.discord: str = ""
         self.twitter: str = ""
-        self.mangaUpdates: str = ""
+        self.manga_updates: str = ""
         self.email: str = ""
         self.bio: str = ""
-        self.focusedLanguage: str = ""
+        self.focused_language: str = ""
         self.official: bool = False
         self.ex_licensed: bool = False
         self.verified: bool = False
@@ -268,7 +268,7 @@ class ScanlationGroup:
         group.website = attributes["website"]
         group.discord = attributes["discord"]
         group.twitter = attributes["twitter"]
-        group.mangaUpdates = attributes["mangaUpdates"]
+        group.manga_updates = attributes["mangaUpdates"]
         group.email = attributes["contactEmail"]
         group.bio = attributes["description"]
         group.focusedLanguage = attributes["focusedLanguages"]
@@ -317,8 +317,7 @@ class ScanlationGroup:
         return not self.__eq__(other)
 
     def __repr__(self) -> str:
-        return (f"ScanlationGroup(id = {self.group_id}, name = {self.name}, leader = {self.leader}, \
-                createdAt = {self.createdAt}, updatedAt = {self.updatedAt})")
+        return (f"ScanlationGroup(id = {self.group_id}, name = {self.name}, leader = {self.leader}")
 
     def list_groups(self, **kwargs) -> List["ScanlationGroup"]:
         """ Get information about multiple groups
@@ -355,14 +354,14 @@ class ScanlationGroup:
         return ScanlationGroup.group_from_dict(resp)
 
     def create_group(
-            self, name: str, version: int, ObjReturn: bool = False
+            self, name: str, version: int, return_obj: bool = False
     ) -> Union["ScanlationGroup", None]:
         """Creates a Scanlation Group
 
         Args:
             name: The name of the author
             version: The version of author info
-            ObjReturn: Default `False`. If set to `True`, it will return the info
+            return_obj: Default `False`. If set to `True`, it will return the info
 
         Returns:
             ScanlationGroup (Optional): The given scanlation group information
@@ -377,7 +376,7 @@ class ScanlationGroup:
             params=params,
             headers=self.auth.get_bearer_token(),
         )
-        if ObjReturn:
+        if return_obj:
             return ScanlationGroup.author_from_dict(resp)
 
     def update_group(
@@ -386,7 +385,7 @@ class ScanlationGroup:
             group_id: str,
             version: int,
             name: Union[str, None] = None,
-            ObjReturn: bool = False,
+            return_obj: bool = False,
     ) -> Union["ScanlationGroup", None]:
         """ Updates a Scanlation Group
 
@@ -394,7 +393,7 @@ class ScanlationGroup:
             group_id: The author id
             version: The version of author info
             name: The name of the author
-            ObjReturn: Default `False`. If set to `True`, it will return the info
+            return_obj: Default `False`. If set to `True`, it will return the info
 
         Returns:
             Union[ScanlationGroup, None]:  Updated ScanlationGroup
@@ -407,8 +406,8 @@ class ScanlationGroup:
             url, "PUT", timeout=self.api.timeout, params=params, headers=self.auth.get_bearer_token()
         )
 
-        if ObjReturn:
-            return ScanlationGroup.author_from_dict(resp) if ObjReturn else None
+        if return_obj:
+            return ScanlationGroup.author_from_dict(resp) if return_obj else None
 
     def delete_group(self, group_id: str) -> None:
         """Deletes an Group

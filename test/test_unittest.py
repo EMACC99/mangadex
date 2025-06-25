@@ -7,8 +7,8 @@ import os
 import pytest
 from dotenv import load_dotenv
 
-from mangadex import URLRequest, ApiError
 import mangadex as md
+from mangadex import ApiError, URLRequest
 
 load_dotenv()
 

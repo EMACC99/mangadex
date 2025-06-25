@@ -1,8 +1,9 @@
 """Module providing authentication and checking for infrastructure"""
 from __future__ import absolute_import
+
 from typing import Optional
 
-from typing_extensions import Self, Union, Dict, List
+from typing_extensions import Dict, List, Self, Union
 
 from mangadex.errors import ApiError
 from mangadex.url_models import URLRequest
@@ -346,8 +347,9 @@ class ApiClient(Auth):
 
 
 if __name__ == "__main__":
-    from .people import User
     from dotenv import load_dotenv
+
+    from .people import User
 
     load_dotenv("mangadex/api/.env")
     api = Api()
