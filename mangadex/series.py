@@ -1023,6 +1023,7 @@ class Manga:
             params={"status": status},
             headers=self.auth.get_bearer_token(),
             timeout=self.api.timeout,
+            json_body=True
         )
 
 
