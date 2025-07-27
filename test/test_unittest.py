@@ -7,8 +7,8 @@ import os
 import pytest
 from dotenv import load_dotenv
 
-from mangadex import URLRequest, ApiError
 import mangadex as md
+from mangadex import ApiError, URLRequest
 
 load_dotenv()
 
@@ -105,7 +105,7 @@ class TestChapter:
     timeout = 5
 
     def test_GetMangaChapter(self):
-        ch_id = "015979c8-ffa4-4afa-b48e-3da6d10279b0"
+        ch_id = "249f2aa4-38a9-428f-8632-9a4aecc013ad"
         resp = self.chapter.get_chapter_by_id(chapter_id=ch_id)
 
         url = f"{self.chapter.api.url}/chapter/{ch_id}"
@@ -118,8 +118,7 @@ class TestChapter:
         assert resp == saved_resp, "The Chapter Objects are not equal"
 
     def test_FetchChapterImages(self):
-        ch_id = "015979c8-ffa4-4afa-b48e-3da6d10279b0"
-
+        ch_id = "249f2aa4-38a9-428f-8632-9a4aecc013ad"
         resp = self.chapter.get_chapter_by_id(chapter_id=ch_id)
 
         resp.fetch_chapter_images()
