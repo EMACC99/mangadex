@@ -1,9 +1,8 @@
 """
 Module for error class declaration
 """
-from typing_extensions import Union
-
 from requests import Response
+from typing_extensions import Union
 
 
 class ApiError(Exception):
