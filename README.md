@@ -24,15 +24,15 @@ pip install .
 
 ```py
 >>> import mangadex as md
->>> auth = md.auth.Auth()
->>> manga = md.series.Manga(auth=auth)
->>> chapter = md.series.Chapter(auth=auth)
->>> customlist = md.series.CustomList(auth=auth)
->>> tag = md.series.Tag(auth=auth)
->>> cover = md.series.Cover(auth=auth)
->>> scangroup = md.people.ScanlationGroup(auth=auth)
->>> user = md.people.User(auth=auth)
->>> follows = md.people.Follows(auth=auth)
+>>> auth = md.Auth()
+>>> manga = md.Manga(auth=auth)
+>>> chapter = md.Chapter(auth=auth)
+>>> customlist = md.CustomList(auth=auth)
+>>> tag = md.Tag(auth=auth)
+>>> cover = md.Cover(auth=auth)
+>>> scangroup = md.ScanlationGroup(auth=auth)
+>>> user = md.User(auth=auth)
+>>> follows = md.Follows(auth=auth)
 ```
 
 ## Manga
