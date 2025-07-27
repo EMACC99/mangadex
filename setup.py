@@ -1,7 +1,7 @@
 """
 Python setup for the library
 """
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 VERSION = "2.7"
 DESCRIPTION = "Python wrapper for the mangadex API"

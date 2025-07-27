@@ -1,12 +1,12 @@
 """
 Module for error class declaration
 """
-from typing_extensions import Union
-
 from requests import Response
+from typing_extensions import Union
 
 
 class ApiError(Exception):
+
     def __init__(
             self, resp: Union[Response, dict], message="The api responded with the error"
     ) -> None:
@@ -35,6 +35,11 @@ class BaseError(Exception):
 
 
 class ApiClientError(BaseError):
+    """Raised when the API doesn't return what it should return.
+
+    Args:
+        BaseError (_type_): _description_
+    """
     def __init__(self, data: dict, message: str) -> None:
         super(ApiClientError, self).__init__(data, message=message)
         self.data = data

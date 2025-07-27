@@ -3,9 +3,9 @@ Url handler module
 """
 
 import json
-from typing_extensions import Dict, Union, Any
 
 import requests
+from typing_extensions import Any, Dict, Union
 
 from .errors import ApiError
 
@@ -15,10 +15,11 @@ except NameError:
     from past.builtins import basestring
 
 try:
-    from urllib.parse import urlparse, urlencode
+    from urllib.parse import urlencode, urlparse
 except ImportError:
-    from urlparse import urlparse
     from urllib import urlencode
+
+    from urlparse import urlparse
 
 
 class URLRequest:
@@ -33,6 +34,7 @@ class URLRequest:
         timeout,
         params: Union[Dict[str, Any], None] = None,
         headers=None,
+        json_body=False,
     ) -> dict:
         """
         The handler fot GET, POST, PUT and DEL
@@ -43,6 +45,8 @@ class URLRequest:
             k: v.decode("utf-8") if isinstance(v, bytes) else v
             for k, v in params.items()
         }
+        if json_body:
+            params = json.dumps(params)
 
         if method == "GET":
             url = URLRequest.__build_url(url, params)
