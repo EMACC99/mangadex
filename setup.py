@@ -3,7 +3,7 @@ Python setup for the library
 """
 from setuptools import find_packages, setup
 
-VERSION = "2.7"
+VERSION = "2.7.1"
 DESCRIPTION = "Python wrapper for the mangadex API"
 with open("README.md", "r", encoding="utf8") as f:
     LONG_DESCRIPTION = f.read()
