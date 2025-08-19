@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/<PYPI_PACKAGE_NAME>
+      url: https://pypi.org/p/mangadex
     permissions:
       id-token: write
     steps:
