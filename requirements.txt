@@ -3,7 +3,7 @@ charset-normalizer==3.3.2
 future==1.0.0
 idna==3.7
 python-dateutil==2.9.0.post0
-python-dotenv==1.0.1
+python-dotenv==1.2.2
 requests==2.32.4
 six==1.16.0
 typing_extensions==4.12.2
