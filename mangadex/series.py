@@ -1,4 +1,5 @@
 """Module providing Chapter and Manga info"""
+
 from __future__ import absolute_import
 
 import datetime
@@ -57,18 +58,22 @@ class Chapter:
 
         chapter.chapter_id = resp["id"]
         chapter.title = attributes["title"]
-        chapter.volume = attributes["volume"] if attributes["volume"] != "null" else None
+        chapter.volume = (
+            attributes["volume"] if attributes["volume"] != "null" else None
+        )
         chapter.chapter = (
-            float(attributes["chapter"]
-                  ) if attributes["chapter"] is not None else None
+            float(attributes["chapter"]) if attributes["chapter"] is not None else None
         )
         chapter.translated_language = attributes["translatedLanguage"]
-        chapter.publish_at = parse(
-            attributes["publishAt"]) if attributes.get("publishAt") else None
-        chapter.created_at = parse(
-            attributes["createdAt"]) if attributes.get("createdAt") else None
-        chapter.updated_at = parse(
-            attributes["updatedAt"]) if attributes.get("updatedAt") else None
+        chapter.publish_at = (
+            parse(attributes["publishAt"]) if attributes.get("publishAt") else None
+        )
+        chapter.created_at = (
+            parse(attributes["createdAt"]) if attributes.get("createdAt") else None
+        )
+        chapter.updated_at = (
+            parse(attributes["updatedAt"]) if attributes.get("updatedAt") else None
+        )
         for relations in resp["relationships"]:
             if relations["type"] == "scanlation_group":
                 chapter.group_id = relations["id"]
@@ -688,8 +693,7 @@ class Manga:
 
     def __eq__(self, other: Self) -> bool:
         my_vals = [self.manga_id, self.title, self.created_at, self.author_id]
-        other_vals = [other.manga_id, other.title,
-                      other.created_at, other.author_id]
+        other_vals = [other.manga_id, other.title, other.created_at, other.author_id]
         return my_vals == other_vals
 
     def __ne__(self, other: Self) -> bool:
@@ -1031,7 +1035,7 @@ class Manga:
             params={"status": status},
             headers=self.auth.get_bearer_token(),
             timeout=self.api.timeout,
-            json_body=True
+            json_body=True,
         )
 
 
@@ -1210,8 +1214,7 @@ class CustomList:
             "visibility": visibility,
             "manga[]": manga,
         }
-        URLRequest.request_url(url, "POST", params=params,
-                               timeout=self.api.timeout)
+        URLRequest.request_url(url, "POST", params=params, timeout=self.api.timeout)
 
     def get_customlist(self, customlist_id: str, **kwargs) -> "CustomList":
         """

@@ -49,8 +49,7 @@ class Author:
             pass
 
         if resp["type"] != "author" or not resp:
-            raise ValueError(
-                f"The data provided is not Author is : {resp['type']}")
+            raise ValueError(f"The data provided is not Author is : {resp['type']}")
 
         author = cls()
 
@@ -107,7 +106,7 @@ class Author:
         )
 
     def list_author(self, **kwargs) -> List["Author"]:
-        """ Get information about multiple authors
+        """Get information about multiple authors
 
         Args:
             limit: Number of authors to load
@@ -141,7 +140,7 @@ class Author:
         return Author.author_from_dict(resp)
 
     def create_author(
-            self, name: str, version: int, return_obj: bool = False
+        self, name: str, version: int, return_obj: bool = False
     ) -> Union["Author", None]:
         """Creates an Author
 
@@ -166,14 +165,14 @@ class Author:
             return Author.author_from_dict(resp)
 
     def update_author(
-            self,
-            *,
-            author_id: str,
-            version: int,
-            name: Union[str, None] = None,
-            return_obj: bool = False,
+        self,
+        *,
+        author_id: str,
+        version: int,
+        name: Union[str, None] = None,
+        return_obj: bool = False,
     ) -> Union["Author", None]:
-        """ Updates Author Information
+        """Updates Author Information
 
         Args:
             author_id: The author id
@@ -189,7 +188,11 @@ class Author:
         if name is not None:
             params["name"] = name
         resp = URLRequest.request_url(
-            url, "PUT", timeout=self.api.timeout, params=params, headers=self.auth.get_bearer_token()
+            url,
+            "PUT",
+            timeout=self.api.timeout,
+            params=params,
+            headers=self.auth.get_bearer_token(),
         )
 
         if return_obj:
@@ -204,7 +207,10 @@ class Author:
 
         url = f"{self.api.url}/author/{author_id}"
         URLRequest.request_url(
-            url, "DELETE", headers=self.auth.get_bearer_token(), timeout=self.api.timeout
+            url,
+            "DELETE",
+            headers=self.auth.get_bearer_token(),
+            timeout=self.api.timeout,
         )
 
 
@@ -256,18 +262,17 @@ class ScanlationGroup:
             pass
 
         if resp["type"] != "scanlation_group" or not resp:
-            raise ValueError(f"The data provided is not Author is : {resp['type']}",
-                             )
+            raise ValueError(
+                f"The data provided is not Author is : {resp['type']}",
+            )
 
         group = cls()
 
         attributes = resp["attributes"]
         group.group_id = resp["id"]
         group.name = [attributes["name"]]
-        if 'altNames' in attributes:
-            group.name.append([altName["name"]
-                               for altName in attributes['altNames']
-                               ])
+        if "altNames" in attributes:
+            group.name.append([altName["name"] for altName in attributes["altNames"]])
         group.website = attributes["website"]
         group.discord = attributes["discord"]
         group.twitter = attributes["twitter"]
@@ -276,13 +281,13 @@ class ScanlationGroup:
         group.bio = attributes["description"]
         group.focusedLanguage = attributes["focusedLanguages"]
         group.official = attributes["official"]
-        if group.official == 'true':
+        if group.official == "true":
             group.ex_licensed = attributes["exLicensed"]
         group.verified = attributes["verified"]
         group.inactive = attributes["inactive"]
         group.publish_delay = attributes["publishDelay"]
         group.relationships = [
-            {relations['type']: relations['id']}
+            {relations["type"]: relations["id"]}
             for relations in resp["relationships"]
             if len(relations) > 1
         ]
@@ -320,10 +325,10 @@ class ScanlationGroup:
         return not self.__eq__(other)
 
     def __repr__(self) -> str:
-        return (f"ScanlationGroup(id = {self.group_id}, name = {self.name}, leader = {self.leader}")
+        return f"ScanlationGroup(id = {self.group_id}, name = {self.name}, leader = {self.leader}"
 
     def list_groups(self, **kwargs) -> List["ScanlationGroup"]:
-        """ Get information about multiple groups
+        """Get information about multiple groups
 
         Args:
             limit: Number of authors to load
@@ -357,7 +362,7 @@ class ScanlationGroup:
         return ScanlationGroup.group_from_dict(resp)
 
     def create_group(
-            self, name: str, version: int, return_obj: bool = False
+        self, name: str, version: int, return_obj: bool = False
     ) -> Union["ScanlationGroup", None]:
         """Creates a Scanlation Group
 
@@ -383,14 +388,14 @@ class ScanlationGroup:
             return ScanlationGroup.author_from_dict(resp)
 
     def update_group(
-            self,
-            *,
-            group_id: str,
-            version: int,
-            name: Union[str, None] = None,
-            return_obj: bool = False,
+        self,
+        *,
+        group_id: str,
+        version: int,
+        name: Union[str, None] = None,
+        return_obj: bool = False,
     ) -> Union["ScanlationGroup", None]:
-        """ Updates a Scanlation Group
+        """Updates a Scanlation Group
 
         Args:
             group_id: The author id
@@ -406,7 +411,11 @@ class ScanlationGroup:
         if name is not None:
             params["name"] = name
         resp = URLRequest.request_url(
-            url, "PUT", timeout=self.api.timeout, params=params, headers=self.auth.get_bearer_token()
+            url,
+            "PUT",
+            timeout=self.api.timeout,
+            params=params,
+            headers=self.auth.get_bearer_token(),
         )
 
         if return_obj:
@@ -421,7 +430,10 @@ class ScanlationGroup:
 
         url = f"{self.api.url}/group/{group_id}"
         URLRequest.request_url(
-            url, "DELETE", headers=self.auth.get_bearer_token(), timeout=self.api.timeout
+            url,
+            "DELETE",
+            headers=self.auth.get_bearer_token(),
+            timeout=self.api.timeout,
         )
 
 
@@ -453,8 +465,8 @@ class User:
         return not self.__eq__(other)
 
     def __repr__(self) -> str:
-        return (f"User(id = {self.id}, username = {self.username}, \
-                roles = {self.roles}, relations = {self.relations})")
+        return f"User(id = {self.id}, username = {self.username}, \
+                roles = {self.roles}, relations = {self.relations})"
 
     @classmethod
     def user_from_dict(cls, data: dict) -> "User":
@@ -481,13 +493,14 @@ class User:
         user = cls(auth=None)  # No need to pass auth here
         user.id = data["id"]
         user.username = attributes["username"]
-        user.roles = [' '.join([word.title() for word in role.split('_')])
-                      for role in attributes["roles"]]
+        user.roles = [
+            " ".join([word.title() for word in role.split("_")])
+            for role in attributes["roles"]
+        ]
         user.relations = []
         if relationships:
             for relationship in relationships:
-                user.relations.append(
-                    {relationship["type"]: relationship["id"]})
+                user.relations.append({relationship["type"]: relationship["id"]})
 
         return user
 
@@ -518,9 +531,7 @@ class User:
         """
         url = f"{self.api.url}/user/me"
         resp = URLRequest.request_url(
-            url, "GET",
-            timeout=self.auth.timeout,
-            headers=self.auth.get_bearer_token()
+            url, "GET", timeout=self.auth.timeout, headers=self.auth.get_bearer_token()
         )
         return User.user_from_dict(resp)
 
@@ -544,7 +555,7 @@ class Follows:
         self.api = Api()
 
     def followed_groups(self, **kwargs) -> List["ScanlationGroup"]:
-        """ Get information about Scanlation Groups you follow
+        """Get information about Scanlation Groups you follow
 
         Args:
             limit: Number of groups to load
@@ -558,12 +569,16 @@ class Follows:
             kwargs["translatedLanguage[]"] = kwargs.pop("translatedLanguage")
         url = f"{self.api.url}/user/follows/group"
         resp = URLRequest.request_url(
-            url, "GET", timeout=self.api.timeout, params=kwargs, headers=self.auth.get_bearer_token()
+            url,
+            "GET",
+            timeout=self.api.timeout,
+            params=kwargs,
+            headers=self.auth.get_bearer_token(),
         )
         return ScanlationGroup.create_group_list(resp)
 
     def followed_users(self, **kwargs) -> List["User"]:
-        """ Get information about users you follow
+        """Get information about users you follow
 
         Args:
             limit: Number of authors to load
@@ -574,7 +589,11 @@ class Follows:
         """
         url = f"{self.api.url}/user/follows/user"
         resp = URLRequest.request_url(
-            url, "GET", timeout=self.api.timeout, params=kwargs, headers=self.auth.get_bearer_token()
+            url,
+            "GET",
+            timeout=self.api.timeout,
+            params=kwargs,
+            headers=self.auth.get_bearer_token(),
         )
         return User.create_user_list(resp)
 
@@ -586,7 +605,8 @@ class Follows:
         """
         url = f"{self.api.url}/manga/{manga_id}/follow"
         URLRequest.request_url(
-            url, "POST", headers=self.auth.get_bearer_token(), timeout=self.api.timeout)
+            url, "POST", headers=self.auth.get_bearer_token(), timeout=self.api.timeout
+        )
 
     def unfollow_manga(self, manga_id: str) -> None:
         """Follow a manga
@@ -596,9 +616,13 @@ class Follows:
         """
         url = f"{self.api.url}/manga/{manga_id}/follow"
         URLRequest.request_url(
-            url, "DELETE", headers=self.auth.get_bearer_token(), timeout=self.api.timeout)
+            url,
+            "DELETE",
+            headers=self.auth.get_bearer_token(),
+            timeout=self.api.timeout,
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     md = Author()
     print(md.list_author())

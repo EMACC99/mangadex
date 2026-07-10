@@ -1,7 +1,7 @@
 [project]
 name = "md"
 version = "0.1.0"
-description = "Add your description here"
+description = "A Python synchronous API Client for MangaDex"
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.9,<4.0"

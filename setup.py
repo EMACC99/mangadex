@@ -1,6 +1,7 @@
 """
 Python setup for the library
 """
+
 from setuptools import find_packages, setup
 
 VERSION = "2.7.1"

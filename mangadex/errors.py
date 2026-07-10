@@ -1,6 +1,7 @@
 """
 Module for error class declaration
 """
+
 from requests import Response
 from typing_extensions import Union
 
@@ -8,7 +9,7 @@ from typing_extensions import Union
 class ApiError(Exception):
 
     def __init__(
-            self, resp: Union[Response, dict], message="The api responded with the error"
+        self, resp: Union[Response, dict], message="The api responded with the error"
     ) -> None:
         self.resp = resp
         self.details = ""

@@ -57,8 +57,7 @@ class URLRequest:
                 raise
         elif method == "POST":
             try:
-                resp = requests.post(
-                    url, data=params, headers=headers, timeout=timeout)
+                resp = requests.post(url, data=params, headers=headers, timeout=timeout)
             except requests.RequestException as e:
                 print(f"An error has occurred: {e}")
                 raise
@@ -84,8 +83,7 @@ class URLRequest:
 
         content = resp.content
         data = URLRequest.__parse_data(
-            content if isinstance(
-                content, basestring) else content.decode("utf-8")
+            content if isinstance(content, basestring) else content.decode("utf-8")
         )
         return data
 

@@ -1,6 +1,7 @@
 """
 Python module for interacting with the mangadex API
 """
+
 from .auth import Api, ApiClient, Auth
 from .errors import ApiError
 from .people import Author, Follows, ScanlationGroup, User

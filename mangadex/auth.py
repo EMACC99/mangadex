@@ -1,4 +1,5 @@
 """Module providing authentication and checking for infrastructure"""
+
 from __future__ import absolute_import
 
 from typing import Optional
@@ -17,7 +18,7 @@ class Api:
         self.timeout = 5
 
     def ping(self) -> Optional[str]:
-        """ Ping healthchech
+        """Ping healthchech
 
         Raises:
             ApiError: Raised when api is not functioning
@@ -116,7 +117,7 @@ class Auth:
 
 
 class ApiClient(Auth):
-    """ Class that checks for user's API Clients"""
+    """Class that checks for user's API Clients"""
 
     def __init__(self, auth: Union[Auth, None]):
         super().__init__()
@@ -167,8 +168,7 @@ class ApiClient(Auth):
         client.created_at = attributes["createdAt"]
         client.updated_at = attributes["updatedAt"]
         for relation in attributes["relationships"]:
-            client.relations.append(
-                {"type": relation["type"], "id": relation["id"]})
+            client.relations.append({"type": relation["type"], "id": relation["id"]})
 
         return client
 
@@ -271,9 +271,8 @@ class ApiClient(Auth):
         return ApiClient.client_from_dict(resp) if obj_return else None
 
     def edit_api_client(
-            self, client_id: str,
-            description: str,
-            obj_return: bool = True) -> Optional["ApiClient"]:
+        self, client_id: str, description: str, obj_return: bool = True
+    ) -> Optional["ApiClient"]:
         """Change an API Client description
 
         Returns:
